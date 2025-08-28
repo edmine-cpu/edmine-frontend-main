@@ -1,0 +1,179 @@
+'use client';
+
+import Link from "next/link";
+import { Lang } from "@/app/(types)/lang";
+import { useEffect, useState, useRef } from "react";
+import { checkAuth, clearAuthCache } from "@/utils/auth";
+import { useTranslation } from "@/hooks/useTranslation";
+import { API_ENDPOINTS } from '@/config/api';
+
+interface MobileButtonsProps {
+    lang: Lang;
+}
+
+export function MobileButtons({ lang }: MobileButtonsProps) {
+    const { t } = useTranslation(lang);
+    const [isAuth, setIsAuth] = useState<boolean | null>(null);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    const checkAuthStatus = async () => {
+        const auth = await checkAuth();
+        setIsAuth(auth);
+        if (auth) {
+            try {
+                const response = await fetch(API_ENDPOINTS.adminDashboard, {
+                    credentials: 'include'
+                });
+                setIsAdmin(response.ok);
+            } catch {
+                setIsAdmin(false);
+            }
+        } else {
+            setIsAdmin(false);
+        }
+    };
+
+    useEffect(() => {
+        checkAuthStatus();
+
+        const handleAuthChange = () => checkAuthStatus();
+        window.addEventListener('auth-changed', handleAuthChange);
+
+        return () => {
+            window.removeEventListener('auth-changed', handleAuthChange);
+        };
+    }, []);
+
+    // Закрытие меню по клику вне
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(API_ENDPOINTS.logout, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                // удаляем токен
+                document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                clearAuthCache();
+
+                window.dispatchEvent(new Event('auth-changed'));
+                setIsAuth(false);
+                setIsAdmin(false);
+                setIsMenuOpen(false);
+                window.location.href = `/${lang || 'en'}`;
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
+    return (
+        <div className="flex items-center">
+            <div className="relative" ref={menuRef}>
+                {/* Кнопка всегда доступна */}
+                <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="flex flex-col justify-between w-8 h-6 cursor-pointer group"
+                    aria-label={t('home')}
+                >
+                    <span className="block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors"></span>
+                    <span className="block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors"></span>
+                    <span className="block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors"></span>
+                </button>
+
+                {/* Выпадающее меню */}
+                {isMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 z-50 font-primary">
+                        <div className="py-2">
+                            {isAuth === null ? (
+                                <div className="px-5 py-3 text-sm text-gray-400">Loading...</div>
+                            ) : isAuth ? (
+                                <>
+                                    <Link
+                                        href={`/${lang || 'en'}/profile`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('profile')}
+                                    </Link>
+                                    <Link
+                                        href={`/${lang || 'en'}/chats`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('chat')}
+                                    </Link>
+                                    <Link
+                                        href={`/${lang || 'en'}/catalog`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('catalog')}
+                                    </Link>
+                                    <Link
+                                        href={`/${lang || 'en'}/blog`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('blog')}
+                                    </Link>
+                                    <hr className="my-1" />
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2"
+                                    >
+                                        {t('logout')}
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        href={`/${lang || 'en'}/catalog`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('catalog')}
+                                    </Link>
+                                    <Link
+                                        href={`/${lang || 'en'}/blog`}
+                                        className="block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('blog')}
+                                    </Link>
+                                    <hr className="my-1" />
+                                    <Link
+                                        href={`/${lang || 'en'}/login`}
+                                        className="block px-5 py-3 text-sm text-blue-600 hover:bg-blue-50 font-medium rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('login')}
+                                    </Link>
+                                    <Link
+                                        href={`/${lang || 'en'}/forgot-password`}
+                                        className="block px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Забули пароль?
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,37 @@
+.ver-button {
+  padding: 12px 24px;
+  width: 100%;
+  background-color: #e60000;  /* красный фон по умолчанию */
+  border: 2px solid #e60000;
+  border-radius: 15px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #fff;                 /* белый текст по умолчанию */
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ver-button:hover {
+  background-color: transparent; /* фон становится прозрачным */
+  color: #e60000;               /* текст красный */
+}
+
+.ver-button-inverse {
+  padding: 12px 24px;
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid #e60000;
+  border-radius: 15px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #e60000;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ver-button-inverse:hover {
+  background-color: #000;
+  background-color: #e60000;
+  color: #fff;
+}
+
