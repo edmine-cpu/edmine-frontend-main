@@ -49,6 +49,8 @@ interface Company {
 		name_en?: string
 		name?: string
 	} | null
+	categories?: any[]
+	subcategories?: any[]
 }
 
 interface Country {
@@ -94,6 +96,8 @@ interface CompanyFormData {
 	description_de: string
 	country: string
 	city: string
+	categories: number[]
+	subcategories: number[]
 }
 
 // Custom hook for profile state management
@@ -105,6 +109,8 @@ const useProfileState = () => {
 	const [success, setSuccess] = useState('')
 	const [allCountries, setAllCountries] = useState<Country[]>([])
 	const [allCities, setAllCities] = useState<City[]>([])
+	const [allCategories, setAllCategories] = useState<any[]>([])
+	const [allSubcategories, setAllSubcategories] = useState<any[]>([])
 
 	// Clear messages after 5 seconds
 	useEffect(() => {
@@ -132,6 +138,10 @@ const useProfileState = () => {
 		setAllCountries,
 		allCities,
 		setAllCities,
+		allCategories,
+		setAllCategories,
+		allSubcategories,
+		setAllSubcategories,
 	}
 }
 
@@ -216,6 +226,10 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		setAllCountries,
 		allCities,
 		setAllCities,
+		allCategories,
+		setAllCategories,
+		allSubcategories,
+		setAllSubcategories,
 	} = useProfileState()
 
 	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
@@ -252,7 +266,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		description_de: '',
 		country: '',
 		city: '',
+		categories: [],
+		subcategories: [],
 	})
+
+	const [categoryBlocks, setCategoryBlocks] = useState<
+		{ category: number | ''; subcategory: number | '' }[]
+	>([{ category: '', subcategory: '' }])
 
 	// Authentication check
 	useEffect(() => {
@@ -328,12 +348,38 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		}
 	}
 
+	const fetchCategories = async () => {
+		try {
+			const response = await fetch(API_ENDPOINTS.categories)
+			if (response.ok) {
+				const data = await response.json()
+				setAllCategories(data)
+			}
+		} catch (error) {
+			console.error('Error fetching categories:', error)
+		}
+	}
+
+	const fetchSubcategories = async () => {
+		try {
+			const response = await fetch(API_ENDPOINTS.subcategories)
+			if (response.ok) {
+				const data = await response.json()
+				setAllSubcategories(data)
+			}
+		} catch (error) {
+			console.error('Error fetching subcategories:', error)
+		}
+	}
+
 	useEffect(() => {
 		if (isAuthenticated) {
 			fetchProfile()
 			fetchCompanies()
 			fetchCountries()
 			fetchCities()
+			fetchCategories()
+			fetchSubcategories()
 		}
 	}, [isAuthenticated])
 
@@ -428,13 +474,19 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			description_de: '',
 			country: '',
 			city: '',
+			categories: [],
+			subcategories: [],
 		})
+		setCategoryBlocks([{ category: '', subcategory: '' }])
 		setSelectedLang('uk')
 		setEditingCompanyId(null)
 		setShowCompanyForm(false)
 	}
 
 	const startEditCompany = (company: Company) => {
+		const categories = (company as any).categories || []
+		const subcategories = (company as any).subcategories || []
+
 		setCompanyForm({
 			name: company.name,
 			description_uk: company.description_uk || '',
@@ -444,7 +496,21 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			description_de: company.description_de || '',
 			country: company.country?.id?.toString() || '',
 			city: company.city?.id?.toString() || '',
+			categories: categories.map((c: any) => c.id),
+			subcategories: subcategories.map((s: any) => s.id),
 		})
+
+		// Создаем categoryBlocks на основе существующих категорий
+		const blocks = []
+		const maxLength = Math.max(categories.length, subcategories.length, 1)
+		for (let i = 0; i < maxLength; i++) {
+			blocks.push({
+				category: categories[i]?.id || '',
+				subcategory: subcategories[i]?.id || '',
+			})
+		}
+		setCategoryBlocks(blocks)
+
 		setEditingCompanyId(company.id)
 		setShowCompanyForm(true)
 	}
@@ -461,6 +527,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 				...companyForm,
 				country: companyForm.country ? parseInt(companyForm.country) : null,
 				city: companyForm.city ? parseInt(companyForm.city) : null,
+				category: companyForm.categories,
+				under_category: companyForm.subcategories,
 			}
 
 			const response = await fetch(endpoint, {
@@ -537,6 +605,36 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			...prev,
 			[`description_${selectedLang}`]: value,
 		}))
+	}
+
+	const handleCategoryChange = (index: number, value: number | '') => {
+		setCategoryBlocks(prev =>
+			prev.map((block, i) =>
+				i === index ? { ...block, category: value, subcategory: '' } : block
+			)
+		)
+		setCompanyForm(prev => {
+			const newCategories = [...prev.categories]
+			newCategories[index] = (value as number) || undefined
+			return { ...prev, categories: newCategories.filter(Boolean) as number[] }
+		})
+	}
+
+	const handleSubcategoryChange = (index: number, value: number | '') => {
+		setCategoryBlocks(prev =>
+			prev.map((block, i) =>
+				i === index ? { ...block, subcategory: value } : block
+			)
+		)
+		setCompanyForm(prev => {
+			const newSubcats = [...prev.subcategories]
+			newSubcats[index] = (value as number) || undefined
+			return { ...prev, subcategories: newSubcats.filter(Boolean) as number[] }
+		})
+	}
+
+	const addCategoryBlock = () => {
+		setCategoryBlocks(prev => [...prev, { category: '', subcategory: '' }])
 	}
 
 	const getCurrentDescription = (): string => {
@@ -1107,6 +1205,40 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 												<p className='text-xs text-gray-500'>
 													Slug: {company.slug_name}
 												</p>
+												{/* Categories */}
+												{company.categories &&
+													company.categories.length > 0 && (
+														<div className='mt-2'>
+															<div className='flex flex-wrap gap-1'>
+																{company.categories.map((category: any) => (
+																	<span
+																		key={category.id}
+																		className='bg-red-100 text-red-800 px-2 py-1 rounded text-xs'
+																	>
+																		{category.name}
+																	</span>
+																))}
+															</div>
+														</div>
+													)}
+												{/* Subcategories */}
+												{company.subcategories &&
+													company.subcategories.length > 0 && (
+														<div className='mt-1'>
+															<div className='flex flex-wrap gap-1'>
+																{company.subcategories.map(
+																	(subcategory: any) => (
+																		<span
+																			key={subcategory.id}
+																			className='bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs'
+																		>
+																			{subcategory.name_uk || subcategory.name}
+																		</span>
+																	)
+																)}
+															</div>
+														</div>
+													)}
 											</div>
 											<div className='flex space-x-2 ml-4'>
 												<button
@@ -1273,6 +1405,71 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 											))}
 										</select>
 									</div>
+								</div>
+
+								{/* Categories Selection */}
+								<div className='mb-4'>
+									<label className='text-sm font-medium text-gray-700 mb-2 block'>
+										Категорії компанії
+									</label>
+									{categoryBlocks.map((block, index) => (
+										<div key={index} className='mb-4 space-y-2'>
+											<select
+												value={block.category}
+												onChange={e =>
+													handleCategoryChange(
+														index,
+														Number(e.target.value) || ''
+													)
+												}
+												className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
+											>
+												<option value=''>Виберіть категорію</option>
+												{allCategories.map(cat => (
+													<option key={cat.id} value={cat.id}>
+														{(cat as any)[`name_${lang}`] ||
+															cat.name_en ||
+															cat.name}
+													</option>
+												))}
+											</select>
+
+											{block.category && (
+												<select
+													value={block.subcategory}
+													onChange={e =>
+														handleSubcategoryChange(
+															index,
+															Number(e.target.value) || ''
+														)
+													}
+													className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
+												>
+													<option value=''>Виберіть підкатегорію</option>
+													{allSubcategories
+														.filter(
+															sc =>
+																(sc as any).category_id === block.category ||
+																(sc as any).full_category_id === block.category
+														)
+														.map(sc => (
+															<option key={sc.id} value={sc.id}>
+																{(sc as any)[`name_${lang}`] ||
+																	sc.name_en ||
+																	sc.name}
+															</option>
+														))}
+												</select>
+											)}
+										</div>
+									))}
+									<button
+										type='button'
+										onClick={addCategoryBlock}
+										className='mt-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors'
+									>
+										➕ Додати ще одну категорію
+									</button>
 								</div>
 
 								{/* Language Switcher for Description */}

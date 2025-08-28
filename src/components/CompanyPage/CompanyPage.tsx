@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/config/api'
+import { Categories } from './Categories'
 import { Description } from './Description'
 import { OwnerData } from './OwnerData'
 
@@ -14,6 +15,8 @@ interface Company {
 	description_pl: string
 	description_fr: string
 	description_de: string
+	categories?: any[]
+	subcategories?: any[]
 }
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
@@ -48,6 +51,11 @@ export async function CompanyPage({ params }: { params: Params }) {
 					country={company.country}
 					city={company.city}
 					id={company.owner_id}
+				/>
+				<Categories
+					lang={lang}
+					categories={company.categories}
+					subcategories={company.subcategories}
 				/>
 				<Description lang={lang} description={description} />
 			</div>
