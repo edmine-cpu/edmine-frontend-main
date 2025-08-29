@@ -1,9 +1,9 @@
 import {TitleName} from "@/components/Header/Desktop/TitleName";
 import {LanguageSwitcher} from "@/components/Header/LanguageSwitcher";
 import {SearchBid} from "@/components/Header/Desktop/SearchBid";
-import {TabLink} from "@/components/headersOLD/Buttons";
 import {HeaderButtons} from "@/components/Header/Desktop/Buttons";
 import {Lang} from "@/app/(types)/lang";
+import Link from "next/link";
 
 
 interface HeaderProps {
@@ -57,10 +57,13 @@ export function DesktopHeader({lang}: HeaderProps) {
             <TitleName lang={lang} />
             <LanguageSwitcher currentLang={lang} />
             <SearchBid lang={lang}/>
-            <TabLink href={`/${lang || 'en'}/catalog`} name={t.catalog} mobile />
-            <TabLink href={`/${lang || 'en'}/blog`} name={t.blog} mobile />
+            <Link href={`/${lang || 'en'}/catalog`} className="text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50">
+                {t.catalog}
+            </Link>
+            <Link href={`/${lang || 'en'}/blog`} className="text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50">
+                {t.blog}
+            </Link>
             <HeaderButtons lang={lang || 'en'}/> 
-
         </header>
     )
 }
