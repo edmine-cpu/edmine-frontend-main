@@ -9,6 +9,93 @@ import { checkAuth } from '@/utils/auth'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
+type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
+
+const texts = {
+	uk: {
+		partner: 'Партнер',
+		chat: 'Чат',
+		back: 'Назад',
+		online: 'Онлайн',
+		loading: 'Завантаження...',
+		file: 'Файл',
+		attachFile: 'Прикріпити файл',
+		messagePlaceholder:
+			'Введіть повідомлення... (Shift+Enter для нового рядка)',
+		send: 'Відправити (Enter)',
+		fileTooLarge: 'Файл занадто великий. Максимальний розмір: 30 МБ',
+		bytes: 'Bytes',
+		kb: 'KB',
+		mb: 'MB',
+		gb: 'GB',
+	},
+	en: {
+		partner: 'Partner',
+		chat: 'Chat',
+		back: 'Back',
+		online: 'Online',
+		loading: 'Loading...',
+		file: 'File',
+		attachFile: 'Attach file',
+		messagePlaceholder: 'Enter message... (Shift+Enter for new line)',
+		send: 'Send (Enter)',
+		fileTooLarge: 'File is too large. Maximum size: 30 MB',
+		bytes: 'Bytes',
+		kb: 'KB',
+		mb: 'MB',
+		gb: 'GB',
+	},
+	pl: {
+		partner: 'Partner',
+		chat: 'Czat',
+		back: 'Wstecz',
+		online: 'Online',
+		loading: 'Ładowanie...',
+		file: 'Plik',
+		attachFile: 'Załącz plik',
+		messagePlaceholder: 'Wprowadź wiadomość... (Shift+Enter dla nowej linii)',
+		send: 'Wyślij (Enter)',
+		fileTooLarge: 'Plik jest za duży. Maksymalny rozmiar: 30 MB',
+		bytes: 'Bytes',
+		kb: 'KB',
+		mb: 'MB',
+		gb: 'GB',
+	},
+	fr: {
+		partner: 'Partenaire',
+		chat: 'Chat',
+		back: 'Retour',
+		online: 'En ligne',
+		loading: 'Chargement...',
+		file: 'Fichier',
+		attachFile: 'Joindre un fichier',
+		messagePlaceholder:
+			'Entrez un message... (Shift+Enter pour une nouvelle ligne)',
+		send: 'Envoyer (Enter)',
+		fileTooLarge: 'Le fichier est trop volumineux. Taille maximale: 30 MB',
+		bytes: 'Bytes',
+		kb: 'KB',
+		mb: 'MB',
+		gb: 'GB',
+	},
+	de: {
+		partner: 'Partner',
+		chat: 'Chat',
+		back: 'Zurück',
+		online: 'Online',
+		loading: 'Laden...',
+		file: 'Datei',
+		attachFile: 'Datei anhängen',
+		messagePlaceholder: 'Nachricht eingeben... (Shift+Enter für neue Zeile)',
+		send: 'Senden (Enter)',
+		fileTooLarge: 'Datei ist zu groß. Maximale Größe: 30 MB',
+		bytes: 'Bytes',
+		kb: 'KB',
+		mb: 'MB',
+		gb: 'GB',
+	},
+} as const
+
 interface Message {
 	id: number
 	content: string
@@ -35,7 +122,8 @@ export default function ChatPage() {
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	const chatIdParam = params.chatId as string
-	const lang = params.lang as string
+	const lang = params.lang as Lang
+	const t = texts[lang]
 
 	// Инициализируем хук перевода
 	const translation = useTranslation(chatId || 0)
@@ -145,9 +233,9 @@ export default function ChatPage() {
 	}, [messages])
 
 	const formatFileSize = (bytes: number): string => {
-		if (bytes === 0) return '0 Bytes'
+		if (bytes === 0) return `0 ${t.bytes}`
 		const k = 1024
-		const sizes = ['Bytes', 'KB', 'MB', 'GB']
+		const sizes = [t.bytes, t.kb, t.mb, t.gb]
 		const i = Math.floor(Math.log(bytes) / Math.log(k))
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 	}
@@ -170,7 +258,7 @@ export default function ChatPage() {
 				<Header lang={lang as any} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='flex justify-center items-center h-64'>
-						<div className='text-lg'>Завантаження...</div>
+						<div className='text-lg'>{t.loading}</div>
 					</div>
 				</div>
 			</div>
@@ -205,7 +293,7 @@ export default function ChatPage() {
 											d='M15 19l-7-7 7-7'
 										/>
 									</svg>
-									Назад
+									{t.back}
 								</button>
 								<div className='h-8 w-px bg-gray-300'></div>
 								<div className='flex items-center space-x-3'>
@@ -226,7 +314,9 @@ export default function ChatPage() {
 										<h1 className='text-xl font-semibold text-gray-900'>
 											{partnerName}
 										</h1>
-										<p className='text-sm text-gray-500'>Чат #{chatId}</p>
+										<p className='text-sm text-gray-500'>
+											{t.chat} #{chatId}
+										</p>
 									</div>
 								</div>
 							</div>
@@ -237,10 +327,11 @@ export default function ChatPage() {
 									onToggle={translation.toggleTranslation}
 									onLanguageChange={translation.setTargetLanguage}
 									error={translation.state.error}
+									lang={lang}
 								/>
 								<div className='flex items-center space-x-2'>
 									<span className='w-2 h-2 bg-green-400 rounded-full'></span>
-									<span className='text-sm text-gray-600'>Онлайн</span>
+									<span className='text-sm text-gray-600'>{t.online}</span>
 								</div>
 							</div>
 						</div>
@@ -309,6 +400,7 @@ export default function ChatPage() {
 																?.detectedLanguage
 														}
 														targetLanguage={translation.state.targetLanguage}
+														lang={lang}
 													/>
 												</>
 											)}
@@ -338,7 +430,7 @@ export default function ChatPage() {
 																d='M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13'
 															/>
 														</svg>
-														{message.file_name || 'Файл'}
+														{message.file_name || t.file}
 														{message.file_size && (
 															<span className='ml-2 text-xs opacity-75'>
 																({formatFileSize(message.file_size)})
@@ -448,9 +540,7 @@ export default function ChatPage() {
 									onChange={e => {
 										if (e.target.files && e.target.files[0]) {
 											if (e.target.files[0].size > 30 * 1024 * 1024) {
-												alert(
-													'Файл занадто великий. Максимальний розмір: 30 МБ'
-												)
+												alert(t.fileTooLarge)
 												return
 											}
 											setSelectedFile(e.target.files[0])
@@ -462,7 +552,7 @@ export default function ChatPage() {
 								<button
 									onClick={() => fileInputRef.current?.click()}
 									className='flex-shrink-0 p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors'
-									title='Прикріпити файл'
+									title={t.attachFile}
 								>
 									<svg
 										className='w-5 h-5'
@@ -484,7 +574,7 @@ export default function ChatPage() {
 										value={newMessage}
 										onChange={e => setNewMessage(e.target.value)}
 										onKeyPress={handleKeyPress}
-										placeholder='Введіть повідомлення... (Shift+Enter для нового рядка)'
+										placeholder={t.messagePlaceholder}
 										className='w-full p-4 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200'
 										rows={2}
 										style={{ minHeight: '60px', maxHeight: '120px' }}
@@ -499,7 +589,7 @@ export default function ChatPage() {
 									onClick={sendMessage}
 									disabled={!newMessage.trim() && !selectedFile}
 									className='flex-shrink-0 p-4 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center'
-									title='Відправити (Enter)'
+									title={t.send}
 								>
 									<svg
 										className='w-5 h-5'

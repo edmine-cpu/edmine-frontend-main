@@ -51,6 +51,7 @@ interface BidItem {
 	slug_pl?: string
 	slug_fr?: string
 	slug_de?: string
+	author?: number // ID автора задания
 }
 
 const T = {
@@ -60,6 +61,11 @@ const T = {
 		services: 'Послуги',
 		details: 'Детальніше',
 		anyRegions: 'Будь-які регіони',
+		startChat: 'Почати чат',
+		loginToChat: 'Увійти для спілкування',
+		cannotChatWithSelf: 'Неможливо створити чат з самим собою',
+		chatError: 'Помилка створення чату. Спробуйте пізніше.',
+		networkError: 'Помилка мережі. Перевірте підключення.',
 	},
 	en: {
 		title: 'Orders',
@@ -67,6 +73,11 @@ const T = {
 		services: 'Services',
 		details: 'Details',
 		anyRegions: 'Any regions',
+		startChat: 'Start Chat',
+		loginToChat: 'Login to chat',
+		cannotChatWithSelf: 'Cannot create chat with yourself',
+		chatError: 'Chat creation error. Try again later.',
+		networkError: 'Network error. Check your connection.',
 	},
 	pl: {
 		title: 'Zlecenia',
@@ -74,6 +85,11 @@ const T = {
 		services: 'Usługi',
 		details: 'Szczegóły',
 		anyRegions: 'Dowolne regiony',
+		startChat: 'Rozpocznij czat',
+		loginToChat: 'Zaloguj się, aby czatować',
+		cannotChatWithSelf: 'Nie można utworzyć czatu z samym sobą',
+		chatError: 'Błąd tworzenia czatu. Spróbuj ponownie później.',
+		networkError: 'Błąd sieci. Sprawdź połączenie.',
 	},
 	fr: {
 		title: 'Demandes',
@@ -81,6 +97,11 @@ const T = {
 		services: 'Services',
 		details: 'Détails',
 		anyRegions: 'Toutes régions',
+		startChat: 'Commencer le chat',
+		loginToChat: 'Se connecter pour discuter',
+		cannotChatWithSelf: 'Impossible de créer un chat avec soi-même',
+		chatError: 'Erreur de création de chat. Réessayez plus tard.',
+		networkError: 'Erreur réseau. Vérifiez votre connexion.',
 	},
 	de: {
 		title: 'Aufträge',
@@ -88,8 +109,111 @@ const T = {
 		services: 'Leistungen',
 		details: 'Details',
 		anyRegions: 'Beliebige Regionen',
+		startChat: 'Chat starten',
+		loginToChat: 'Anmelden zum Chatten',
+		cannotChatWithSelf: 'Chat mit sich selbst nicht möglich',
+		chatError: 'Chat-Erstellungsfehler. Versuchen Sie es später erneut.',
+		networkError: 'Netzwerkfehler. Überprüfen Sie Ihre Verbindung.',
 	},
 } as const
+
+// Компонент кнопки чата для карточки
+function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
+	const router = useRouter()
+	const [currentUserId, setCurrentUserId] = useState<number | null>(null)
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+	const t = T[lang]
+
+	useEffect(() => {
+		// Получаем информацию о текущем пользователе
+		const fetchCurrentUser = async () => {
+			try {
+				const response = await fetch(API_ENDPOINTS.meApi, {
+					credentials: 'include',
+				})
+				if (response.ok) {
+					const userData = await response.json()
+					setCurrentUserId(userData.id)
+					setIsAuthenticated(true)
+				} else {
+					setIsAuthenticated(false)
+				}
+			} catch (error) {
+				console.error('Error fetching current user:', error)
+				setIsAuthenticated(false)
+			}
+		}
+
+		fetchCurrentUser()
+	}, [])
+
+	const handleCreateChat = async () => {
+		if (!authorId) return
+
+		// Проверяем, не пытается ли пользователь создать чат с самим собой
+		if (currentUserId === authorId) {
+			alert(t.cannotChatWithSelf)
+			return
+		}
+
+		try {
+			const formData = new FormData()
+			formData.append('partner_id', authorId.toString())
+
+			const response = await fetch(API_ENDPOINTS.createChat, {
+				method: 'POST',
+				body: formData,
+				credentials: 'include',
+			})
+
+			if (response.ok) {
+				const data = await response.json()
+				router.push(`/${lang}/chat/${data.chat_id}`)
+			} else {
+				const errorData = await response.json()
+				console.error(
+					'Failed to create chat:',
+					response.status,
+					errorData.detail || errorData
+				)
+
+				if (
+					response.status === 400 &&
+					errorData.detail?.includes('с самим собой')
+				) {
+					alert(t.cannotChatWithSelf)
+				} else {
+					alert(t.chatError)
+				}
+			}
+		} catch (error) {
+			console.error('Error creating chat:', error)
+			alert(t.networkError)
+		}
+	}
+
+	if (!authorId) return null
+
+	return (
+		<>
+			{isAuthenticated ? (
+				<button
+					onClick={handleCreateChat}
+					className='px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition-colors text-sm'
+				>
+					💬 {t.startChat}
+				</button>
+			) : (
+				<button
+					onClick={() => router.push(`/${lang}/login`)}
+					className='px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors text-sm'
+				>
+					🔐 {t.loginToChat}
+				</button>
+			)}
+		</>
+	)
+}
 
 export default function ZayavkiSubcategoryPage({
 	params,
@@ -296,12 +420,15 @@ export default function ZayavkiSubcategoryPage({
 												</span>
 											)}
 										</div>
-										<a
-											href={bidUrl}
-											className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
-										>
-											{t.details}
-										</a>
+										<div className='flex items-center space-x-2'>
+											<ChatButtonCard lang={lang} authorId={bid.author} />
+											<a
+												href={bidUrl}
+												className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
+											>
+												{t.details}
+											</a>
+										</div>
 									</div>
 								</div>
 							)

@@ -3,6 +3,44 @@
 import { API_ENDPOINTS } from '@/config/api'
 import { useState } from 'react'
 
+type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
+
+const texts = {
+	uk: {
+		translating: 'Перекладається...',
+		showOriginal: 'Показати оригінал',
+		translate: 'Перекласти',
+	},
+	en: {
+		translating: 'Translating...',
+		showOriginal: 'Show original',
+		translate: 'Translate',
+	},
+	pl: {
+		translating: 'Tłumaczenie...',
+		showOriginal: 'Pokaż oryginał',
+		translate: 'Przetłumacz',
+	},
+	fr: {
+		translating: 'Traduction...',
+		showOriginal: "Afficher l'original",
+		translate: 'Traduire',
+	},
+	de: {
+		translating: 'Übersetzung...',
+		showOriginal: 'Original anzeigen',
+		translate: 'Übersetzen',
+	},
+} as const
+
+const LANGUAGE_NAMES = {
+	uk: 'українською',
+	en: 'English',
+	pl: 'Polski',
+	fr: 'Français',
+	de: 'Deutsch',
+}
+
 interface TranslateButtonProps {
 	messageId: string
 	originalText: string
@@ -11,14 +49,7 @@ interface TranslateButtonProps {
 	senderId: number
 	currentUserId: number
 	onTranslate: (translatedText: string) => void
-}
-
-const LANGUAGE_NAMES = {
-	uk: 'українською',
-	en: 'English',
-	pl: 'Polski',
-	fr: 'Français',
-	de: 'Deutsch',
+	lang?: Lang
 }
 
 // Функция перевода через серверный API
@@ -55,9 +86,11 @@ export default function TranslateButton({
 	senderId,
 	currentUserId,
 	onTranslate,
+	lang = 'uk',
 }: TranslateButtonProps) {
 	const [isTranslating, setIsTranslating] = useState(false)
 	const [isTranslated, setIsTranslated] = useState(false)
+	const t = texts[lang]
 
 	// Показывать кнопку перевода только для сообщений собеседника
 	if (senderId === currentUserId) {
@@ -106,7 +139,7 @@ export default function TranslateButton({
 			{isTranslating ? (
 				<>
 					<div className='w-3 h-3 border border-current border-t-transparent rounded-full animate-spin'></div>
-					<span>Перекладається...</span>
+					<span>{t.translating}</span>
 				</>
 			) : isTranslated ? (
 				<>
@@ -129,7 +162,7 @@ export default function TranslateButton({
 							d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
 						/>
 					</svg>
-					<span>Показати оригінал</span>
+					<span>{t.showOriginal}</span>
 				</>
 			) : (
 				<>
@@ -147,7 +180,7 @@ export default function TranslateButton({
 						/>
 					</svg>
 					<span>
-						Перекласти{' '}
+						{t.translate}{' '}
 						{LANGUAGE_NAMES[targetLang as keyof typeof LANGUAGE_NAMES] ||
 							targetLang}
 					</span>

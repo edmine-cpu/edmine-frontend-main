@@ -3,6 +3,41 @@
 import { API_ENDPOINTS } from '@/config/api'
 import { useEffect, useState } from 'react'
 
+type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
+
+const texts = {
+	uk: {
+		chat: 'Чат',
+		file: '📎 Файл',
+		message: 'Повідомлення...',
+		send: 'Надіслати',
+	},
+	en: {
+		chat: 'Chat',
+		file: '📎 File',
+		message: 'Message...',
+		send: 'Send',
+	},
+	pl: {
+		chat: 'Czat',
+		file: '📎 Plik',
+		message: 'Wiadomość...',
+		send: 'Wyślij',
+	},
+	fr: {
+		chat: 'Chat',
+		file: '📎 Fichier',
+		message: 'Message...',
+		send: 'Envoyer',
+	},
+	de: {
+		chat: 'Chat',
+		file: '📎 Datei',
+		message: 'Nachricht...',
+		send: 'Senden',
+	},
+} as const
+
 interface Message {
 	id: number
 	sender_id: number
@@ -16,14 +51,17 @@ interface Message {
 export default function ChatOverlay({
 	chatId,
 	onClose,
+	lang = 'uk',
 }: {
 	chatId: number
 	onClose: () => void
+	lang?: Lang
 }) {
 	const [messages, setMessages] = useState<Message[]>([])
 	const [text, setText] = useState('')
 	const [file, setFile] = useState<File | null>(null)
 	const [currentUserId, setCurrentUserId] = useState<number | null>(null)
+	const t = texts[lang]
 
 	useEffect(() => {
 		// Получаем информацию о текущем пользователе
@@ -91,7 +129,7 @@ export default function ChatOverlay({
 				onClick={e => e.stopPropagation()}
 			>
 				<div className='px-4 py-2 bg-red-600 text-white flex justify-between items-center'>
-					<h3 className='font-semibold'>Чат</h3>
+					<h3 className='font-semibold'>{t.chat}</h3>
 					<button onClick={onClose} className='text-white text-xl'>
 						×
 					</button>
@@ -123,7 +161,7 @@ export default function ChatOverlay({
 												: 'text-blue-600'
 										}`}
 									>
-										📎 Файл
+										{t.file}
 									</a>
 								)}
 								<div
@@ -145,7 +183,7 @@ export default function ChatOverlay({
 						value={text}
 						onChange={e => setText(e.target.value)}
 						className='flex-1 rounded border px-3 py-2'
-						placeholder='Повідомлення...'
+						placeholder={t.message}
 					/>
 					<input
 						type='file'
@@ -155,7 +193,7 @@ export default function ChatOverlay({
 						onClick={send}
 						className='bg-red-600 text-white px-4 py-2 rounded'
 					>
-						Надіслати
+						{t.send}
 					</button>
 				</div>
 			</div>
