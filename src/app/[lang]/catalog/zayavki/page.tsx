@@ -256,22 +256,56 @@ export default function ZayavkiPage({
 		)
 	}, [filters.category, subcategories])
 
+	// Функция для получения slug'а категории
+	const getCategorySlug = (categoryId: string) => {
+		const category = categories.find(cat => String(cat.id) === categoryId)
+		if (!category) return categoryId
+		return (category.name_en || category.name)
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9-]/g, '')
+	}
+
+	// Функция для получения slug'а подкатегории
+	const getSubcategorySlug = (subcategoryId: string) => {
+		const subcategory = subcategories.find(
+			sub => String(sub.id) === subcategoryId
+		)
+		if (!subcategory) return subcategoryId
+		return (subcategory.name_en || subcategory.name_uk || '')
+			.toLowerCase()
+			.replace(/\s+/g, '-')
+			.replace(/[^a-z0-9-]/g, '')
+	}
+
 	useEffect(() => {
-		const params = new URLSearchParams()
-		if (filters.category) params.set('category', filters.category)
-		if (filters.subcategory) params.set('subcategory', filters.subcategory)
-		if (filters.country) params.set('country', filters.country)
-		if (filters.city) params.set('city', filters.city)
-		if (filters.sort) params.set('sort', filters.sort)
-		if (filters.search) params.set('search', filters.search)
+		// Создаем параметры для API (используем ID)
+		const apiParams = new URLSearchParams()
+		if (filters.category) apiParams.set('category', filters.category)
+		if (filters.subcategory) apiParams.set('subcategory', filters.subcategory)
+		if (filters.country) apiParams.set('country', filters.country)
+		if (filters.city) apiParams.set('city', filters.city)
+		if (filters.sort) apiParams.set('sort', filters.sort)
+		if (filters.search) apiParams.set('search', filters.search)
+
+		// Создаем параметры для URL (используем slug'и для SEO)
+		const urlParams = new URLSearchParams()
+		if (filters.category)
+			urlParams.set('category', getCategorySlug(filters.category))
+		if (filters.subcategory)
+			urlParams.set('subcategory', getSubcategorySlug(filters.subcategory))
+		if (filters.country) urlParams.set('country', filters.country)
+		if (filters.city) urlParams.set('city', filters.city)
+		if (filters.sort) urlParams.set('sort', filters.sort)
+		if (filters.search) urlParams.set('search', filters.search)
 
 		// Обновляем URL для SEO
 		const newUrl = `/${lang}/catalog/zayavki${
-			params.toString() ? '?' + params.toString() : ''
+			urlParams.toString() ? '?' + urlParams.toString() : ''
 		}`
 		window.history.replaceState(null, '', newUrl)
 
-		fetch(`${API_ENDPOINTS.bids}?${params.toString()}`)
+		fetch(`${API_ENDPOINTS.bids}?${apiParams.toString()}`)
 			.then(res => res.json())
 			.then(data => {
 				if (typeof data === 'object' && !Array.isArray(data)) {
@@ -410,16 +444,8 @@ export default function ZayavkiPage({
 
 										// Обновляем URL для SEO
 										if (categoryId) {
-											const category = categories.find(
-												cat => String(cat.id) === categoryId
-											)
-											if (category) {
-												const categorySlug = (category.name_en || category.name)
-													.toLowerCase()
-													.replace(/\s+/g, '-')
-													.replace(/[^a-z0-9-]/g, '')
-												router.push(`/${lang}/catalog/zayavki/${categorySlug}`)
-											}
+											const categorySlug = getCategorySlug(categoryId)
+											router.push(`/${lang}/catalog/zayavki/${categorySlug}`)
 										} else {
 											router.push(`/${lang}/catalog/zayavki`)
 										}
@@ -446,29 +472,11 @@ export default function ZayavkiPage({
 
 										// Обновляем URL для SEO
 										if (subcategoryId && filters.category) {
-											const category = categories.find(
-												cat => String(cat.id) === filters.category
+											const categorySlug = getCategorySlug(filters.category)
+											const subcategorySlug = getSubcategorySlug(subcategoryId)
+											router.push(
+												`/${lang}/catalog/zayavki/${categorySlug}/${subcategorySlug}`
 											)
-											const subcategory = subcategories.find(
-												sub => String(sub.id) === subcategoryId
-											)
-											if (category && subcategory) {
-												const categorySlug = (category.name_en || category.name)
-													.toLowerCase()
-													.replace(/\s+/g, '-')
-													.replace(/[^a-z0-9-]/g, '')
-												const subcategorySlug = (
-													subcategory.name_en ||
-													subcategory.name_uk ||
-													''
-												)
-													.toLowerCase()
-													.replace(/\s+/g, '-')
-													.replace(/[^a-z0-9-]/g, '')
-												router.push(
-													`/${lang}/catalog/zayavki/${categorySlug}/${subcategorySlug}`
-												)
-											}
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -575,7 +583,7 @@ export default function ZayavkiPage({
 
 							return (
 								<div
-									key={bid.id}
+									key={bid.id || `bid-${Math.random()}`}
 									className='bg-white rounded-sm shadow p-4 border border-gray-200'
 								>
 									<div className='flex justify-between items-start mb-2'>

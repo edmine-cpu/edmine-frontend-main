@@ -2,14 +2,14 @@
 
 import { DesktopHeader } from '@/components/Header/DesktopHeader'
 import { MobileHeader } from '@/components/Header/MobileHeader'
-import { useTranslation, type Lang } from '@/hooks/useTranslation'
+import { useTranslationHeader, type Lang } from '@/hooks/headerTranslation'
 
 interface HeaderProps {
 	lang: Lang
 }
 
 export function Header({ lang }: HeaderProps) {
-	const { t } = useTranslation(lang)
+	const { t } = useTranslationHeader(lang)
 
 	return (
 		<header>
