@@ -1,24 +1,26 @@
-import { useTranslation, type Lang } from '@/hooks/useTranslation';
-import { DesktopHeader } from '@/components/Header/DesktopHeader';
-import { MobileHeader } from '@/components/Header/MobileHeader';
+'use client'
+
+import { DesktopHeader } from '@/components/Header/DesktopHeader'
+import { MobileHeader } from '@/components/Header/MobileHeader'
+import { useTranslation, type Lang } from '@/hooks/useTranslation'
 
 interface HeaderProps {
-    lang: Lang;
+	lang: Lang
 }
 
 export function Header({ lang }: HeaderProps) {
-    const { t } = useTranslation(lang);
+	const { t } = useTranslation(lang)
 
-    return (
-        <header>
-            <div className="block md:hidden">
-                <MobileHeader lang={lang} />
-            </div>
-            <div className="hidden md:block">
-                <DesktopHeader lang={lang} />
-            </div>
-        </header>
-    );
+	return (
+		<header>
+			<div className='block md:hidden'>
+				<MobileHeader lang={lang} />
+			</div>
+			<div className='hidden md:block'>
+				<DesktopHeader lang={lang} />
+			</div>
+		</header>
+	)
 }
 
-export default Header;
+export default Header

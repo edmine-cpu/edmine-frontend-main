@@ -1,279 +1,138 @@
-export type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de';
+'use client'
 
-const TRANSLATIONS = {
-  uk: {
-    // Auth
-    login: 'Увійти',
-    register: 'Реєстрація',
-    logout: 'Вийти',
-    email: 'Email',
-    password: 'Пароль',
-    confirmPassword: 'Підтвердити пароль',
-    name: 'Ім\'я',
-    forgotPassword: 'Забули пароль?',
-    noAccount: 'Немає аккаунту?',
-    
-    // Navigation
-    home: 'Головна',
-    profile: 'Профіль',
-    catalog: 'Каталог',
-    blog: 'Блог',
-    chat: 'Чат',
-    categories: 'Категорії',
-    admin: 'Адмін',
-    addTask: 'Додати завдання',
-    
-    // Common
-    save: 'Зберегти',
-    cancel: 'Скасувати',
-    edit: 'Редагувати',
-    delete: 'Видалити',
-    search: 'Пошук',
-    loading: 'Завантаження...',
-    error: 'Помилка',
-    success: 'Успішно',
-    
-    // Profile
-    nickname: 'Нікнейм',
-    description: 'Опис',
-    role: 'Роль',
-    location: 'Локація',
-    avatar: 'Аватар',
-    
-    // Chat
-    sendMessage: 'Надіслати повідомлення',
-    openChat: 'Відкрити чат',
-   
-    // Categories
-    all: 'Все',
-    orders: 'Замовлення',
-    executors: 'Виконавці',
-    
-    // Admin
-    users: 'Користувачі',
-    statistics: 'Статистика',
-    moderation: 'Модерація'
-  },
-  en: {
-    // Auth
-    login: 'Login',
-    register: 'Register',
-    logout: 'Logout',
-    email: 'Email',
-    password: 'Password',
-    confirmPassword: 'Confirm Password',
-    name: 'Name',
-    forgotPassword: 'Forgot password?',
-    noAccount: 'No account?',
-    
-    // Navigation
-    home: 'Home',
-    profile: 'Profile',
-    chat: 'Chat',
-    categories: 'Categories',
-    catalog: 'Catalog',
-    blog: 'Blog',
-    admin: 'Admin',
-    addTask: 'Add Task',
-    
-    // Common
-    save: 'Save',
-    cancel: 'Cancel',
-    edit: 'Edit',
-    delete: 'Delete',
-    search: 'Search',
-    loading: 'Loading...',
-    error: 'Error',
-    success: 'Success',
-    
-    // Profile
-    nickname: 'Nickname',
-    description: 'Description',
-    role: 'Role',
-    location: 'Location',
-    avatar: 'Avatar',
-    
-    // Chat
-    sendMessage: 'Send message',
-    openChat: 'Open chat',
-    
-    // Categories
-    all: 'All',
-    orders: 'Orders',
-    executors: 'Executors',
-    
-    // Admin
-    users: 'Users',
-    statistics: 'Statistics',
-    moderation: 'Moderation'
-  },
-  pl: {
-    // Auth
-    login: 'Zaloguj się',
-    register: 'Rejestracja',
-    logout: 'Wyloguj',
-    email: 'Email',
-    password: 'Hasło',
-    confirmPassword: 'Potwierdź hasło',
-    name: 'Imię',
-    forgotPassword: 'Zapomniałeś hasła?',
-    noAccount: 'Nie masz konta?',
-    
-    // Navigation
-    home: 'Start',
-    profile: 'Profil',
-    chat: 'Czat',
-    categories: 'Kategorie',
-    catalog: 'Katalog',
-    blog: 'Blog',
-    admin: 'Admin',
-    addTask: 'Dodaj zadanie',
-    
-    // Common
-    save: 'Zapisz',
-    cancel: 'Anuluj',
-    edit: 'Edytuj',
-    delete: 'Usuń',
-    search: 'Szukaj',
-    loading: 'Ładowanie...',
-    error: 'Błąd',
-    success: 'Sukces',
-    
-    // Profile
-    nickname: 'Pseudonim',
-    description: 'Opis',
-    role: 'Rola',
-    location: 'Lokacja',
-    avatar: 'Awatar',
-    
-    // Chat
-    sendMessage: 'Wyślij wiadomość',
-    openChat: 'Otwórz czat',
-    
-    // Categories
-    all: 'Wszystko',
-    orders: 'Zlecenia',
-    executors: 'Wykonawcy',
-    
-    // Admin
-    users: 'Użytkownicy',
-    statistics: 'Statystyki',
-    moderation: 'Moderacja'
-  },
-  fr: {
-    // Auth
-    login: 'Connexion',
-    register: 'Inscription',
-    logout: 'Déconnexion',
-    email: 'Email',
-    password: 'Mot de passe',
-    confirmPassword: 'Confirmer le mot de passe',
-    name: 'Nom',
-    forgotPassword: 'Mot de passe oublié?',
-    noAccount: 'Pas de compte?',
-    
-    // Navigation
-    home: 'Accueil',
-    profile: 'Profil',
-    chat: 'Chat',
-    categories: 'Catégories',
-    admin: 'Admin',
-    addTask: 'Ajouter une tâche',
-    
-    // Common
-    save: 'Sauvegarder',
-    cancel: 'Annuler',
-    edit: 'Modifier',
-    delete: 'Supprimer',
-    search: 'Recherche',
-    loading: 'Chargement...',
-    error: 'Erreur',
-    success: 'Succès',
-    
-    // Profile
-    nickname: 'Pseudo',
-    description: 'Description',
-    role: 'Rôle',
-    location: 'Localisation',
-    avatar: 'Avatar',
-    
-    // Chat
-    sendMessage: 'Envoyer un message',
-    openChat: 'Ouvrir le chat',
-    
-    // Categories
-    all: 'Tout',
-    orders: 'Commandes',
-    executors: 'Exécutants',
-    
-    // Admin
-    users: 'Utilisateurs',
-    statistics: 'Statistiques',
-    moderation: 'Modération'
-  },
-  de: {
-    // Auth
-    login: 'Anmelden',
-    register: 'Registrierung',
-    logout: 'Abmelden',
-    email: 'Email',
-    password: 'Passwort',
-    confirmPassword: 'Passwort bestätigen',
-    name: 'Name',
-    forgotPassword: 'Passwort vergessen?',
-    noAccount: 'Kein Konto?',
-    
-    // Navigation
-    home: 'Start',
-    profile: 'Profil',
-    chat: 'Chat',
-    categories: 'Kategorien',
-    catalog: 'Katalog',
-    blog: 'Blog',
-    admin: 'Admin',
-    addTask: 'Aufgabe hinzufügen',
-    
-    // Common
-    save: 'Speichern',
-    cancel: 'Abbrechen',
-    edit: 'Bearbeiten',
-    delete: 'Löschen',
-    search: 'Suchen',
-    loading: 'Laden...',
-    error: 'Fehler',
-    success: 'Erfolg',
-    
-    // Profile
-    nickname: 'Spitzname',
-    description: 'Beschreibung',
-    role: 'Rolle',
-    location: 'Standort',
-    avatar: 'Avatar',
-    
-    // Chat
-    sendMessage: 'Nachricht senden',
-    openChat: 'Chat öffnen',
-    
-    // Categories
-    all: 'Alle',
-    orders: 'Aufträge',
-    executors: 'Ausführende',
-    
-    // Admin
-    users: 'Benutzer',
-    statistics: 'Statistiken',
-    moderation: 'Moderation'
-  }
-} as const;
+import { API_ENDPOINTS } from '@/config/api'
+import { useCallback, useState } from 'react'
 
-export function useTranslation(lang: Lang) {
-  const t = (key: keyof typeof TRANSLATIONS['uk']) => {
-    return TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en'][key] || key;
-  };
-  
-  return { t };
+export interface TranslationState {
+	isEnabled: boolean
+	isLoading: boolean
+	targetLanguage: string
+	error: string | null
 }
 
-export function getTranslation(lang: Lang, key: keyof typeof TRANSLATIONS['uk']) {
-  return TRANSLATIONS[lang]?.[key] || TRANSLATIONS['en'][key] || key;
+export interface TranslatedMessage {
+	id: number
+	originalContent: string
+	translatedContent: string
+	isTranslated: boolean
+	detectedLanguage?: string
+}
+
+export const useTranslation = (chatId: number) => {
+	const [state, setState] = useState<TranslationState>({
+		isEnabled: false,
+		isLoading: false,
+		targetLanguage: 'pl',
+		error: null,
+	})
+
+	const [translatedMessages, setTranslatedMessages] = useState<
+		Map<number, TranslatedMessage>
+	>(new Map())
+
+	const updateState = useCallback((updates: Partial<TranslationState>) => {
+		setState(prev => ({ ...prev, ...updates }))
+	}, [])
+
+	const toggleTranslation = useCallback(async () => {
+		if (state.isLoading) return
+
+		if (state.isEnabled) {
+			// Отключить перевод
+			updateState({ isEnabled: false })
+			setTranslatedMessages(new Map())
+			return
+		}
+
+		// Включить перевод
+		updateState({ isLoading: true, error: null })
+
+		try {
+			const response = await fetch(
+				`${API_ENDPOINTS.chats}/${chatId}/messages?translate_to=${state.targetLanguage}`,
+				{
+					credentials: 'include',
+				}
+			)
+
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+			}
+
+			const data = await response.json()
+			console.log('Translation API response:', data)
+
+			// Создаем карту переведенных сообщений
+			const translationMap = new Map<number, TranslatedMessage>()
+
+			if (data.messages && Array.isArray(data.messages)) {
+				data.messages.forEach((msg: any) => {
+					if (msg.translated_content && msg.is_translated) {
+						translationMap.set(msg.id, {
+							id: msg.id,
+							originalContent: msg.content || '',
+							translatedContent: msg.translated_content,
+							isTranslated: true,
+							detectedLanguage: msg.detected_language,
+						})
+					}
+				})
+			}
+
+			setTranslatedMessages(translationMap)
+			updateState({
+				isEnabled: true,
+				isLoading: false,
+			})
+
+			console.log(
+				`Translation enabled. ${translationMap.size} messages translated.`
+			)
+		} catch (error) {
+			console.error('Translation error:', error)
+			updateState({
+				isLoading: false,
+				error: error instanceof Error ? error.message : 'Translation failed',
+			})
+		}
+	}, [
+		chatId,
+		state.isEnabled,
+		state.isLoading,
+		state.targetLanguage,
+		updateState,
+	])
+
+	const getMessageContent = useCallback(
+		(messageId: number, originalContent: string): string => {
+			if (!state.isEnabled) return originalContent
+
+			const translated = translatedMessages.get(messageId)
+			return translated?.translatedContent || originalContent
+		},
+		[state.isEnabled, translatedMessages]
+	)
+
+	const isMessageTranslated = useCallback(
+		(messageId: number): boolean => {
+			return state.isEnabled && translatedMessages.has(messageId)
+		},
+		[state.isEnabled, translatedMessages]
+	)
+
+	const setTargetLanguage = useCallback(
+		(language: string) => {
+			updateState({ targetLanguage: language })
+		},
+		[updateState]
+	)
+
+	return {
+		state,
+		toggleTranslation,
+		getMessageContent,
+		isMessageTranslated,
+		setTargetLanguage,
+		translatedMessages: translatedMessages,
+	}
 }

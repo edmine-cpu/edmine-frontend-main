@@ -1,11 +1,15 @@
 'use client'
 
+import { API_ENDPOINTS } from '@/config/api'
 import { useState } from 'react'
 
 interface TranslateButtonProps {
 	messageId: string
 	originalText: string
 	targetLang: string
+	chatId: number
+	senderId: number
+	currentUserId: number
 	onTranslate: (translatedText: string) => void
 }
 
@@ -17,88 +21,48 @@ const LANGUAGE_NAMES = {
 	de: 'Deutsch',
 }
 
-// Простая функция перевода с fallback
-const translateText = async (
-	text: string,
+// Функция перевода через серверный API
+const translateMessage = async (
+	chatId: number,
 	targetLang: string
-): Promise<string> => {
-	// Сначала пробуем Google Translate API (через cors proxy)
+): Promise<any> => {
 	try {
-		const response = await fetch(
-			`https://api.allorigins.win/get?url=${encodeURIComponent(
-				`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(
-					text
-				)}`
-			)}`
-		)
+		const formData = new FormData()
+		formData.append('target_language', targetLang)
 
-		if (response.ok) {
-			const data = await response.json()
-			const contents = JSON.parse(data.contents)
-			if (contents && contents[0] && contents[0][0] && contents[0][0][0]) {
-				return contents[0][0][0]
-			}
-		}
-	} catch (error) {
-		console.log('Google Translate failed, trying LibreTranslate:', error)
-	}
-
-	// Fallback: пробуем LibreTranslate
-	try {
-		const response = await fetch('https://libretranslate.de/translate', {
+		const response = await fetch(`${API_ENDPOINTS.chats}/${chatId}/translate`, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				q: text,
-				source: 'auto',
-				target: targetLang === 'uk' ? 'uk' : targetLang,
-			}),
+			credentials: 'include',
+			body: formData,
 		})
 
 		if (response.ok) {
-			const data = await response.json()
-			return data.translatedText
+			return await response.json()
+		} else {
+			throw new Error(`Translation failed: ${response.status}`)
 		}
 	} catch (error) {
-		console.log('LibreTranslate failed:', error)
+		console.error('Server translation failed:', error)
+		throw error
 	}
-
-	// Последний fallback: простой мок-перевод
-	const mockTranslations: Record<string, Record<string, string>> = {
-		uk: {
-			Hello: 'Привіт',
-			'How are you?': 'Як справи?',
-			'Thank you': 'Дякую',
-			'Good morning': 'Доброго ранку',
-			'Good night': 'На добраніч',
-		},
-		en: {
-			Привіт: 'Hello',
-			'Як справи?': 'How are you?',
-			Дякую: 'Thank you',
-			'Доброго ранку': 'Good morning',
-			'На добраніч': 'Good night',
-		},
-	}
-
-	const translations = mockTranslations[targetLang]
-	if (translations && translations[text]) {
-		return translations[text]
-	}
-
-	return `[${targetLang.toUpperCase()}] ${text}`
 }
 
 export default function TranslateButton({
 	messageId,
 	originalText,
 	targetLang,
+	chatId,
+	senderId,
+	currentUserId,
 	onTranslate,
 }: TranslateButtonProps) {
 	const [isTranslating, setIsTranslating] = useState(false)
 	const [isTranslated, setIsTranslated] = useState(false)
+
+	// Показывать кнопку перевода только для сообщений собеседника
+	if (senderId === currentUserId) {
+		return null
+	}
 
 	const handleTranslate = async () => {
 		if (isTranslated) {
@@ -106,14 +70,27 @@ export default function TranslateButton({
 			onTranslate(originalText)
 			setIsTranslated(false)
 		} else {
-			// Перевести
+			// Перевести через серверный API
 			setIsTranslating(true)
 			try {
-				const translated = await translateText(originalText, targetLang)
-				onTranslate(translated)
-				setIsTranslated(true)
+				const translationResult = await translateMessage(chatId, targetLang)
+
+				// Найти переведенное сообщение по ID
+				const translatedMessage = translationResult.translated_messages?.find(
+					(msg: any) => msg.id.toString() === messageId
+				)
+
+				if (translatedMessage && translatedMessage.translated_content) {
+					onTranslate(translatedMessage.translated_content)
+					setIsTranslated(true)
+				} else {
+					console.warn('Translation not found for message:', messageId)
+					onTranslate(originalText)
+				}
 			} catch (error) {
 				console.error('Translation failed:', error)
+				// Fallback к оригинальному тексту при ошибке
+				onTranslate(originalText)
 			} finally {
 				setIsTranslating(false)
 			}

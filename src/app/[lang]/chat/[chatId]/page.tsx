@@ -1,8 +1,10 @@
 'use client'
 
-import TranslateButton from '@/components/chat/TranslateButton'
+import MessageTranslationStatus from '@/components/chat/MessageTranslationStatus'
+import TranslationToggle from '@/components/chat/TranslationToggle'
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
+import { useTranslation } from '@/hooks/useTranslation'
 import { checkAuth } from '@/utils/auth'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -32,8 +34,11 @@ export default function ChatPage() {
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
-	const lang = params.lang as string
 	const chatIdParam = params.chatId as string
+	const lang = params.lang as string
+
+	// Инициализируем хук перевода
+	const translation = useTranslation(chatId || 0)
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -49,10 +54,11 @@ export default function ChatPage() {
 					credentials: 'include',
 				}
 			)
+
 			if (response.ok) {
 				const data = await response.json()
-				// API возвращает объект с полем messages
 				const messages = data.messages || data
+
 				if (Array.isArray(messages)) {
 					setMessages(messages.reverse()) // Reverse to show oldest first
 				} else {
@@ -153,21 +159,9 @@ export default function ChatPage() {
 		}
 	}
 
-	const handleTranslateMessage = (
-		messageId: number,
-		translatedText: string
-	) => {
-		setMessages(prevMessages =>
-			prevMessages.map(message =>
-				message.id === messageId
-					? {
-							...message,
-							translatedContent: translatedText,
-							isTranslated: translatedText !== message.content,
-					  }
-					: message
-			)
-		)
+	// Функция для обработки клика по файлу
+	const handleFileClick = (filePath: string) => {
+		window.open(`${API_ENDPOINTS.static}/${filePath}`, '_blank')
 	}
 
 	if (loading) {
@@ -236,9 +230,18 @@ export default function ChatPage() {
 									</div>
 								</div>
 							</div>
-							<div className='flex items-center space-x-2'>
-								<span className='w-2 h-2 bg-green-400 rounded-full'></span>
-								<span className='text-sm text-gray-600'>Онлайн</span>
+							<div className='flex items-center space-x-4'>
+								<TranslationToggle
+									isEnabled={translation.state.isEnabled}
+									isLoading={translation.state.isLoading}
+									onToggle={translation.toggleTranslation}
+									onLanguageChange={translation.setTargetLanguage}
+									error={translation.state.error}
+								/>
+								<div className='flex items-center space-x-2'>
+									<span className='w-2 h-2 bg-green-400 rounded-full'></span>
+									<span className='text-sm text-gray-600'>Онлайн</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -292,23 +295,21 @@ export default function ChatPage() {
 											{message.content && (
 												<>
 													<div className='whitespace-pre-wrap leading-relaxed'>
-														{message.isTranslated
-															? message.translatedContent
-															: message.content}
+														{translation.getMessageContent(
+															message.id,
+															message.content
+														)}
 													</div>
-													{message.content.trim().length > 10 && (
-														<TranslateButton
-															messageId={message.id.toString()}
-															originalText={message.content}
-															targetLang={lang}
-															onTranslate={translatedText =>
-																handleTranslateMessage(
-																	message.id,
-																	translatedText
-																)
-															}
-														/>
-													)}
+													<MessageTranslationStatus
+														isTranslated={translation.isMessageTranslated(
+															message.id
+														)}
+														detectedLanguage={
+															translation.translatedMessages.get(message.id)
+																?.detectedLanguage
+														}
+														targetLanguage={translation.state.targetLanguage}
+													/>
 												</>
 											)}
 
