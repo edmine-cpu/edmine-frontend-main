@@ -237,7 +237,7 @@ export default function CreateBidPage() {
 
             formState.files.slice(0, 3).forEach((f) => data.append('files', f));
 
-            const res = await fetch(`${API_BASE_URL}/api/${lang}/create-request`, {
+            const res = await fetch(`${API_BASE_URL}/api/${lang}/create-request-fast`, {
                 method: 'POST',
                 body: data,
                 credentials: 'include', // включаем куки для аутентификации

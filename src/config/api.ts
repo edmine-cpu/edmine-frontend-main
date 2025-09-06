@@ -1,6 +1,6 @@
 // API Configuration
 // Change this to production URL when deploying
-export const API_BASE_URL = 'http://localhost:80'
+export const API_BASE_URL = 'http://localhost:8000'
 // 82.25.86.30
 // API endpoints
 export const API_ENDPOINTS = {
@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
 
 	//bids
 	bids: `${API_BASE_URL}/api/bids`,
-	createBid: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,
+	createBid: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request-fast`,
 	verifyBid: (lang: string) =>
 		`${API_BASE_URL}/api/${lang}/verify-request-code`,
 	bidById: (id: number) => `${API_BASE_URL}/api/bids/${id}`,
