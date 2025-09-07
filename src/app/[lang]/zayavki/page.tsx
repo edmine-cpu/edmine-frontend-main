@@ -424,12 +424,7 @@ export default function ZayavkiPage({
 							>
 								{t.companies}
 							</button>
-							<button
-								className='px-4 py-2 rounded-md bg-white border font-semibold text-gray-400'
-								disabled
-							>
-								{t.services}
-							</button>
+		
 						</div>
 					</div>
 
