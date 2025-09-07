@@ -15,6 +15,8 @@ export function HamburgerMenu({ onClick }: HamburgerMenuProps) {
             onKeyDown={e => { if(e.key === 'Enter' || e.key === ' ') onClick(); }}
         >
             <span className="block h-1 bg-black rounded"></span>
+            <span className="block h-1 bg-black rounded"></span>
+            <span className="block h-1 bg-black rounded"></span>
         </div>
     );
 }

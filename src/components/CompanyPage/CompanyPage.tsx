@@ -6,6 +6,11 @@ import { OwnerData } from './OwnerData'
 interface Company {
 	id: number
 	name: string
+	name_uk?: string
+	name_en?: string
+	name_pl?: string
+	name_fr?: string
+	name_de?: string
 	slug_name: string
 	city: string
 	country: string
@@ -23,10 +28,12 @@ type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 type Params = { lang: Lang; slugname: string; id: string }
 
 async function getCompany(slugname: string, id: string) {
-	const res = await fetch(
-		`${API_BASE_URL}/api/companies/slug/${slugname}/${id}`,
-		{ cache: 'no-store' }
-	)
+	// Извлекаем ID из slugname если он в формате "slug-id"
+	const extractedId = slugname.includes('-') ? slugname.split('-').pop() : id
+
+	const res = await fetch(`${API_BASE_URL}/api/companies/${extractedId}`, {
+		cache: 'no-store',
+	})
 	if (!res.ok) throw new Error('Ошибка загрузки компании')
 	return res.json() as Promise<Company>
 }
@@ -42,12 +49,18 @@ export async function CompanyPage({ params }: { params: Params }) {
 		(company[`description_${lang}` as keyof Company] as string) ??
 		company.description_uk
 
+	// Получаем переведенное название компании
+	const companyName: string =
+		(company[`name_${lang}` as keyof Company] as string) ??
+		company.name_uk ??
+		company.name
+
 	return (
 		<div className='m-4 container mx-auto flex justify-center items-center h-screen'>
 			<div className='max-w-300 w-full min-h-screen rounded-md shadow-md p-6 bg-white flex flex-col'>
 				<OwnerData
 					lang={lang}
-					name={company.name}
+					name={companyName}
 					country={company.country}
 					city={company.city}
 					id={company.owner_id}

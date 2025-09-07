@@ -1,71 +1,117 @@
-import Image from 'next/image';
-import { useState } from 'react';
+'use client'
+
+import { memo, useEffect, useMemo, useState } from 'react'
 
 interface OptimizedImageProps {
-  src: string;
-  alt: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  fill?: boolean;
-  priority?: boolean;
-  sizes?: string;
-  fallback?: string;
+	src: string
+	alt: string
+	width?: number
+	height?: number
+	className?: string
+	priority?: boolean
+	placeholder?: string
+	sizes?: string
 }
 
-export default function OptimizedImage({
-  src,
-  alt,
-  width,
-  height,
-  className = '',
-  fill = false,
-  priority = false,
-  sizes,
-  fallback = '/images/placeholder.jpg',
+const OptimizedImage = memo(function OptimizedImage({
+	src,
+	alt,
+	width,
+	height,
+	className = '',
+	priority = false,
+	placeholder,
+	sizes,
 }: OptimizedImageProps) {
-  const [imageSrc, setImageSrc] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+	const [loaded, setLoaded] = useState(false)
+	const [error, setError] = useState(false)
 
-  const handleError = () => {
-    setHasError(true);
-    setImageSrc(fallback);
-  };
+	// Мемоизируем srcSet для разных размеров
+	const srcSet = useMemo(() => {
+		if (!width || !height) return undefined
 
-  const handleLoad = () => {
-    setIsLoading(false);
-  };
+		const baseUrl = src.split('?')[0]
+		const params = new URLSearchParams(src.split('?')[1] || '')
 
-  return (
-    <div className={`relative ${className}`}>
-      {isLoading && !hasError && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
-      )}
-      
-      <Image
-        src={imageSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        fill={fill}
-        priority={priority}
-        sizes={sizes}
-        className={`transition-opacity duration-300 ${
-          isLoading ? 'opacity-0' : 'opacity-100'
-        } ${className}`}
-        onError={handleError}
-        onLoad={handleLoad}
-        quality={85}
-        placeholder="blur"
-        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-      />
-      
-      {hasError && (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-          <span className="text-gray-400 text-sm">Зображення не доступне</span>
-        </div>
-      )}
-    </div>
-  );
-}
+		// Создаем разные размеры для респонсивности
+		const sizes = [1, 1.5, 2, 3]
+		return sizes
+			.map(scale => {
+				const scaledWidth = Math.round(width * scale)
+				const scaledHeight = Math.round(height * scale)
+				params.set('w', scaledWidth.toString())
+				params.set('h', scaledHeight.toString())
+				return `${baseUrl}?${params.toString()} ${scale}x`
+			})
+			.join(', ')
+	}, [src, width, height])
+
+	// Предзагрузка критических изображений
+	useEffect(() => {
+		if (priority && typeof window !== 'undefined') {
+			const link = document.createElement('link')
+			link.rel = 'preload'
+			link.as = 'image'
+			link.href = src
+			if (srcSet) link.setAttribute('imagesrcset', srcSet)
+			document.head.appendChild(link)
+
+			return () => {
+				if (document.head.contains(link)) {
+					document.head.removeChild(link)
+				}
+			}
+		}
+	}, [src, srcSet, priority])
+
+	const handleLoad = () => {
+		setLoaded(true)
+	}
+
+	const handleError = () => {
+		setError(true)
+	}
+
+	if (error) {
+		return (
+			<div
+				className={`bg-gray-200 flex items-center justify-center ${className}`}
+				style={{ width, height }}
+			>
+				<span className='text-gray-400 text-sm'>
+					Изображение не загрузилось
+				</span>
+			</div>
+		)
+	}
+
+	return (
+		<div className='relative'>
+			{placeholder && !loaded && (
+				<div
+					className={`absolute inset-0 bg-gray-200 animate-pulse ${className}`}
+					style={{ width, height }}
+				/>
+			)}
+			<img
+				src={src}
+				srcSet={srcSet}
+				sizes={sizes}
+				alt={alt}
+				width={width}
+				height={height}
+				className={`${className} ${
+					loaded ? 'loaded' : ''
+				} transition-opacity duration-300`}
+				loading={priority ? 'eager' : 'lazy'}
+				onLoad={handleLoad}
+				onError={handleError}
+				style={{
+					opacity: loaded ? 1 : 0,
+				}}
+			/>
+		</div>
+	)
+})
+
+export default OptimizedImage

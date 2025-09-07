@@ -160,9 +160,7 @@ export function SearchBid({ lang }: SearchBidProps) {
 	const handleSearch = () => {
 		if (searchQuery.trim()) {
 			router.push(
-				`/${lang}/catalog/zayavki?search=${encodeURIComponent(
-					searchQuery.trim()
-				)}`
+				`/${lang}/zayavki?search=${encodeURIComponent(searchQuery.trim())}`
 			)
 			setShowSuggestions(false)
 		}
@@ -181,7 +179,7 @@ export function SearchBid({ lang }: SearchBidProps) {
 		setSearchQuery(suggestion.title)
 		setShowSuggestions(false)
 		router.push(
-			`/${lang}/catalog/zayavki?search=${encodeURIComponent(suggestion.title)}`
+			`/${lang}/zayavki?search=${encodeURIComponent(suggestion.title)}`
 		)
 	}
 
