@@ -79,7 +79,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 				setIsAuth(false)
 				setIsAdmin(false)
 				setIsMenuOpen(false)
-				window.location.href = `/${lang || 'en'}`
+				window.location.href = `/${lang || 'uk'}`
 			}
 		} catch (error) {
 			console.error('Logout error:', error)
@@ -111,28 +111,28 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 							) : isAuth ? (
 								<>
 									<Link
-										href={`/${lang || 'en'}/profile`}
+										href={`/${lang || 'uk'}/profile`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
 										{t('profile')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/chats`}
+										href={`/${lang || 'uk'}/chats`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
 										{t('chat')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/catalog`}
+										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
 										{t('catalog')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/blog`}
+										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
@@ -149,14 +149,14 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 							) : (
 								<>
 									<Link
-										href={`/${lang || 'en'}/catalog`}
+										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
 										{t('catalog')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/blog`}
+										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
@@ -164,14 +164,14 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									</Link>
 									<hr className='my-1' />
 									<Link
-										href={`/${lang || 'en'}/login`}
+										href={`/${lang || 'uk'}/login`}
 										className='block px-5 py-3 text-sm text-blue-600 hover:bg-blue-50 font-medium rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>
 										{t('login')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/forgot-password`}
+										href={`/${lang || 'uk'}/forgot-password`}
 										className='block px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2'
 										onClick={() => setIsMenuOpen(false)}
 									>

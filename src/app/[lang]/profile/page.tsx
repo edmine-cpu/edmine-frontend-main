@@ -30,7 +30,12 @@ interface Profile {
 
 interface Company {
 	id: number
-	name: string
+	name: string // основное название для обратной совместимости
+	name_uk?: string
+	name_en?: string
+	name_pl?: string
+	name_fr?: string
+	name_de?: string
 	description_uk: string
 	description_en: string
 	description_pl: string
@@ -88,7 +93,12 @@ interface FormData {
 }
 
 interface CompanyFormData {
-	name: string
+	name: string // основное название для обратной совместимости
+	name_uk: string
+	name_en: string
+	name_pl: string
+	name_fr: string
+	name_de: string
 	description_uk: string
 	description_en: string
 	description_pl: string
@@ -259,6 +269,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	const [selectedLang, setSelectedLang] = useState<LangType>('uk')
 	const [companyForm, setCompanyForm] = useState<CompanyFormData>({
 		name: '',
+		name_uk: '',
+		name_en: '',
+		name_pl: '',
+		name_fr: '',
+		name_de: '',
 		description_uk: '',
 		description_en: '',
 		description_pl: '',
@@ -467,6 +482,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	const resetCompanyForm = () => {
 		setCompanyForm({
 			name: '',
+			name_uk: '',
+			name_en: '',
+			name_pl: '',
+			name_fr: '',
+			name_de: '',
 			description_uk: '',
 			description_en: '',
 			description_pl: '',
@@ -489,6 +509,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
 		setCompanyForm({
 			name: company.name,
+			name_uk: company.name_uk || company.name || '',
+			name_en: company.name_en || company.name || '',
+			name_pl: company.name_pl || company.name || '',
+			name_fr: company.name_fr || company.name || '',
+			name_de: company.name_de || company.name || '',
 			description_uk: company.description_uk || '',
 			description_en: company.description_en || '',
 			description_pl: company.description_pl || '',
@@ -1338,23 +1363,64 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 									</button>
 								</div>
 
-								{/* Company Name */}
-								<div className='mb-4'>
-									<label className='text-sm font-medium text-gray-700 mb-2 block'>
+								{/* Company Name - Multilingual */}
+								<div className='mb-6'>
+									<label className='text-sm font-medium text-gray-700 mb-3 block'>
 										Назва компанії
 									</label>
+
+									{/* Language Switcher for Company Name */}
+									<div className='mb-3'>
+										<LanguageSwitcher
+											current={selectedLang}
+											onChange={setSelectedLang}
+										/>
+									</div>
+
+									{/* Company Name Input for selected language */}
 									<input
 										type='text'
-										value={companyForm.name}
-										onChange={e =>
+										value={
+											companyForm[
+												`name_${selectedLang}` as keyof CompanyFormData
+											] as string
+										}
+										onChange={e => {
+											const fieldName =
+												`name_${selectedLang}` as keyof CompanyFormData
 											setCompanyForm(prev => ({
 												...prev,
-												name: e.target.value,
+												[fieldName]: e.target.value,
+												// Обновляем основное поле для обратной совместимости
+												name:
+													selectedLang === 'uk'
+														? e.target.value
+														: prev.name || e.target.value,
 											}))
-										}
+										}}
 										className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
-										placeholder='Назва вашої компанії'
+										placeholder={`Назва компанії (${LANG_LABELS[selectedLang]})`}
 									/>
+
+									{/* Preview of filled languages */}
+									<div className='mt-2 flex flex-wrap gap-2'>
+										{(['uk', 'en', 'pl', 'fr', 'de'] as LangType[]).map(
+											langCode => {
+												const fieldName =
+													`name_${langCode}` as keyof CompanyFormData
+												const value = companyForm[fieldName] as string
+												return value ? (
+													<span
+														key={langCode}
+														className='inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full'
+													>
+														{LANG_LABELS[langCode]}: {value.substring(0, 20)}
+														{value.length > 20 ? '...' : ''}
+													</span>
+												) : null
+											}
+										)}
+									</div>
 								</div>
 
 								{/* Company Location */}
@@ -1501,7 +1567,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 								<div className='flex space-x-3'>
 									<button
 										onClick={saveCompany}
-										disabled={!companyForm.name.trim()}
+										disabled={
+											!companyForm.name_uk.trim() &&
+											!companyForm.name_en.trim() &&
+											!companyForm.name_pl.trim() &&
+											!companyForm.name_fr.trim() &&
+											!companyForm.name_de.trim()
+										}
 										className='flex-1 bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium'
 									>
 										{editingCompanyId

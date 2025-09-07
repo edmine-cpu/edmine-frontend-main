@@ -300,7 +300,7 @@ export default function ZayavkiPage({
 		if (filters.search) urlParams.set('search', filters.search)
 
 		// Обновляем URL для SEO
-		const newUrl = `/${lang}/catalog/zayavki${
+		const newUrl = `/${lang}/zayavki${
 			urlParams.toString() ? '?' + urlParams.toString() : ''
 		}`
 		window.history.replaceState(null, '', newUrl)
@@ -393,13 +393,13 @@ export default function ZayavkiPage({
 						<h1 className='text-2xl font-semibold text-red-600'>{t.title}</h1>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/zayavki`)}
+								onClick={() => router.push(`/${lang}/zayavki`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/kompanii`)}
+								onClick={() => router.push(`/${lang}/kompanii`)}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
 							>
 								{t.companies}
@@ -445,9 +445,9 @@ export default function ZayavkiPage({
 										// Обновляем URL для SEO
 										if (categoryId) {
 											const categorySlug = getCategorySlug(categoryId)
-											router.push(`/${lang}/catalog/zayavki/${categorySlug}`)
+											router.push(`/${lang}/zayavki/${categorySlug}`)
 										} else {
-											router.push(`/${lang}/catalog/zayavki`)
+											router.push(`/${lang}/zayavki`)
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -475,7 +475,7 @@ export default function ZayavkiPage({
 											const categorySlug = getCategorySlug(filters.category)
 											const subcategorySlug = getSubcategorySlug(subcategoryId)
 											router.push(
-												`/${lang}/catalog/zayavki/${categorySlug}/${subcategorySlug}`
+												`/${lang}/zayavki/${categorySlug}/${subcategorySlug}`
 											)
 										}
 									}}
@@ -577,7 +577,7 @@ export default function ZayavkiPage({
 							const subcategoryNames = getSubcategoryNames(bid.under_categories)
 
 							const bidSlug = getSlug(bid) || `bid-${bid.id}`
-							const bidUrl = `/${lang}/catalog/order/${bidSlug}`
+							const bidUrl = `/${lang}/zayavki/order/${bidSlug}`
 
 							const location = getLocationString(bid.city, bid.country_id)
 

@@ -352,7 +352,7 @@ export default function ZayavkiSubcategoryPage({
 						</div>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/zayavki`)}
+								onClick={() => router.push(`/${lang}/zayavki`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
@@ -389,7 +389,7 @@ export default function ZayavkiSubcategoryPage({
 								: ''
 
 							const bidSlug = getSlug(bid) || `bid-${bid.id}`
-							const bidUrl = `/${lang}/catalog/order/${bidSlug}`
+							const bidUrl = `/${lang}/zayavki/order/${bidSlug}`
 
 							const location = getLocationString(bid.city, bid.country_id)
 

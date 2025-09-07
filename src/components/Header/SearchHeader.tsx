@@ -18,9 +18,7 @@ export function SearchHeader({ lang }: SearchHeaderProps) {
 		if (searchQuery.trim()) {
 			// Редирект на каталог с параметром поиска
 			router.push(
-				`/${lang}/catalog/zayavki?search=${encodeURIComponent(
-					searchQuery.trim()
-				)}`
+				`/${lang}/zayavki?search=${encodeURIComponent(searchQuery.trim())}`
 			)
 		}
 	}

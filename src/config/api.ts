@@ -20,7 +20,9 @@ export const API_ENDPOINTS = {
 
 	//bids
 	bids: `${API_BASE_URL}/api/bids`,
-	createBid: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request-fast`,
+	createBid: (lang: string) =>
+		`${API_BASE_URL}/api/${lang}/create-request-fast`,
+	createBidSlow: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,
 	verifyBid: (lang: string) =>
 		`${API_BASE_URL}/api/${lang}/verify-request-code`,
 	bidById: (id: number) => `${API_BASE_URL}/api/bids/${id}`,
@@ -29,7 +31,10 @@ export const API_ENDPOINTS = {
 	companies: `${API_BASE_URL}/api/companies`,
 	companies_profile: `${API_BASE_URL}/api/companies/profile/get_companies`,
 	company_by_id: (id: number) => `${API_BASE_URL}/api/companies/${id}`,
-	create_company: `${API_BASE_URL}/api/companies`,
+	company_by_slug: (slug: string) =>
+		`${API_BASE_URL}/api/companies/slug/${slug}`,
+	create_company: `${API_BASE_URL}/api/companies-fast`,
+	create_company_slow: `${API_BASE_URL}/api/companies`,
 	update_company: (id: number) => `${API_BASE_URL}/api/companies/${id}`,
 	delete_company: (id: number) => `${API_BASE_URL}/api/companies/${id}`,
 

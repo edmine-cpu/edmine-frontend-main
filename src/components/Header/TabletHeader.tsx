@@ -70,7 +70,7 @@ export function TabletHeader({ lang }: HeaderProps) {
 				<LanguageSwitcher currentLang={lang} />
 				<SearchBid lang={lang} />
 				<Link
-					href={`/${lang || 'en'}/catalog`}
+					href={`/${lang || 'en'}/zayavki`}
 					className='text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50'
 				>
 					{t.catalog}

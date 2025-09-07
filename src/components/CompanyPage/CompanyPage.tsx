@@ -28,14 +28,32 @@ type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 type Params = { lang: Lang; slugname: string; id: string }
 
 async function getCompany(slugname: string, id: string) {
-	// Извлекаем ID из slugname если он в формате "slug-id"
-	const extractedId = slugname.includes('-') ? slugname.split('-').pop() : id
+	// Сначала пробуем получить по ID напрямую
+	try {
+		const res = await fetch(`${API_BASE_URL}/api/companies/${id}`, {
+			cache: 'no-store',
+		})
+		if (res.ok) {
+			return res.json() as Promise<Company>
+		}
+	} catch (error) {
+		console.log('Failed to get company by ID, trying slug method')
+	}
 
-	const res = await fetch(`${API_BASE_URL}/api/companies/${extractedId}`, {
-		cache: 'no-store',
-	})
-	if (!res.ok) throw new Error('Ошибка загрузки компании')
-	return res.json() as Promise<Company>
+	// Если не получилось по ID, пробуем по слагу
+	try {
+		const fullSlug = `${slugname}-${id}`
+		const res = await fetch(`${API_BASE_URL}/api/companies/slug/${fullSlug}`, {
+			cache: 'no-store',
+		})
+		if (res.ok) {
+			return res.json() as Promise<Company>
+		}
+	} catch (error) {
+		console.log('Failed to get company by slug')
+	}
+
+	throw new Error('Компания не найдена')
 }
 
 export async function CompanyPage({ params }: { params: Params }) {

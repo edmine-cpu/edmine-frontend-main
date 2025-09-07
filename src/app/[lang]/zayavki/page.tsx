@@ -611,7 +611,7 @@ export default function ZayavkiPage({
 									`${getTitle(bid).toLowerCase().replace(/\s+/g, '-')}-${
 										bid.id
 									}`
-								const bidUrl = `/${lang}/bid/${bid.id}`
+								const bidUrl = `/${lang}/zayavki/order/${bidSlug}`
 
 								const location = getLocationString(bid.city, bid.country_id)
 
