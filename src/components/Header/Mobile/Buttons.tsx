@@ -96,7 +96,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 						e.preventDefault()
 						setIsMenuOpen(!isMenuOpen)
 					}}
-					className='flex flex-col justify-center w-10 h-10 cursor-pointer group p-2 space-y-1 bg-transparent hover:bg-gray-100 rounded-md transition-colors hamburger-button mobile-button'
+					className='flex flex-col justify-center w-12 h-12 cursor-pointer group p-3 space-y-1 bg-transparent hover:bg-gray-100 rounded-md transition-colors hamburger-button mobile-button'
 					aria-label={t('home')}
 					type='button'
 				>
@@ -118,8 +118,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/profile`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -128,8 +127,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/chats`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -138,8 +136,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -148,8 +145,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -172,8 +168,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -182,8 +177,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -193,8 +187,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/login`}
 										className='block px-5 py-3 text-sm text-blue-600 hover:bg-blue-50 font-medium rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>
@@ -203,8 +196,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/forgot-password`}
 										className='block px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2'
-										onClick={e => {
-											e.preventDefault()
+										onClick={() => {
 											setIsMenuOpen(false)
 										}}
 									>

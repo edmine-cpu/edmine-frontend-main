@@ -13,7 +13,7 @@ interface HeaderProps {
 
 export function MobileHeader({ lang }: HeaderProps) {
 	return (
-		<header className='flex items-center justify-between px-2 py-1 bg-white'>
+		<header className='flex items-center justify-between px-2 py-3 bg-white'>
 			{/* 5 элементов равномерно распределенных */}
 			<div className='flex items-center justify-between w-full'>
 				{/* 1. Logo */}
@@ -34,7 +34,7 @@ export function MobileHeader({ lang }: HeaderProps) {
 				{/* 4. Add Button */}
 				<div className='flex-1 flex justify-center'>
 					<Link href={`/${lang || 'en'}/create-request`}>
-						<button className='text-2xl font-bold text-red-600 leading-none hover:text-red-700 transition-colors font-primary px-2 py-1 rounded-lg hover:bg-red-50'>
+						<button className='text-3xl font-bold text-red-600 leading-none hover:text-red-700 transition-colors font-primary px-3 py-2 rounded-lg hover:bg-red-50 w-12 h-12 flex items-center justify-center'>
 							+
 						</button>
 					</Link>

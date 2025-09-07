@@ -185,13 +185,13 @@ export function SearchIcon({ lang }: SearchIconProps) {
 					e.preventDefault()
 					setIsExpanded(!isExpanded)
 				}}
-				className='p-2 cursor-pointer hover:opacity-80 mobile-button'
+				className='p-3 cursor-pointer hover:opacity-80 mobile-button w-12 h-12 flex items-center justify-center'
 				type='button'
 				aria-label='Toggle search'
 			>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
-					className='h-6 w-6 text-gray-600'
+					className='h-7 w-7 text-gray-600'
 					fill='none'
 					viewBox='0 0 24 24'
 					stroke='currentColor'
