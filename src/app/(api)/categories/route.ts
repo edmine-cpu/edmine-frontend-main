@@ -1,5 +1,4 @@
-    // export async function GET() {
-    //     const res = await fetch('http://192.168.0.160:8000/check/categories');
-    //     const data = await res.json();
-    //     return Response.json(data);
-    // }
+export async function GET() {
+    // Temporary disabled API route
+    return Response.json({ message: 'API route disabled' });
+}

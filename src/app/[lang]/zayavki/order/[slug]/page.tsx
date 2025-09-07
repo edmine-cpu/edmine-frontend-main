@@ -95,7 +95,7 @@ function BidAuthorContact({
 	}, [])
 
 	const handleCreateChat = async () => {
-		const t = CONTACT_TRANSLATIONS as any
+		const t = CONTACT_TRANSLATIONS as Record<string, Record<string, string>>
 
 		// Проверяем, не пытается ли пользователь создать чат с самим собой
 		if (currentUserId === id) {
@@ -360,7 +360,12 @@ export default function BidPage({
 	const [bid, setBid] = useState<Bid | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
-	const [author, setAuthor] = useState<any>(null)
+	const [author, setAuthor] = useState<{
+		id: number
+		name: string
+		first_name?: string
+		last_name?: string
+	} | null>(null)
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
@@ -412,7 +417,7 @@ export default function BidPage({
 							return
 						}
 					} catch (err) {
-						console.log('Direct ID fetch failed, trying slug search')
+						console.log('Direct ID fetch failed, trying slug search', err)
 					}
 				}
 

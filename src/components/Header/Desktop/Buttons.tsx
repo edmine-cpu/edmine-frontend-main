@@ -37,16 +37,16 @@ interface HeaderProps {
 
 export function HeaderButtons({ lang }: HeaderProps) {
 	const { t } = useTranslationHeader(lang)
+	const [isAuth, setIsAuth] = useState<boolean | null>(null)
+	const [isAdmin, setIsAdmin] = useState<boolean>(false)
+	const [isMenuOpen, setIsMenuOpen] = useState(false)
+	const menuRef = useRef<HTMLDivElement>(null)
 
 	// Проверяем, что функция t существует
 	if (!t || typeof t !== 'function') {
 		console.error('Translation function t is not available')
 		return null
 	}
-	const [isAuth, setIsAuth] = useState<boolean | null>(null)
-	const [isAdmin, setIsAdmin] = useState<boolean>(false)
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
-	const menuRef = useRef<HTMLDivElement>(null)
 
 	const checkAuthStatus = async () => {
 		const auth = await checkAuth()

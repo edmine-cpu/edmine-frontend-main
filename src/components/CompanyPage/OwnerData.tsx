@@ -100,7 +100,7 @@ export function OwnerData({ lang, name, country, city, id }: OwnerPropsData) {
 	}, [])
 
 	const handleCreateChat = async () => {
-		const t = TRANSLATIONS as any
+		const t = TRANSLATIONS as Record<string, Record<string, string>>
 
 		// Проверяем, не пытается ли пользователь создать чат с самим собой
 		if (currentUserId === id) {
