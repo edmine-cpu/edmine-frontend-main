@@ -1,0 +1,47 @@
+/* iOS Safari specific fixes for mobile header */
+
+/* Ensure hamburger menu is visible on iOS */
+.hamburger-button {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+	touch-action: manipulation;
+}
+
+/* Fix iOS button styling */
+.mobile-button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background: transparent;
+	border: none;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
+}
+
+/* Ensure hamburger lines are visible */
+.hamburger-line {
+	display: block !important;
+	background-color: #1f2937 !important;
+	min-height: 2px !important;
+	width: 100% !important;
+	border-radius: 2px;
+	transition: all 0.2s ease;
+}
+
+/* Fix search input on iOS */
+.mobile-search-input {
+	-webkit-appearance: none;
+	-webkit-border-radius: 0;
+	border-radius: 8px;
+}
+
+/* Prevent zoom on input focus in iOS */
+@media screen and (max-width: 768px) {
+	input[type='text'],
+	input[type='search'] {
+		font-size: 16px !important;
+	}
+}

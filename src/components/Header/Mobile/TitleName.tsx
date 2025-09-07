@@ -1,15 +1,13 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 interface TitleNameProps {
-    lang?: string;
+	lang?: string
 }
 
-export function TitleName({ lang = 'en' }: TitleNameProps){
-    return (
-        <Link href={`/${lang}`}>
-            <span className="text-red-600 font-bold cursor-pointer text-4xl">
-                 M
-            </span>
-        </Link>
-        )
+export function TitleName({ lang = 'en' }: TitleNameProps) {
+	return (
+		<Link href={`/${lang}`}>
+			<span className='text-red-600 font-bold cursor-pointer text-2xl'>M</span>
+		</Link>
+	)
 }

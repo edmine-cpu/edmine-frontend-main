@@ -6,6 +6,7 @@ import { useTranslationHeader } from '@/hooks/headerTranslation'
 import { checkAuth, clearAuthCache } from '@/utils/auth'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import './mobile-fixes.css'
 
 interface MobileButtonsProps {
 	lang: Lang
@@ -91,13 +92,17 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 			<div className='relative' ref={menuRef}>
 				{/* Кнопка всегда доступна */}
 				<button
-					onClick={() => setIsMenuOpen(!isMenuOpen)}
-					className='flex flex-col justify-between w-8 h-6 cursor-pointer group'
+					onClick={e => {
+						e.preventDefault()
+						setIsMenuOpen(!isMenuOpen)
+					}}
+					className='flex flex-col justify-center w-10 h-10 cursor-pointer group p-2 space-y-1 bg-transparent hover:bg-gray-100 rounded-md transition-colors hamburger-button mobile-button'
 					aria-label={t('home')}
+					type='button'
 				>
-					<span className='block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors'></span>
-					<span className='block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors'></span>
-					<span className='block h-1 bg-black rounded group-hover:bg-gray-700 transition-colors'></span>
+					<span className='hamburger-line'></span>
+					<span className='hamburger-line'></span>
+					<span className='hamburger-line'></span>
 				</button>
 
 				{/* Выпадающее меню */}
@@ -113,35 +118,51 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/profile`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('profile')}
 									</Link>
 									<Link
 										href={`/${lang || 'uk'}/chats`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('chat')}
 									</Link>
 									<Link
 										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('catalog')}
 									</Link>
 									<Link
 										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('blog')}
 									</Link>
 									<hr className='my-1' />
 									<button
-										onClick={handleLogout}
+										onClick={e => {
+											e.preventDefault()
+											handleLogout()
+										}}
 										className='block w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2'
+										type='button'
 									>
 										{t('logout')}
 									</button>
@@ -151,14 +172,20 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/zayavki`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('catalog')}
 									</Link>
 									<Link
 										href={`/${lang || 'uk'}/blog`}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('blog')}
 									</Link>
@@ -166,14 +193,20 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 									<Link
 										href={`/${lang || 'uk'}/login`}
 										className='block px-5 py-3 text-sm text-blue-600 hover:bg-blue-50 font-medium rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										{t('login')}
 									</Link>
 									<Link
 										href={`/${lang || 'uk'}/forgot-password`}
 										className='block px-5 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg mx-2'
-										onClick={() => setIsMenuOpen(false)}
+										onClick={e => {
+											e.preventDefault()
+											setIsMenuOpen(false)
+										}}
 									>
 										Забули пароль?
 									</Link>

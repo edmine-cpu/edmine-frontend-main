@@ -1,9 +1,10 @@
 'use client'
 
 import { API_ENDPOINTS } from '@/config/api'
-import { useTranslation } from '@/hooks/useTranslation'
+import { useTranslationHeader } from '@/hooks/headerTranslation'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
+import './mobile-fixes.css'
 
 type Lang = 'en' | 'de' | 'fr' | 'pl' | 'uk'
 
@@ -19,7 +20,7 @@ interface SearchIconProps {
 }
 
 export function SearchIcon({ lang }: SearchIconProps) {
-	const { t } = useTranslation(lang)
+	const { t } = useTranslationHeader(lang)
 	const router = useRouter()
 	const [searchQuery, setSearchQuery] = useState('')
 	const [isExpanded, setIsExpanded] = useState(false)
@@ -180,8 +181,13 @@ export function SearchIcon({ lang }: SearchIconProps) {
 	return (
 		<div className='relative' ref={searchRef}>
 			<button
-				onClick={() => setIsExpanded(!isExpanded)}
-				className='p-2 cursor-pointer hover:opacity-80'
+				onClick={e => {
+					e.preventDefault()
+					setIsExpanded(!isExpanded)
+				}}
+				className='p-2 cursor-pointer hover:opacity-80 mobile-button'
+				type='button'
+				aria-label='Toggle search'
 			>
 				<svg
 					xmlns='http://www.w3.org/2000/svg'
@@ -204,16 +210,20 @@ export function SearchIcon({ lang }: SearchIconProps) {
 					<div className='flex gap-2'>
 						<input
 							type='text'
-							placeholder={t('searchPlaceholder')}
+							placeholder={t('search')}
 							value={searchQuery}
 							onChange={e => setSearchQuery(e.target.value)}
 							onKeyPress={handleKeyPress}
 							autoFocus
-							className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm'
+							className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm mobile-search-input'
 						/>
 						<button
-							onClick={handleSearch}
-							className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm'
+							onClick={e => {
+								e.preventDefault()
+								handleSearch()
+							}}
+							className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm mobile-button'
+							type='button'
 						>
 							{loading ? '...' : t('search')}
 						</button>
@@ -225,8 +235,19 @@ export function SearchIcon({ lang }: SearchIconProps) {
 							{suggestions.map(s => (
 								<div
 									key={s.id}
-									onClick={() => handleSuggestionClick(s)}
+									onClick={e => {
+										e.preventDefault()
+										handleSuggestionClick(s)
+									}}
 									className='px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0'
+									role='button'
+									tabIndex={0}
+									onKeyDown={e => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault()
+											handleSuggestionClick(s)
+										}
+									}}
 								>
 									<p className='text-sm font-medium truncate'>{s.title}</p>
 									{s.description && (
