@@ -6,7 +6,7 @@ type Params = { lang: Lang; slug: string }
 
 const SUPPORTED_LANGS: Lang[] = ['uk', 'en', 'pl', 'fr', 'de']
 
-пexport default async function Page({ params }: { params: Promise<Params> }) {
+export default async function Page({ params }: { params: Promise<Params> }) {
 	const { lang } = await params
 	const { slug } = await params
 
