@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DropDownFilters } from '../DropDownFilters'
 
 type FiltersButtonProps = {
@@ -14,6 +14,23 @@ export function FiltersButton({ name }: FiltersButtonProps) {
 	const toggleMenu = () => {
 		setOpen(prev => !prev)
 	}
+
+	const closeMenu = () => {
+		setOpen(false)
+	}
+
+	// Prevent body scroll when overlay is open
+	useEffect(() => {
+		if (open) {
+			document.body.style.overflow = 'hidden'
+		} else {
+			document.body.style.overflow = 'auto'
+		}
+		// Cleanup function to restore scroll on component unmount
+		return () => {
+			document.body.style.overflow = 'auto'
+		}
+	}, [open])
 
 	return (
 		<div className='inline-block'>
@@ -42,10 +59,8 @@ export function FiltersButton({ name }: FiltersButtonProps) {
 			</button>
 
 			{open && (
-				<div className='fixed inset-0 bg-black/50 z-50 flex justify-end'>
-					<div className='bg-white w-full h-full p-4'>
-						<DropDownFilters />
-					</div>
+				<div className='fixed inset-0 z-50'>
+					<DropDownFilters onClose={closeMenu} />
 				</div>
 			)}
 		</div>
