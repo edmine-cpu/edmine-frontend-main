@@ -19,6 +19,28 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef<HTMLDivElement>(null)
 
+	useEffect(() => {
+		checkAuthStatus()
+
+		const handleAuthChange = () => checkAuthStatus()
+		window.addEventListener('auth-changed', handleAuthChange)
+
+		return () => {
+			window.removeEventListener('auth-changed', handleAuthChange)
+		}
+	}, [])
+
+	// Закрытие меню по клику вне
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setIsMenuOpen(false)
+			}
+		}
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => document.removeEventListener('mousedown', handleClickOutside)
+	}, [])
+
 	// Проверяем, что функция t существует
 	if (!t || typeof t !== 'function') {
 		console.error('Translation function t is not available')

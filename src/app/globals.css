@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 :root {
-	--background: #f8f9fa; /* чуть светлее, мягкий фон для светлой темы */
+	--background: #fffffff; /* чуть светлее, мягкий фон для светлой темы */
 	--foreground: #171717;
 }
 
@@ -14,7 +14,7 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #f8f9fa; /* чуть светлее, мягкий фон для светлой темы */
+		--background: #ffffff; /* чуть светлее, мягкий фон для светлой темы */
 		--foreground: #171717;
 	}
 }

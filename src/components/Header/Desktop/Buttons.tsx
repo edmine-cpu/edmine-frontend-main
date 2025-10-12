@@ -42,6 +42,39 @@ export function HeaderButtons({ lang }: HeaderProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef<HTMLDivElement>(null)
 
+	useEffect(() => {
+		checkAuthStatus()
+
+		// Слушаем события изменения авторизации
+		const handleAuthChange = () => {
+			checkAuthStatus()
+		}
+
+		if (typeof window !== 'undefined') {
+			window.addEventListener('auth-changed', handleAuthChange)
+		}
+
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('auth-changed', handleAuthChange)
+			}
+		}
+	}, [])
+
+	// Close menu when clicking outside
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setIsMenuOpen(false)
+			}
+		}
+
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [])
+
 	// Проверяем, что функция t существует
 	if (!t || typeof t !== 'function') {
 		console.error('Translation function t is not available')
@@ -62,7 +95,6 @@ export function HeaderButtons({ lang }: HeaderProps) {
 	useEffect(() => {
 		checkAuthStatus()
 
-		// Слушаем события изменения авторизации
 		const handleAuthChange = () => {
 			checkAuthStatus()
 		}

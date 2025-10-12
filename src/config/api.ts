@@ -1,9 +1,8 @@
-// API Configuration
-// Change this to production URL when deploying
+
 export const API_BASE_URL = 'http://82.25.86.30:8000'
 // export const API_BASE_URL = 'http://localhost:8000'
-//
-// API endpoints
+
+
 export const API_ENDPOINTS = {
 	// Auth
 	register: `${API_BASE_URL}/api/register`,
