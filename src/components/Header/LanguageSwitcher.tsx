@@ -1,7 +1,6 @@
 'use client'
 
 import { Lang } from '@/app/(types)/lang'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const LANG_LABELS: Record<Lang, string> = {
@@ -17,7 +16,6 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
-	const router = useRouter()
 	const [open, setOpen] = useState(false)
 
 	const handleLanguageChange = (newLang: Lang) => {
@@ -31,7 +29,7 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 		<div className='relative inline-block text-left'>
 			<button
 				onClick={() => setOpen(!open)}
-				className='px-3 py-2 text-sm font-semibold rounded border border-gray-300 bg-white hover:bg-gray-50 transition w-12 h-12  '
+				className='flex justify-center items-center mx-auto text-center px-2 py-2 text-sm font-semibold rounded border border-gray-300 bg-white hover:bg-gray-50 transition sm:w-11.5 sm:h-11.5 w-10 h-10 '
 			>
 				{LANG_LABELS[currentLang]}
 			</button>

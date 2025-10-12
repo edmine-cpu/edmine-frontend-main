@@ -4,7 +4,7 @@ type Props = {
 
 export function Region({ name }: Props) {
 	return (
-		<button className='flex items-center gap-[6] text-sm'>
+		<button className='flex items-center gap-1 py-2 rounded-lg hover:bg-gray-100 transition text-sm'>
 			{' '}
 			<div className='main-svgWrapper-tDhGP'>
 				<svg
