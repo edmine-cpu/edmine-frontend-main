@@ -1,10 +1,10 @@
-type RegionProps = {
+type Props = {
 	name: string
 }
 
-export function Region(name: RegionProps) {
+export function Region({ name }: Props) {
 	return (
-		<button className='flex items-center gap-[6] '>
+		<button className='flex items-center gap-[6] text-sm'>
 			{' '}
 			<div className='main-svgWrapper-tDhGP'>
 				<svg
@@ -21,7 +21,7 @@ export function Region(name: RegionProps) {
 					></path>
 				</svg>
 			</div>
-			{name.name}
+			{name}
 		</button>
 	)
 }

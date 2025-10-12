@@ -1,5 +1,6 @@
 'use client'
 
+import { FiltersButton } from './ui/FiltersButton'
 import { Region } from './ui/Region'
 
 type Props = {
@@ -30,11 +31,11 @@ export function FiltersMenu({
 	title = title.replace(/-/g, ' ')
 
 	return (
-		<div className='mx-'>
+		<div className=''>
 			<p className='font-semibold text-xl'>{title}</p>
 			<div className='flex justify-between items-center'>
 				<Region name={'Все регионы'} />
-				<button>Фильтры</button>
+				<FiltersButton name={'Фильтры'} />
 			</div>
 		</div>
 	)
