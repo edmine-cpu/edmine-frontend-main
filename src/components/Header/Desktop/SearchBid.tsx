@@ -194,7 +194,7 @@ export function SearchBid({ lang }: SearchBidProps) {
 					onFocus={() => {
 						if (suggestions.length > 0) setShowSuggestions(true)
 					}}
-					className='w-64 px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200'
+					className='w-64 px-4 py-3 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm transition-all duration-200'
 					placeholder='Search'
 				/>
 				<button

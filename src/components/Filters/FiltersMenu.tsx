@@ -1,5 +1,7 @@
 'use client'
 
+import { Region } from './ui/Region'
+
 type Props = {
 	lang: string
 	country: string
@@ -25,9 +27,15 @@ export function FiltersMenu({
 			undercategory
 	}
 
+	title = title.replace(/-/g, ' ')
+
 	return (
-		<div className='flex justify-center'>
-			<p className='font-semibold'>{title}</p>
+		<div className='mx-'>
+			<p className='font-semibold text-xl'>{title}</p>
+			<div className='flex justify-between items-center'>
+				<Region name={'Все регионы'} />
+				<button>Фильтры</button>
+			</div>
 		</div>
 	)
 }

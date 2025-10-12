@@ -13,37 +13,26 @@ interface HeaderProps {
 
 export function MobileHeader({ lang }: HeaderProps) {
 	return (
-		<header className='flex items-center justify-between px-2 py-3 bg-white'>
-			{/* 5 элементов равномерно распределенных */}
-			<div className='flex items-center justify-between w-full'>
+		<header className='w-full bg-white py-3'>
+			<div className='flex w-full items-center justify-between px-0'>
 				{/* 1. Logo */}
-				<div className='flex-1 flex justify-center'>
-					<TitleName lang={lang} />
-				</div>
+				<TitleName lang={lang} />
 
 				{/* 2. Language Switcher */}
-				<div className='flex-1 flex justify-center'>
-					<LanguageSwitcher currentLang={lang} />
-				</div>
+				<LanguageSwitcher currentLang={lang} />
 
 				{/* 3. Search */}
-				<div className='flex-1 flex justify-center'>
-					<SearchIcon lang={lang} />
-				</div>
+				<SearchIcon lang={lang} />
 
 				{/* 4. Add Button */}
-				<div className='flex-1 flex justify-center'>
-					<Link href={`/${lang || 'en'}/create-request`}>
-						<button className='text-3xl font-bold text-red-600 leading-none hover:text-red-700 transition-colors font-primary px-3 py-2 rounded-lg hover:bg-red-50 w-12 h-12 flex items-center justify-center'>
-							+
-						</button>
-					</Link>
-				</div>
+				<Link href={`/${lang || 'en'}/create-request`}>
+					<button className='text-3xl font-bold text-red-600 leading-none hover:text-red-700 transition-colors font-primary py-2 rounded-lg hover:bg-red-50 w-12 h-12 flex items-center justify-center'>
+						+
+					</button>
+				</Link>
 
 				{/* 5. Burger Menu */}
-				<div className='flex-1 flex justify-center'>
-					<MobileButtons lang={lang} />
-				</div>
+				<MobileButtons lang={lang} />
 			</div>
 		</header>
 	)
