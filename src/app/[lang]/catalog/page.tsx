@@ -12,12 +12,12 @@ export default function CatalogPage({
 	params: Promise<{ lang: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const router = useRouter()
 
 	useEffect(() => {
 		// Редирект на заявки по умолчанию
-		router.replace(`/${lang}/catalog/zayavki`)
+		router.replace(`/catalog/zayavki`)
 	}, [router, lang])
 
 	return (

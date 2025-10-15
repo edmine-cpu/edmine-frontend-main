@@ -143,7 +143,7 @@ const T = {
 
 export default function BidPage({ params }: { params: Promise<{ lang: string; bidSlug: string }> }) {
     const resolvedParams = React.use(params);
-    const lang = ((resolvedParams.lang as string) || 'en') as Lang;
+    const lang = "en" as Lang;
     const bidSlug = resolvedParams.bidSlug; // Теперь только bidSlug, без categorySlug
     const t = T[lang];
 
@@ -302,7 +302,7 @@ export default function BidPage({ params }: { params: Promise<{ lang: string; bi
             <Header lang={lang} />
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Ссылка назад теперь ведет в каталог, а не в категорию */}
-                <a href={`/${lang}/catalog`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6">
+                <a href={`/catalog`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6">
                     {t.back}
                 </a>
 

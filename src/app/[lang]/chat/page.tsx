@@ -268,7 +268,7 @@ export default function ChatMenuPage() {
 						<h1 className='text-2xl font-bold mb-4'>{t.chat}</h1>
 						<p className='text-gray-600 mb-4'>{t.loginRequired}</p>
 						<a
-							href={`/${lang}/login`}
+							href={`/login`}
 							className='bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors'
 						>
 							{t.login}
@@ -310,7 +310,7 @@ export default function ChatMenuPage() {
 									<p>{t.noChats}</p>
 									<p className='text-sm mt-2'>
 										<a
-											href={`/${lang}/catalog`}
+											href={`/catalog`}
 											className='text-blue-500 hover:underline'
 										>
 											{t.findPerformers}
@@ -407,7 +407,7 @@ export default function ChatMenuPage() {
 
 										<button
 											onClick={() =>
-												router.push(`/${lang}/chat/${selectedChat.id}`)
+												router.push(`/chat/${selectedChat.id}`)
 											}
 											className='text-sm text-blue-500 hover:text-blue-700'
 										>

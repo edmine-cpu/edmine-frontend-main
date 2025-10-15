@@ -101,7 +101,7 @@ const T = {
 
 export default function BidPage({ params }: { params: Promise<{ lang: string; bidId: string }> }) {
   const resolvedParams = React.use(params);
-  const lang = ((resolvedParams.lang as string) || 'en') as Lang;
+  const lang = "en" as Lang;
   const bidId = resolvedParams.bidId;
   const t = T[lang];
 
@@ -165,7 +165,7 @@ export default function BidPage({ params }: { params: Promise<{ lang: string; bi
     <div className="min-h-screen bg-gray-50">
       <Header lang={lang} />
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <a href={`/${lang}/categories`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6">
+        <a href={`/categories`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6">
           {t.back}
         </a>
         

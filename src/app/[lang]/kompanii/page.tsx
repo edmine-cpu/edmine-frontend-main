@@ -304,7 +304,7 @@ export default function KompaniiPage({
 		if (filters.search) urlParams.set('search', filters.search)
 
 		// Обновляем URL для SEO
-		const newUrl = `/${lang}/kompanii${
+		const newUrl = `/kompanii${
 			urlParams.toString() ? '?' + urlParams.toString() : ''
 		}`
 		window.history.replaceState(null, '', newUrl)
@@ -344,13 +344,13 @@ export default function KompaniiPage({
 						<h1 className='text-2xl font-semibold text-red-600'>{t.title}</h1>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/zayavki`)}
+								onClick={() => router.push(`/zayavki`)}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
 							>
 								{t.orders}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/kompanii`)}
+								onClick={() => router.push(`/kompanii`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
@@ -390,9 +390,9 @@ export default function KompaniiPage({
 										// Обновляем URL для SEO
 										if (categoryId) {
 											const categorySlug = getCategorySlug(categoryId)
-											router.push(`/${lang}/kompanii/${categorySlug}`)
+											router.push(`/kompanii/${categorySlug}`)
 										} else {
-											router.push(`/${lang}/kompanii`)
+											router.push(`/kompanii`)
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -420,7 +420,7 @@ export default function KompaniiPage({
 											const categorySlug = getCategorySlug(filters.category)
 											const subcategorySlug = getSubcategorySlug(subcategoryId)
 											router.push(
-												`/${lang}/kompanii/${categorySlug}/${subcategorySlug}`
+												`/kompanii/${categorySlug}/${subcategorySlug}`
 											)
 										}
 									}}
@@ -523,7 +523,7 @@ export default function KompaniiPage({
 								const companySlug =
 									company.slug_name ||
 									company.name.toLowerCase().replace(/\s+/g, '-')
-								const companyUrl = `/${lang}/kompanii/${companySlug}-${company.id}`
+								const companyUrl = `/kompanii/${companySlug}-${company.id}`
 
 								return (
 									<a

@@ -1,13 +1,12 @@
-import { getLanguage } from "@/utils/getLang";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { Lang } from "@/app/(types)/lang";
+import { Header } from "@/components/Header/Header";
+import { MainPage } from "@/components/indexMain/MainPageComponent";
 
-export default async function Home() {
-  const cookieStore = await cookies();
-  const jwt = cookieStore.get("jwt_token")?.value;
-
-  const lang: Lang = getLanguage(jwt) as Lang;
-
-  return redirect(`/${lang}`);
+// Дефолтная версия без языка - английская
+export default function Home() {
+  return (
+    <div>
+      <Header lang="en" />
+      <MainPage lang="en" />
+    </div>
+  );
 }

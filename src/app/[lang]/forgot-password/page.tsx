@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useTranslation } from '@/hooks/useTranslation';
 import Header from '@/components/Header/Header';
 import Link from 'next/link';
 import { API_ENDPOINTS } from '@/config/api';
@@ -11,8 +10,7 @@ type Step = 'email' | 'code' | 'password' | 'success';
 
 export default function ForgotPasswordPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = React.use(params);
-  const { t } = useTranslation(lang as any);
-  
+
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');

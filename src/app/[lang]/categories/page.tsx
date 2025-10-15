@@ -174,7 +174,7 @@ export default function CategoriesPage({
 }) {
 	const resolvedParams = React.use(params)
 	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const t = T[lang]
 
 	const searchQuery = (resolvedSearchParams.search as string) || ''
@@ -431,11 +431,11 @@ export default function CategoriesPage({
 												window.history.pushState(
 													null,
 													'',
-													`/${lang}/zayavki/${categoryName}`
+													`/zayavki/${categoryName}`
 												)
 											}
 										} else {
-											window.history.pushState(null, '', `/${lang}/categories`)
+											window.history.pushState(null, '', `/categories`)
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -617,7 +617,7 @@ export default function CategoriesPage({
 												)}
 											</div>
 											<a
-												href={`/${lang}/zayavki/order/${
+												href={`/zayavki/order/${
 													catName && catName !== 'other'
 														? catName.toLowerCase().replace(/\s+/g, '-') +
 														  '-' +
@@ -654,7 +654,7 @@ export default function CategoriesPage({
 								return (
 									<a
 										key={u.id}
-										href={`/${lang}/user/${u.id}`}
+										href={`/user/${u.id}`}
 										className='block text-left bg-white rounded-md shadow p-5 border border-gray-200 hover:shadow-md transition'
 									>
 										<div className='flex items-baseline justify-between mb-2'>

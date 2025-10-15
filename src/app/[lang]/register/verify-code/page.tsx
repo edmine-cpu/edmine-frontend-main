@@ -101,7 +101,7 @@ export default function VerifyCodePage({ params }: PageProps) {
         if (success) {
             const timeout = setTimeout(() => {
                 setRedirecting(true);
-                window.location.href = `/${lang}/`;
+                window.location.href = `/`;
                 document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             }, 3000);
             return () => clearTimeout(timeout);
@@ -214,7 +214,7 @@ export default function VerifyCodePage({ params }: PageProps) {
                     )}
 
                     <div className="mt-6 text-center">
-                        <Link href={`/${lang}/register`} className="text-red-600 hover:text-red-700 text-sm">
+                        <Link href={`/register`} className="text-red-600 hover:text-red-700 text-sm">
                             ← Повернутися до реєстрації
                         </Link>
                     </div>

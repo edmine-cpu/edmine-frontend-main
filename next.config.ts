@@ -34,15 +34,9 @@ const nextConfig: NextConfig = {
         ];
     },
 
-    // Редиректы
+    // Редиректы (убрано: дефолтная версия без языка - английская)
     async redirects() {
-        return [
-            {
-                source: '/',
-                destination: '/uk',
-                permanent: false,
-            },
-        ];
+        return [];
     },
 
     // Прокси для API

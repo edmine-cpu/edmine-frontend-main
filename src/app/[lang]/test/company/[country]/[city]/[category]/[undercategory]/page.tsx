@@ -1,6 +1,7 @@
 import { Lang } from '@/app/(types)/lang'
 import { FiltersMenu } from '@/components/Filters/FiltersMenu'
 import Header from '@/components/Header/Header'
+import { ItemsList } from '@/components/ItemsList/ItemsList'
 
 type Params = {
 	country: string
@@ -27,7 +28,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 				category={category}
 				undercategory={undercategory}
 			/>
-			
+			<ItemsList lang={lang} country={'Ukraine'} />
 		</div>
 	)
 }

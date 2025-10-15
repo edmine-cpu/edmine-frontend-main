@@ -186,7 +186,7 @@ export default function UserPage({
 			<Header lang={lang} />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
 				<a
-					href={`/${lang}/catalog`}
+					href={`/catalog`}
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}
@@ -294,7 +294,7 @@ export default function UserPage({
 
 											if (response.ok) {
 												const result = await response.json()
-												window.location.href = `/${lang}/chat/${result.chat_id}`
+												window.location.href = `/chat/${result.chat_id}`
 											} else {
 												alert('Ошибка создания чата')
 											}

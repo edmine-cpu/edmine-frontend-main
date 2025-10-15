@@ -115,7 +115,7 @@ function BidAuthorContact({
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${lang}/chat/${data.chat_id}`)
+				router.push(`/chat/${data.chat_id}`)
 			} else {
 				const errorData = await response.json()
 				console.error(
@@ -160,7 +160,7 @@ function BidAuthorContact({
 						</button>
 					) : (
 						<button
-							onClick={() => router.push(`/${lang}/login`)}
+							onClick={() => router.push(`/login`)}
 							className='flex justify-center items-center mr-auto bg-red-100 rounded-md pr-3 pl-3 py-2 hover:bg-red-200 transition durations-200'
 						>
 							<span className='text-2xl mr-1'>🔐 </span>
@@ -586,7 +586,7 @@ export default function BidPage({
 			<Header lang={lang} />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
 				<a
-					href={`/${lang}/zayavki`}
+					href={`/zayavki`}
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}

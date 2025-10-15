@@ -30,9 +30,11 @@ export function FiltersMenu({
 
 	title = title.replace(/-/g, ' ')
 
+	title = 'Програмирование, Веб-разработка'
+
 	return (
 		<div className=''>
-			<p className='font-semibold text-xl'>{title}</p>
+			<p className='font-semibold text-md'>{title}</p>
 			<div className='flex justify-between items-center'>
 				<Region name={'Все регионы'} />
 				<FiltersButton name={'Фильтры'} />

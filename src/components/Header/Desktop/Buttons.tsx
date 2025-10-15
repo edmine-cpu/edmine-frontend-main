@@ -42,6 +42,17 @@ export function HeaderButtons({ lang }: HeaderProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef<HTMLDivElement>(null)
 
+	const checkAuthStatus = async () => {
+		const auth = await checkAuth()
+		setIsAuth(auth)
+		if (auth) {
+			const admin = await checkAdminStatus()
+			setIsAdmin(admin)
+		} else {
+			setIsAdmin(false)
+		}
+	}
+
 	useEffect(() => {
 		checkAuthStatus()
 
@@ -80,49 +91,6 @@ export function HeaderButtons({ lang }: HeaderProps) {
 		console.error('Translation function t is not available')
 		return null
 	}
-
-	const checkAuthStatus = async () => {
-		const auth = await checkAuth()
-		setIsAuth(auth)
-		if (auth) {
-			const admin = await checkAdminStatus()
-			setIsAdmin(admin)
-		} else {
-			setIsAdmin(false)
-		}
-	}
-
-	useEffect(() => {
-		checkAuthStatus()
-
-		const handleAuthChange = () => {
-			checkAuthStatus()
-		}
-
-		if (typeof window !== 'undefined') {
-			window.addEventListener('auth-changed', handleAuthChange)
-		}
-
-		return () => {
-			if (typeof window !== 'undefined') {
-				window.removeEventListener('auth-changed', handleAuthChange)
-			}
-		}
-	}, [])
-
-	// Close menu when clicking outside
-	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-				setIsMenuOpen(false)
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside)
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
-		}
-	}, [])
 
 	const handleLogout = async () => {
 		try {

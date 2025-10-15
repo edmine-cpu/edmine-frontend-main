@@ -131,7 +131,7 @@ function VerifyRequestContent({
 				}
 
 				setTimeout(() => {
-					router.push(`/${lang}/zayavki`)
+					router.push(`/zayavki`)
 				}, 1500)
 
 				return { success: true, message: result.message || t.success }

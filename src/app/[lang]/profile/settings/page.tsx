@@ -162,7 +162,7 @@ export default function ProfilePage() {
             })
             if (meRes.status === 401) {
                 setIsAuth(false)
-                router.push(`/${lang}/login`)
+                router.push(`/login`)
                 return
             }
             setIsAuth(true)
@@ -251,7 +251,7 @@ export default function ProfilePage() {
         try {
             const payload = preparePayload(formState)
 
-            const res = await fetch(`${API_ENDPOINTS.profileById(userId)}`, {
+            const res = await fetch(`${API_ENDPOINTS.profileById(user.id)}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

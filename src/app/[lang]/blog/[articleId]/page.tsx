@@ -127,7 +127,7 @@ export default function BlogArticlePage() {
                 <div className="container mx-auto px-4 py-8">
                     <div className="text-center">
                         <h1 className="text-2xl font-bold text-red-600 mb-4">{error || t.notFound}</h1>
-                        <Link href={`/${lang}/blog`}>
+                        <Link href={`/blog`}>
                             <button className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition-colors">
                                 {t.backToBlog}
                             </button>
@@ -145,7 +145,7 @@ export default function BlogArticlePage() {
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Back button */}
-                    <Link href={`/${lang}/blog`}>
+                    <Link href={`/blog`}>
                         <button className="text-red-500 hover:text-red-700 mb-6 flex items-center">
                             <span className="text-lg mr-2">←</span>
                             {t.backToBlog}

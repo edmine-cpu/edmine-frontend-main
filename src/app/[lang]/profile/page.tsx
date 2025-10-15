@@ -217,7 +217,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 
 export default function ProfilePage({ params }: ProfilePageProps) {
 	const resolvedParams = React.use(params)
-	const lang = resolvedParams.lang
+	const lang = "en"
 	const t = useTranslation(lang)
 	const router = useRouter()
 
@@ -295,7 +295,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			const isAuth = await checkAuth()
 			setIsAuthenticated(isAuth)
 			if (!isAuth) {
-				router.push(`/${lang}/login`)
+				router.push(`/login`)
 			}
 		}
 		checkAuthentication()
@@ -640,8 +640,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		)
 		setCompanyForm(prev => {
 			const newCategories = [...prev.categories]
-			newCategories[index] = (value as number) || undefined
-			return { ...prev, categories: newCategories.filter(Boolean) as number[] }
+			if (value) newCategories[index] = value
+			return { ...prev, categories: newCategories.filter((c): c is number => typeof c === 'number') }
 		})
 	}
 
@@ -653,8 +653,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		)
 		setCompanyForm(prev => {
 			const newSubcats = [...prev.subcategories]
-			newSubcats[index] = (value as number) || undefined
-			return { ...prev, subcategories: newSubcats.filter(Boolean) as number[] }
+			if (value) newSubcats[index] = value
+			return { ...prev, subcategories: newSubcats.filter((c): c is number => typeof c === 'number') }
 		})
 	}
 
@@ -663,9 +663,9 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	}
 
 	const getCurrentDescription = (): string => {
-		return (
-			companyForm[`description_${selectedLang}` as keyof CompanyFormData] || ''
-		)
+		const key = `description_${selectedLang}` as keyof CompanyFormData
+		const value = companyForm[key]
+		return (typeof value === 'string' ? value : '') || ''
 	}
 
 	const getRoleDisplayName = (role: string): string => {

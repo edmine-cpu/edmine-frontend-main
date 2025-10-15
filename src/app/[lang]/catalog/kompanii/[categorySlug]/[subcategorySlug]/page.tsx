@@ -86,7 +86,7 @@ export default function KompaniiSubcategoryPage({
 	}>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const categorySlug = resolvedParams.categorySlug as string
 	const subcategorySlug = resolvedParams.subcategorySlug as string
 	const t = T[lang]
@@ -204,13 +204,13 @@ export default function KompaniiSubcategoryPage({
 						</div>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/zayavki`)}
+								onClick={() => router.push(`/catalog/zayavki`)}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
 							>
 								{t.orders}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/kompanii`)}
+								onClick={() => router.push(`/catalog/kompanii`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
@@ -233,7 +233,7 @@ export default function KompaniiSubcategoryPage({
 									? `${company.city}, ${company.country}`
 									: company.city || company.country || ''
 
-							const companyUrl = `/${lang}/kompanii/${company.slug_name}/${company.id}`
+							const companyUrl = `/kompanii/${company.slug_name}/${company.id}`
 
 							return (
 								<a

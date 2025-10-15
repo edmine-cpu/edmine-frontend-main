@@ -2,7 +2,6 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 const locales = ['uk', 'en', 'pl', 'fr', 'de']
-const defaultLocale = 'uk'
 
 export function middleware(request: NextRequest) {
 	// Получаем путь из URL
@@ -13,17 +12,11 @@ export function middleware(request: NextRequest) {
 		locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
 	)
 
+	// Если путь содержит локаль - пропускаем
 	if (pathnameHasLocale) return
 
-	// Если путь корневой, редиректим на дефолтную локаль
-	if (pathname === '/') {
-		return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
-	}
-
-	// Если путь не содержит локаль, добавляем дефолтную
-	return NextResponse.redirect(
-		new URL(`/${defaultLocale}${pathname}`, request.url)
-	)
+	// Для всех остальных путей без локали - пропускаем (английская версия по умолчанию)
+	return
 }
 
 export const config = {

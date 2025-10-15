@@ -86,7 +86,7 @@ export default function AdminPanel({
 			// Простая проверка админ токена
 			const adminToken = localStorage.getItem('admin_token')
 			if (adminToken !== 'admin_logged_in') {
-				router.push(`/${lang}/admin/login`)
+				router.push(`/admin/login`)
 				return
 			}
 			setLoading(false)
@@ -287,7 +287,7 @@ export default function AdminPanel({
 					<button
 						onClick={() => {
 							localStorage.removeItem('admin_token')
-							router.push(`/${lang}/admin/login`)
+							router.push(`/admin/login`)
 						}}
 						className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 					>

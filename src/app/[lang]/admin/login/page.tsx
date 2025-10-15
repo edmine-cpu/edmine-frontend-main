@@ -24,7 +24,7 @@ export default function AdminLogin({ params }: { params: Promise<{ lang: string 
       localStorage.setItem('admin_token', 'admin_logged_in');
       
       // Редирект на админку
-      router.push(`/${lang}/admin`);
+      router.push(`/admin`);
     } else {
       setError('Неверный логин или пароль');
     }

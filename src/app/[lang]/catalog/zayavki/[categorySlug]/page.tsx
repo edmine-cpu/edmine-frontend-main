@@ -158,7 +158,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${lang}/chat/${data.chat_id}`)
+				router.push(`/chat/${data.chat_id}`)
 			} else {
 				const errorData = await response.json()
 				console.error(
@@ -195,7 +195,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 				</button>
 			) : (
 				<button
-					onClick={() => router.push(`/${lang}/login`)}
+					onClick={() => router.push(`/login`)}
 					className='px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors text-sm'
 				>
 					🔐 {t.loginToChat}
@@ -211,7 +211,7 @@ export default function ZayavkiCategoryPage({
 	params: Promise<{ lang: string; categorySlug: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const categorySlug = resolvedParams.categorySlug as string
 	const t = T[lang]
 	const router = useRouter()
@@ -307,13 +307,13 @@ export default function ZayavkiCategoryPage({
 						</div>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/zayavki`)}
+								onClick={() => router.push(`/zayavki`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/kompanii`)}
+								onClick={() => router.push(`/catalog/kompanii`)}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
 							>
 								{t.companies}
@@ -344,7 +344,7 @@ export default function ZayavkiCategoryPage({
 								: ''
 
 							const bidSlug = getSlug(bid) || `bid-${bid.id}`
-							const bidUrl = `/${lang}/zayavki/order/${bidSlug}`
+							const bidUrl = `/zayavki/order/${bidSlug}`
 
 							const location = getLocationString(bid.city, bid.country_id)
 

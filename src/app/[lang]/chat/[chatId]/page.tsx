@@ -203,7 +203,7 @@ export default function ChatPage() {
 			if (chatId) {
 				const isAuth = await checkAuth()
 				if (!isAuth) {
-					router.push(`/${lang}/login`)
+					router.push(`/login`)
 					return
 				}
 

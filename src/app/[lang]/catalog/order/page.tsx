@@ -270,7 +270,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${lang}/chat/${data.chat_id}`)
+				router.push(`/chat/${data.chat_id}`)
 			} else {
 				const errorData = await response.json()
 				console.error(
@@ -307,7 +307,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 				</button>
 			) : (
 				<button
-					onClick={() => router.push(`/${lang}/login`)}
+					onClick={() => router.push(`/login`)}
 					className='px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors text-sm'
 				>
 					🔐 {t.loginToChat}
@@ -323,7 +323,7 @@ export default function OtherCategoryPage({
 	params: Promise<{ lang: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const t = T[lang]
 
 	const [categories, setCategories] = useState<Category[]>([])
@@ -425,7 +425,7 @@ export default function OtherCategoryPage({
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
 					<a
-						href={`/${lang}/catalog`}
+						href={`/catalog`}
 						className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 					>
 						{t.back}
@@ -502,11 +502,11 @@ export default function OtherCategoryPage({
 												const categoryName = category.name
 													.toLowerCase()
 													.replace(/\s+/g, '-')
-												window.location.href = `/${lang}/catalog/${categoryName}`
+												window.location.href = `/catalog/${categoryName}`
 											}
 										} else {
 											// Если сброшена категория - переходим в основной каталог
-											window.location.href = `/${lang}/catalog`
+											window.location.href = `/catalog`
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -627,7 +627,7 @@ export default function OtherCategoryPage({
 
 								// Создаем SEO URL для заявки в категории "order"
 								const bidSlug = getSlug(b) || `${b.id}`
-								const bidUrl = `/${lang}/catalog/other/${bidSlug}`
+								const bidUrl = `/catalog/other/${bidSlug}`
 
 								return (
 									<div
@@ -697,7 +697,7 @@ export default function OtherCategoryPage({
 								return (
 									<a
 										key={u.id}
-										href={`/${lang}/user/${u.id}`}
+										href={`/user/${u.id}`}
 										className='block text-left bg-white rounded-md shadow p-5 border border-gray-200 hover:shadow-md transition'
 									>
 										<div className='flex items-baseline justify-between mb-2'>

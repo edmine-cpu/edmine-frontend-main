@@ -166,7 +166,7 @@ export default function BlogPage() {
 										</p>
 									</div>
 
-									<Link href={`/${lang}/blog/${article.id}`}>
+									<Link href={`/blog/${article.id}`}>
 										<button className='w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200'>
 											{t.readMore}
 										</button>

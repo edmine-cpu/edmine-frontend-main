@@ -16,7 +16,7 @@ export default function Error({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header lang="uk" />
       <div className="container mx-auto px-4 py-8 text-center">
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Щось пішло не так!</h2>

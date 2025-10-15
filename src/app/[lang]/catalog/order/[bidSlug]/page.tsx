@@ -219,7 +219,7 @@ function ChatButton({ lang, authorId }: { lang: Lang; authorId?: number }) {
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${lang}/chat/${data.chat_id}`)
+				router.push(`/chat/${data.chat_id}`)
 			} else {
 				const errorData = await response.json()
 				console.error(
@@ -257,7 +257,7 @@ function ChatButton({ lang, authorId }: { lang: Lang; authorId?: number }) {
 				</button>
 			) : (
 				<button
-					onClick={() => router.push(`/${lang}/login`)}
+					onClick={() => router.push(`/login`)}
 					className='w-full bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-medium flex items-center justify-center space-x-2'
 				>
 					<span className='text-xl'>🔐</span>
@@ -274,7 +274,7 @@ export default function BidPage({
 	params: Promise<{ lang: string; categorySlug: string; bidSlug: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const categorySlug = resolvedParams.categorySlug
 	const bidSlug = resolvedParams.bidSlug
 	const t = T[lang]
@@ -467,7 +467,7 @@ export default function BidPage({
 			<Header lang={lang} />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
 				<a
-					href={`/${lang}/catalog/`}
+					href={`/catalog/`}
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}

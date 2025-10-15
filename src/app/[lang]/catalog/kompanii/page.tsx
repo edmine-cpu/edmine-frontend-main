@@ -189,7 +189,7 @@ export default function KompaniiPage({
 }) {
 	const resolvedParams = React.use(params)
 	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const lang = "en" as Lang
 	const t = T[lang]
 	const router = useRouter()
 
@@ -292,7 +292,7 @@ export default function KompaniiPage({
 		if (filters.search) urlParams.set('search', filters.search)
 
 		// Обновляем URL для SEO
-		const newUrl = `/${lang}/catalog/kompanii${
+		const newUrl = `/catalog/kompanii${
 			urlParams.toString() ? '?' + urlParams.toString() : ''
 		}`
 		window.history.replaceState(null, '', newUrl)
@@ -327,13 +327,13 @@ export default function KompaniiPage({
 						<h1 className='text-2xl font-semibold text-red-600'>{t.title}</h1>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/zayavki`)}
+								onClick={() => router.push(`/catalog/zayavki`)}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
 							>
 								{t.orders}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/catalog/kompanii`)}
+								onClick={() => router.push(`/catalog/kompanii`)}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
@@ -379,9 +379,9 @@ export default function KompaniiPage({
 										// Обновляем URL для SEO
 										if (categoryId) {
 											const categorySlug = getCategorySlug(categoryId)
-											router.push(`/${lang}/catalog/kompanii/${categorySlug}`)
+											router.push(`/catalog/kompanii/${categorySlug}`)
 										} else {
-											router.push(`/${lang}/catalog/kompanii`)
+											router.push(`/catalog/kompanii`)
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -409,7 +409,7 @@ export default function KompaniiPage({
 											const categorySlug = getCategorySlug(filters.category)
 											const subcategorySlug = getSubcategorySlug(subcategoryId)
 											router.push(
-												`/${lang}/catalog/kompanii/${categorySlug}/${subcategorySlug}`
+												`/catalog/kompanii/${categorySlug}/${subcategorySlug}`
 											)
 										}
 									}}
@@ -500,7 +500,7 @@ export default function KompaniiPage({
 									? `${company.city}, ${company.country}`
 									: company.city || company.country || ''
 
-							const companyUrl = `/${lang}/kompanii/${company.slug_name}/${company.id}`
+							const companyUrl = `/kompanii/${company.slug_name}/${company.id}`
 
 							return (
 								<a

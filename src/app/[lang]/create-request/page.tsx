@@ -37,6 +37,23 @@ interface City {
 interface Category {
 	id: number
 	name: string
+	name_uk: string
+	name_en: string
+	name_pl: string
+	name_fr: string
+	name_de: string
+}
+
+interface Subcategory {
+	id: number
+	category_id?: number
+	full_category_id?: number
+	name: string
+	name_uk: string
+	name_en: string
+	name_pl: string
+	name_fr: string
+	name_de: string
 }
 
 const CURRENCIES = [
@@ -83,7 +100,7 @@ export default function CreateBidPage() {
 	})
 
 	const [categories, setCategories] = useState<Category[]>([])
-	const [subcategories, setSubcategories] = useState<any[]>([])
+	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 	const [countries, setCountries] = useState<Country[]>([])
 	const [cities, setCities] = useState<City[]>([])
 	const [filteredCities, setFilteredCities] = useState<City[]>([])
@@ -99,7 +116,7 @@ export default function CreateBidPage() {
 
 			if (!auth) {
 				// Если пользователь не авторизован, перенаправляем на логин
-				router.push(`/${lang}/login`)
+				router.push(`/login`)
 				return
 			}
 
@@ -131,7 +148,7 @@ export default function CreateBidPage() {
 				}
 
 				const catData: Category[] = await catRes.json()
-				const subcatData: any[] = await subcatRes.json()
+				const subcatData: Subcategory[] = await subcatRes.json()
 				const countryData: Country[] = await countryRes.json()
 				const cityData: City[] = await cityRes.json()
 
@@ -190,8 +207,8 @@ export default function CreateBidPage() {
 		)
 		setFormState(prev => {
 			const newCategories = [...prev.categories]
-			newCategories[index] = value || undefined
-			return { ...prev, categories: newCategories.filter(Boolean) }
+			if (value) newCategories[index] = value
+			return { ...prev, categories: newCategories.filter((c): c is number => typeof c === 'number') }
 		})
 	}
 
@@ -203,8 +220,8 @@ export default function CreateBidPage() {
 		)
 		setFormState(prev => {
 			const newSubcats = [...prev.subcategories]
-			newSubcats[index] = value || undefined
-			return { ...prev, subcategories: newSubcats.filter(Boolean) }
+			if (value) newSubcats[index] = value
+			return { ...prev, subcategories: newSubcats.filter((c): c is number => typeof c === 'number') }
 		})
 	}
 
@@ -264,7 +281,7 @@ export default function CreateBidPage() {
 			formState.files.slice(0, 3).forEach(f => data.append('files', f))
 
 			const res = await fetch(
-				`${API_BASE_URL}/api/${lang}/create-request-fast`,
+				`${API_BASE_URL}/api/create-request-fast`,
 				{
 					method: 'POST',
 					body: data,
@@ -276,7 +293,7 @@ export default function CreateBidPage() {
 			if (!res.ok) throw new Error(result.error || 'Failed to create request')
 
 			// Для авторизованных пользователей сразу редиректим в каталог заявок
-			router.push(`/${lang}/zayavki`)
+			router.push(`/zayavki`)
 		} catch (e) {
 			console.error('Error creating request:', e)
 		} finally {
@@ -382,7 +399,7 @@ export default function CreateBidPage() {
 								onClick={addCategoryBlock}
 								className='mt-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'
 							>
-								➕ {t.addCategory || 'Выбрать ещё одну категорию'}
+								➕ {t.addCategory}
 							</button>
 						</div>
 
