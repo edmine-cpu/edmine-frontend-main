@@ -19,7 +19,7 @@ const TRANSLATIONS = {
 		catalog: 'Каталог',
 		blog: 'Блог',
 		chat: 'Чат',
-		chats: 'Чаты',
+		chats: 'Чати',
 		categories: 'Категорії',
 		admin: 'Адмін',
 		addTask: 'Додати завдання',

@@ -1,5 +1,5 @@
-export const API_BASE_URL = 'http://82.25.86.30:8000'
-// export const API_BASE_URL = 'http://localhost:8000'
+// export const API_BASE_URL = 'http://82.25.86.30:8000'
+export const API_BASE_URL = 'http://localhost:8000'
 
 export const API_ENDPOINTS = {
 	// Auth
@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
 
 	//bids
 	bids: `${API_BASE_URL}/api/bids`,
+	bidsV2: `${API_BASE_URL}/api/v2`,
 	createBid: (lang: string) =>
 		`${API_BASE_URL}/api/${lang}/create-request-fast`,
 	createBidSlow: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,
