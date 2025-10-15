@@ -4,6 +4,7 @@ import { Lang } from '@/app/(types)/lang'
 import { API_ENDPOINTS } from '@/config/api'
 import { useTranslationHeader } from '@/hooks/headerTranslation'
 import { checkAuth, clearAuthCache } from '@/utils/auth'
+import { getLangPath } from '@/utils/linkHelper'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import './btns.css'
@@ -113,7 +114,7 @@ export function HeaderButtons({ lang }: HeaderProps) {
 
 				setIsAuth(false)
 				setIsAdmin(false)
-				window.location.href = `/${lang || 'en'}`
+				window.location.href = getLangPath('/', lang)
 			}
 		} catch (error) {
 			console.error('Logout error:', error)
@@ -125,7 +126,7 @@ export function HeaderButtons({ lang }: HeaderProps) {
 	return (
 		<div className='flex items-center space-x-4'>
 			{/* Add Task Button - Always visible */}
-			<Link href={`/${lang || 'en'}/create-request`}>
+			<Link href={getLangPath('/create-request', lang)}>
 				<button className='buttonHead'>{t('addTask')}</button>
 			</Link>
 
@@ -133,7 +134,7 @@ export function HeaderButtons({ lang }: HeaderProps) {
 			{isAuth ? (
 				<>
 					{/* Chats Button - Always visible when authenticated */}
-					<Link href={`/${lang || 'en'}/chats`}>
+					<Link href={getLangPath('/chats', lang)}>
 						<button className='button-inverse-Head'>{t('chats')}</button>
 					</Link>
 
@@ -154,26 +155,26 @@ export function HeaderButtons({ lang }: HeaderProps) {
 							<div className='absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50'>
 								<div className='py-1'>
 									<Link
-										href={`/${lang || 'en'}/profile`}
+										href={getLangPath('/profile', lang)}
 										className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200'
 									>
 										{t('profile')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/catalog`}
+										href={getLangPath('/catalog', lang)}
 										className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200'
 									>
 										{t('catalog')}
 									</Link>
 									<Link
-										href={`/${lang || 'en'}/blog`}
+										href={getLangPath('/blog', lang)}
 										className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200'
 									>
 										{t('blog')}
 									</Link>
 									{isAdmin && (
 										<Link
-											href={`/${lang || 'en'}/admin`}
+											href={getLangPath('/admin', lang)}
 											className='block px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 transition duration-200 font-medium'
 										>
 											{t('admin')}
@@ -193,7 +194,7 @@ export function HeaderButtons({ lang }: HeaderProps) {
 				</>
 			) : (
 				/* Login Button - When not authenticated */
-				<Link href={`/${lang || 'en'}/login`}>
+				<Link href={getLangPath('/login', lang)}>
 					<button className='button-inverse-Head'>{t('login')}</button>
 				</Link>
 			)}

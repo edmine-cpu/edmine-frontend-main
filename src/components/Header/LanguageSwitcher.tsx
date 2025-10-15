@@ -1,6 +1,7 @@
 'use client'
 
 import { Lang } from '@/app/(types)/lang'
+import { switchLang } from '@/utils/linkHelper'
 import { useState } from 'react'
 
 const LANG_LABELS: Record<Lang, string> = {
@@ -20,8 +21,7 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 
 	const handleLanguageChange = (newLang: Lang) => {
 		const currentPath = window.location.pathname
-		const pathWithoutLang = currentPath.replace(/^\/(uk|en|pl|fr|de)/, '')
-		const newPath = `/${newLang}${pathWithoutLang}`
+		const newPath = switchLang(currentPath, newLang)
 		window.location.href = newPath
 	}
 

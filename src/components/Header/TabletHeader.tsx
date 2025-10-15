@@ -5,6 +5,7 @@ import { HeaderButtons } from '@/components/Header/Desktop/Buttons'
 import { SearchBid } from '@/components/Header/Desktop/SearchBid'
 import { TitleName } from '@/components/Header/Desktop/TitleName'
 import { LanguageSwitcher } from '@/components/Header/LanguageSwitcher'
+import { getLangPath } from '@/utils/linkHelper'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -70,7 +71,7 @@ export function TabletHeader({ lang }: HeaderProps) {
 				<LanguageSwitcher currentLang={lang} />
 				<SearchBid lang={lang} />
 				<Link
-					href={`/${lang || 'en'}/zayavki`}
+					href={getLangPath('/zayavki', lang)}
 					className='text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50'
 				>
 					{t.catalog}

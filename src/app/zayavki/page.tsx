@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -265,7 +266,11 @@ export default function ZayavkiPage() {
 	const getCategorySlug = (categoryId: string) => {
 		const category = categories.find(cat => String(cat.id) === categoryId)
 		if (!category) return categoryId
-		return String(category[`name_${lang}` as keyof Category] || category.name_en || category.name)
+		return String(
+			category[`name_${lang}` as keyof Category] ||
+				category.name_en ||
+				category.name
+		)
 			.toLowerCase()
 			.replace(/\s+/g, '-')
 			.replace(/[^a-z0-9-]/g, '')
@@ -279,9 +284,9 @@ export default function ZayavkiPage() {
 		if (!subcategory) return subcategoryId
 		return String(
 			subcategory[`name_${lang}` as keyof Subcategory] ||
-			subcategory.name_en ||
-			subcategory.name_uk ||
-			''
+				subcategory.name_en ||
+				subcategory.name_uk ||
+				''
 		)
 			.toLowerCase()
 			.replace(/\s+/g, '-')
@@ -381,7 +386,7 @@ export default function ZayavkiPage() {
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang="en" />
+			<Header lang='en' />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
 					<div className='flex justify-between items-center mb-6'>
@@ -399,7 +404,6 @@ export default function ZayavkiPage() {
 							>
 								{t.companies}
 							</button>
-		
 						</div>
 					</div>
 
@@ -465,7 +469,7 @@ export default function ZayavkiPage() {
 											const categorySlug = getCategorySlug(filters.category)
 											const subcategorySlug = getSubcategorySlug(subcategoryId)
 											router.push(
-												`//zayavki/${categorySlug}/${subcategorySlug}`
+												`/zayavki/${categorySlug}/${subcategorySlug}`
 											)
 										}
 									}}
@@ -581,7 +585,7 @@ export default function ZayavkiPage() {
 									`${getTitle(bid).toLowerCase().replace(/\s+/g, '-')}-${
 										bid.id
 									}`
-								const bidUrl = `//zayavki/order/${bidSlug}`
+								const bidUrl = `/zayavki/order/${bidSlug}`
 
 								const location = getLocationString(bid.city, bid.country_id)
 
@@ -647,12 +651,12 @@ export default function ZayavkiPage() {
 													</span>
 												)}
 											</div>
-											<a
+											<Link
 												href={bidUrl}
 												className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 											>
 												{t.details}
-											</a>
+											</Link>
 										</div>
 									</div>
 								)

@@ -5,6 +5,7 @@ import { LanguageSwitcher } from '@/components/Header/LanguageSwitcher'
 import { MobileButtons } from '@/components/Header/Mobile/Buttons'
 import { SearchIcon } from '@/components/Header/Mobile/SearchIcon'
 import { TitleName } from '@/components/Header/Mobile/TitleName'
+import { getLangPath } from '@/utils/linkHelper'
 import Link from 'next/link'
 
 interface HeaderProps {
@@ -25,7 +26,7 @@ export function MobileHeader({ lang }: HeaderProps) {
 				<SearchIcon lang={lang} />
 
 				{/* 4. Add Button */}
-				<Link href={`/${lang || 'en'}/create-request`}>
+				<Link href={getLangPath('/create-request', lang)}>
 					<button className='text-3xl font-bold text-red-600 leading-none hover:text-red-700 transition-colors font-primary py-2 rounded-lg hover:bg-red-50 w-12 h-12 flex items-center justify-center'>
 						+
 					</button>

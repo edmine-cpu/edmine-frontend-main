@@ -3,6 +3,7 @@
 import { Lang } from '@/app/(types)/lang'
 import { getTranslation } from '@/hooks/headerTranslation'
 import { TabLink } from '@/components/headersOLD/Buttons'
+import { getLangPath } from '@/utils/linkHelper'
 
 interface BurgerListProps {
 	lang: Lang
@@ -25,15 +26,15 @@ export function BurgerList({ lang, onClose }: BurgerListProps) {
 					</button>
 				</div>
 				<div className='flex flex-col'>
-					<TabLink href={`/${lang || 'en'}/zayavki`} name={t('catalog')} mobile />
-					<TabLink href={`/${lang || 'en'}/blog`} name={t('blog')} mobile />
+					<TabLink href={getLangPath('/zayavki', lang)} name={t('catalog')} mobile />
+					<TabLink href={getLangPath('/blog', lang)} name={t('blog')} mobile />
 					<TabLink
-						href={`/${lang || 'en'}/create-request`}
+						href={getLangPath('/create-request', lang)}
 						name={t('addTask')}
 						mobile
 					/>
-					<TabLink href={`/${lang || 'en'}/chats`} name={t('chats')} mobile />
-					<TabLink href={`/${lang || 'en'}/profile`} name={t('profile')} mobile />
+					<TabLink href={getLangPath('/chats', lang)} name={t('chats')} mobile />
+					<TabLink href={getLangPath('/profile', lang)} name={t('profile')} mobile />
 				</div>
 			</div>
 		</div>

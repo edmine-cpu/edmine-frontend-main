@@ -2,6 +2,8 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
+import { getLangPath } from '@/utils/linkHelper'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -543,9 +545,7 @@ export default function BidPage({
 		if (!id) return ''
 		const city = cities.find(c => c.id === id)
 		if (!city) return ''
-		return (
-			city[`name_` as keyof City] || city.name_en || city.name_uk || ''
-		)
+		return city[`name_` as keyof City] || city.name_en || city.name_uk || ''
 	}
 
 	const getLocationString = (cityId?: number | null, countryId?: number) => {
@@ -564,7 +564,7 @@ export default function BidPage({
 	if (loading)
 		return (
 			<div className='min-h-screen'>
-				<Header lang="en" />
+				<Header lang='en' />
 				<div className='flex items-center justify-center min-h-screen'>
 					<div className='text-lg'>Loading...</div>
 				</div>
@@ -574,7 +574,7 @@ export default function BidPage({
 	if (error || !bid)
 		return (
 			<div className='min-h-screen'>
-				<Header lang="en" />
+				<Header lang='en' />
 				<div className='flex items-center justify-center min-h-screen'>
 					<div className='text-lg text-red-600'>{error || 'Bid not found'}</div>
 				</div>
@@ -583,14 +583,14 @@ export default function BidPage({
 
 	return (
 		<div className='min-h-screen'>
-			<Header lang="en" />
+			<Header lang='en' />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
-				<a
-					href={`//zayavki`}
+				<Link
+					href={getLangPath('/zayavki', lang)}
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}
-				</a>
+				</Link>
 
 				<div className='bg-white rounded-lg shadow-md p-8'>
 					<h1 className='text-3xl font-bold text-gray-900 mb-6'>
@@ -648,7 +648,7 @@ export default function BidPage({
 							</h3>
 							{author && (
 								<BidAuthorContact
-									lang="en"
+									lang='en'
 									name={
 										author.name ||
 										[author.first_name, author.last_name]
@@ -729,7 +729,7 @@ export default function BidPage({
 												</button>
 											) : (
 												<a
-													href={`${API_BASE_URL}/${file}`}
+													href={getLangPath(`${API_BASE_URL}/${file}`, 'en')}
 													download={fileName}
 													className='text-blue-600 hover:text-blue-800 break-all'
 												>

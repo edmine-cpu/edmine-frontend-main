@@ -12,6 +12,7 @@ import TitleDescription from '@/components/createRequest/TitleDescription'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
 import { TRANSLATIONS } from '@/translations/create-request'
 import { checkAuth } from '@/utils/auth'
+import { getLangPath } from '@/utils/linkHelper'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -116,7 +117,7 @@ export default function CreateBidPage() {
 
 			if (!auth) {
 				// Если пользователь не авторизован, перенаправляем на логин
-				router.push(`/login`)
+				router.push(getLangPath('/login', 'en'))
 				return
 			}
 
@@ -293,7 +294,7 @@ export default function CreateBidPage() {
 			if (!res.ok) throw new Error(result.error || 'Failed to create request')
 
 			// Для авторизованных пользователей сразу редиректим в каталог заявок
-			router.push(`/zayavki`)
+			router.push(getLangPath('/zayavki', 'en'))
 		} catch (e) {
 			console.error('Error creating request:', e)
 		} finally {

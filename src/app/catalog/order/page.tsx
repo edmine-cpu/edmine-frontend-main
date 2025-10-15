@@ -2,6 +2,8 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
+import { getLangPath } from '@/utils/linkHelper'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -270,7 +272,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/chat/${data.chat_id}`)
+				router.push(getLangPath(`/chat/${data.chat_id}`, 'en'))
 			} else {
 				const errorData = await response.json()
 				console.error(
@@ -307,7 +309,7 @@ function ChatButtonCard({ lang, authorId }: { lang: Lang; authorId?: number }) {
 				</button>
 			) : (
 				<button
-					onClick={() => router.push(`/login`)}
+					onClick={() => router.push(getLangPath('/login', 'en'))}
 					className='px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition-colors text-sm'
 				>
 					🔐 {t.loginToChat}
@@ -419,12 +421,12 @@ export default function OtherCategoryPage() {
 			<Header lang="en" />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
-					<a
-						href={`//catalog`}
+					<Link
+						href={getLangPath('/catalog', 'en')}
 						className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 					>
 						{t.back}
-					</a>
+					</Link>
 
 					<h1 className='text-2xl font-semibold text-center text-red-600 mb-6'>
 						{t.title}
@@ -497,11 +499,11 @@ export default function OtherCategoryPage() {
 												const categoryName = category.name
 													.toLowerCase()
 													.replace(/\s+/g, '-')
-												window.location.href = `/catalog/${categoryName}`
+												window.location.href = getLangPath(`/catalog/${categoryName}`, 'en')
 											}
 										} else {
 											// Если сброшена категория - переходим в основной каталог
-											window.location.href = `/catalog`
+											window.location.href = getLangPath('/catalog', 'en')
 										}
 									}}
 									className='w-full rounded-md border px-3 py-2'
@@ -622,7 +624,7 @@ export default function OtherCategoryPage() {
 
 								// Создаем SEO URL для заявки в категории "order"
 								const bidSlug = getSlug(b) || `${b.id}`
-								const bidUrl = `//catalog/other/${bidSlug}`
+								const bidUrl = getLangPath(`/catalog/other/${bidSlug}`, 'en')
 
 								return (
 									<div
@@ -656,12 +658,12 @@ export default function OtherCategoryPage() {
 											</div>
 											<div className='flex items-center space-x-2'>
 												<ChatButtonCard lang="en" authorId={b.author} />
-												<a
+												<Link
 													href={bidUrl}
 													className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 												>
 													{t.details}
-												</a>
+												</Link>
 											</div>
 										</div>
 									</div>
@@ -690,9 +692,9 @@ export default function OtherCategoryPage() {
 									.slice(0, 3)
 									.join(', ')
 								return (
-									<a
+									<Link
 										key={u.id}
-										href={`//user/${u.id}`}
+										href={getLangPath(`/user/${u.id}`, 'en')}
 										className='block text-left bg-white rounded-md shadow p-5 border border-gray-200 hover:shadow-md transition'
 									>
 										<div className='flex items-baseline justify-between mb-2'>
@@ -718,7 +720,7 @@ export default function OtherCategoryPage() {
 										<div className='mt-2 text-xs text-blue-600 font-medium'>
 											Детальніше →
 										</div>
-									</a>
+									</Link>
 								)
 							})}
 							{users.length === 0 && (
