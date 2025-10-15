@@ -3,7 +3,7 @@
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -186,7 +186,7 @@ const T = {
 } as const
 
 export default function KompaniiPage() {
-	const lang = "en" as Lang
+	const lang = 'en' as Lang
 	const t = T[lang]
 	const router = useRouter()
 
@@ -248,7 +248,11 @@ export default function KompaniiPage() {
 	const getCategorySlug = (categoryId: string) => {
 		const category = categories.find(cat => String(cat.id) === categoryId)
 		if (!category) return categoryId
-		return String(category[`name_${lang}` as keyof Category] || category.name_en || category.name)
+		return String(
+			category[`name_${lang}` as keyof Category] ||
+				category.name_en ||
+				category.name
+		)
 			.toLowerCase()
 			.replace(/\s+/g, '-')
 			.replace(/[^a-z0-9-]/g, '')
@@ -262,9 +266,9 @@ export default function KompaniiPage() {
 		if (!subcategory) return subcategoryId
 		return String(
 			subcategory[`name_${lang}` as keyof Subcategory] ||
-			subcategory.name_en ||
-			subcategory.name_uk ||
-			''
+				subcategory.name_en ||
+				subcategory.name_uk ||
+				''
 		)
 			.toLowerCase()
 			.replace(/\s+/g, '-')
@@ -312,7 +316,7 @@ export default function KompaniiPage() {
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang="en" />
+			<Header lang='en' />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
 					<div className='flex justify-between items-center mb-6'>
@@ -320,7 +324,7 @@ export default function KompaniiPage() {
 						<div className='flex gap-3'>
 							<button
 								onClick={() => router.push(`/zayavki`)}
-								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
+								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
 							>
 								{t.orders}
 							</button>

@@ -400,7 +400,7 @@ export default function ZayavkiPage() {
 							</button>
 							<button
 								onClick={() => router.push(`/kompanii`)}
-								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
+								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold '
 							>
 								{t.companies}
 							</button>
