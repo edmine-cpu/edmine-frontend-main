@@ -94,4 +94,26 @@ export function RegisterForms({ lang }: Props) {
                     />
                     <input
                         type="password"
-                        value={password} onChange={e => handleChange('password', e.target.value)} placeholder="Password" minLength={8} /> <div className="max-w-lg mx-auto w-[260px] [@media(min-width:375px)]:w-[300px] [@media(min-width:480px)]:w-[400px]"> <CountryCitySelector lang={language} country={country} city={city} handleChange={handleChange} inputClass={inputClass} cities={cities} countries={countries} /> </div> <RegisterButton lang={language} name="reg" /> {serverError && ( <p className="text-red-500 text-sm mt-2">{serverError}</p>)} </form> </div> </div>); }
+                        value={password}
+                        onChange={e => handleChange('password', e.target.value)}
+                        placeholder="Password"
+                        minLength={8}
+                    />
+                    <div className="max-w-lg mx-auto w-[260px] [@media(min-width:375px)]:w-[300px] [@media(min-width:480px)]:w-[400px]">
+                        <CountryCitySelector
+                            lang={language}
+                            country={country}
+                            city={city}
+                            handleChange={handleChange}
+                            inputClass={inputClass}
+                        />
+                    </div>
+                    <RegisterButton lang={language} name="reg" />
+                    {serverError && (
+                        <p className="text-red-500 text-sm mt-2">{serverError}</p>
+                    )}
+                </form>
+            </div>
+        </div>
+    );
+}

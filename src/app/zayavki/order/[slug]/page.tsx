@@ -353,7 +353,7 @@ export default function BidPage({
 	params: Promise<{ slug: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'uk') as Lang
+	const lang = 'en' as Lang
 	const slug = resolvedParams.slug
 	const t = T[lang]
 

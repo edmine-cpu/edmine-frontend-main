@@ -1,7 +1,7 @@
 'use client'
 
 import { Lang } from '@/app/(types)/lang'
-import { texts } from '@/components/Header/DesktopHeader'
+import { getTranslation } from '@/hooks/headerTranslation'
 import { TabLink } from '@/components/headersOLD/Buttons'
 
 interface BurgerListProps {
@@ -10,7 +10,7 @@ interface BurgerListProps {
 }
 
 export function BurgerList({ lang, onClose }: BurgerListProps) {
-	const t = texts[lang]
+	const t = (key: string) => getTranslation(lang, key as any)
 
 	return (
 		<div className='absolute top-full right-0 mt-2 bg-white shadow-lg rounded-lg border border-gray-200 min-w-[200px] z-50'>
@@ -25,15 +25,15 @@ export function BurgerList({ lang, onClose }: BurgerListProps) {
 					</button>
 				</div>
 				<div className='flex flex-col'>
-					<TabLink href={`/${lang || 'en'}/zayavki`} name={t.catalog} mobile />
-					<TabLink href={`/${lang || 'en'}/blog`} name={t.blog} mobile />
+					<TabLink href={`/${lang || 'en'}/zayavki`} name={t('catalog')} mobile />
+					<TabLink href={`/${lang || 'en'}/blog`} name={t('blog')} mobile />
 					<TabLink
 						href={`/${lang || 'en'}/create-request`}
-						name={t.addTask}
+						name={t('addTask')}
 						mobile
 					/>
-					<TabLink href={`/${lang || 'en'}/chats`} name={t.chats} mobile />
-					<TabLink href={`/${lang || 'en'}/profile`} name={t.profile} mobile />
+					<TabLink href={`/${lang || 'en'}/chats`} name={t('chats')} mobile />
+					<TabLink href={`/${lang || 'en'}/profile`} name={t('profile')} mobile />
 				</div>
 			</div>
 		</div>

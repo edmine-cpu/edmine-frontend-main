@@ -185,17 +185,12 @@ const T = {
 	},
 } as const
 
-export default function KompaniiPage({
-	searchParams,
-}: {
-	searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
+export default function KompaniiPage() {
 	const lang = "en" as Lang
 	const t = T[lang]
 	const router = useRouter()
 
-	const searchQuery = (resolvedSearchParams.search as string) || ''
+	const searchQuery = ''
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
@@ -253,7 +248,7 @@ export default function KompaniiPage({
 	const getCategorySlug = (categoryId: string) => {
 		const category = categories.find(cat => String(cat.id) === categoryId)
 		if (!category) return categoryId
-		return (category[`name_`] || category.name_en || category.name)
+		return String(category[`name_${lang}` as keyof Category] || category.name_en || category.name)
 			.toLowerCase()
 			.replace(/\s+/g, '-')
 			.replace(/[^a-z0-9-]/g, '')
@@ -265,8 +260,8 @@ export default function KompaniiPage({
 			sub => String(sub.id) === subcategoryId
 		)
 		if (!subcategory) return subcategoryId
-		return (
-			subcategory[`name_`] ||
+		return String(
+			subcategory[`name_${lang}` as keyof Subcategory] ||
 			subcategory.name_en ||
 			subcategory.name_uk ||
 			''
@@ -289,23 +284,6 @@ export default function KompaniiPage({
 		if (filters.sort) apiParams.set('sort', filters.sort)
 		if (filters.search) apiParams.set('search', filters.search)
 
-		// Создаем параметры для URL (используем slug'и для SEO)
-		const urlParams = new URLSearchParams()
-		if (filters.category)
-			urlParams.set('category', getCategorySlug(filters.category))
-		if (filters.subcategory)
-			urlParams.set('subcategory', getSubcategorySlug(filters.subcategory))
-		if (filters.country) urlParams.set('country', filters.country)
-		if (filters.city) urlParams.set('city', filters.city)
-		if (filters.sort) urlParams.set('sort', filters.sort)
-		if (filters.search) urlParams.set('search', filters.search)
-
-		// Обновляем URL для SEO
-		const newUrl = `//kompanii${
-			urlParams.toString() ? '?' + urlParams.toString() : ''
-		}`
-		window.history.replaceState(null, '', newUrl)
-
 		fetch(`${API_ENDPOINTS.companies}?${apiParams.toString()}`)
 			.then(res => res.json())
 			.then(data => {
@@ -321,14 +299,14 @@ export default function KompaniiPage({
 
 	// Утилиты для получения переводов
 	const getName = (obj: any) =>
-		obj?.[`name_`] ?? obj?.name_en ?? obj?.name_uk ?? obj?.name ?? ''
+		obj?.[`name_${lang}`] ?? obj?.name_en ?? obj?.name_uk ?? obj?.name ?? ''
 	const getDescription = (obj: any) =>
-		obj?.[`description_`] ??
+		obj?.[`description_${lang}`] ??
 		obj?.description_en ??
 		obj?.description_uk ??
 		''
 	const getCompanyName = (company: Company) =>
-		(company?.[`name_` as keyof Company] as string) ??
+		(company?.[`name_${lang}` as keyof Company] as string) ??
 		company?.name_uk ??
 		company?.name
 

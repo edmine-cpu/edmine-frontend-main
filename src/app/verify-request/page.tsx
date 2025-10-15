@@ -64,11 +64,7 @@ const translations = {
 	},
 } as const
 
-function VerifyRequestContent({
-	params,
-}: {
-	
-}) {
+function VerifyRequestContent() {
 	const lang = "en" as Lang
 	const searchParams = useSearchParams()
 	const router = useRouter()
@@ -197,14 +193,10 @@ function VerifyRequestContent({
 	)
 }
 
-export default function VerifyRequestPage({
-	params,
-}: {
-	
-}) {
+export default function VerifyRequestPage() {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
-			<VerifyRequestContent params={params} />
+			<VerifyRequestContent />
 		</Suspense>
 	)
 }

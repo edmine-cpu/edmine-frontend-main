@@ -109,7 +109,7 @@ export default function UserPage({
 	params: Promise<{ userId: string }>
 }) {
 	const resolvedParams = React.use(params)
-	const lang = ((resolvedParams.lang as string) || 'uk') as Lang
+	const lang = 'en' as Lang
 	const userId = resolvedParams.userId
 	const t = T[lang]
 

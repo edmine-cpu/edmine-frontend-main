@@ -57,8 +57,8 @@ const texts = {
 
 export default function BlogPage() {
 	const params = useParams()
-	const lang = params.lang as string
-	const t = texts[lang as keyof typeof texts] || texts.uk
+	const lang = (params.lang as string) || 'en'
+	const t = texts[lang as keyof typeof texts] || texts.en
 
 	const [articles, setArticles] = useState<BlogArticle[]>([])
 	const [loading, setLoading] = useState(true)

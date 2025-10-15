@@ -76,7 +76,6 @@ export const translations = {
         categories: 'Категорії',
         subcategories: 'Підкатегорії',
         country: 'Країна',
-        city: 'Місто',
         language: 'Мова',
         upload: 'Завантажити',
         customer: 'Замовник',
@@ -93,7 +92,6 @@ export const translations = {
         
         // Навігація хедер
         addTask: 'ДОДАТИ ЗАВДАННЯ',
-        chats: 'Чати',
         menu: 'Меню',
         howItWorks: 'Як це працює',
         logout: 'Вийти',
@@ -102,18 +100,10 @@ export const translations = {
         searchRequests: 'Пошук заявок',
         searchPlaceholder: 'Введіть ключові слова...',
         allCategories: 'Всі категорії',
-        search: 'Шукати',
         searching: 'Пошук...',
         searchResults: 'Результати пошуку',
         viewDetails: 'Деталі',
         noResultsFound: 'Нічого не знайдено',
-        
-        // Профиль дополнительно
-        edit: 'Редагувати',
-        save: 'Зберегти',
-        cancel: 'Скасувати',
-        delete: 'Видалити',
-        loading: 'Завантаження...',
         error: 'Помилка',
         personalInfo: 'Особиста інформація',
         accountSettings: 'Налаштування акаунта',
@@ -195,7 +185,6 @@ export const translations = {
         categories: 'Categories',
         subcategories: 'Subcategories',
         country: 'Country',
-        city: 'City',
         language: 'Language',
         upload: 'Upload',
         customer: 'Customer',
@@ -212,27 +201,18 @@ export const translations = {
         
         // Navigation header
         addTask: 'AddTask',
-        chats: 'Chats',
         menu: 'Menu',
         howItWorks: 'How it works',
         logout: 'Logout',
-        
+
         // Search
         searchRequests: 'Search Requests',
         searchPlaceholder: 'Enter keywords...',
         allCategories: 'All Categories',
-        search: 'Search',
         searching: 'Searching...',
         searchResults: 'Search Results',
         viewDetails: 'View Details',
         noResultsFound: 'No results found',
-        
-        // Profile additional
-        edit: 'Edit',
-        save: 'Save',
-        cancel: 'Cancel',
-        delete: 'Delete',
-        loading: 'Loading...',
         error: 'Error',
         personalInfo: 'Personal Information',
         accountSettings: 'Account Settings',
@@ -314,7 +294,6 @@ export const translations = {
         categories: 'Kategorie',
         subcategories: 'Podkategorie',
         country: 'Kraj',
-        city: 'Miasto',
         language: 'Język',
         upload: 'Prześlij',
         customer: 'Klient',
@@ -331,16 +310,14 @@ export const translations = {
         
         // Navigation header
         addTask: 'DODAJ ZADANIE',
-        chats: 'Czaty',
         menu: 'Menu',
         howItWorks: 'Jak to działa',
         logout: 'Wyloguj',
-        
+
         // Search
         searchRequests: 'Szukaj Zapytań',
         searchPlaceholder: 'Wprowadź słowa kluczowe...',
         allCategories: 'Wszystkie Kategorie',
-        search: 'Szukaj',
         searching: 'Szukanie...',
         searchResults: 'Wyniki Wyszukiwania',
         viewDetails: 'Zobacz Szczegóły',
@@ -421,7 +398,6 @@ export const translations = {
         categories: 'Catégories',
         subcategories: 'Sous-catégories',
         country: 'Pays',
-        city: 'Ville',
         language: 'Langue',
         upload: 'Télécharger',
         customer: 'Client',
@@ -438,16 +414,14 @@ export const translations = {
         
         // Navigation header
         addTask: 'AJOUTER TÂCHE',
-        chats: 'Chats',
         menu: 'Menu',
         howItWorks: 'Comment ça marche',
         logout: 'Déconnexion',
-        
+
         // Search
         searchRequests: 'Rechercher des Demandes',
         searchPlaceholder: 'Entrez des mots-clés...',
         allCategories: 'Toutes les Catégories',
-        search: 'Rechercher',
         searching: 'Recherche...',
         searchResults: 'Résultats de Recherche',
         viewDetails: 'Voir les Détails',
@@ -528,7 +502,6 @@ export const translations = {
         categories: 'Kategorien',
         subcategories: 'Unterkategorien',
         country: 'Land',
-        city: 'Stadt',
         language: 'Sprache',
         upload: 'Hochladen',
         customer: 'Kunde',
@@ -545,16 +518,14 @@ export const translations = {
         
         // Navigation header
         addTask: 'AUFGABE HINZUFÜGEN',
-        chats: 'Chats',
         menu: 'Menü',
         howItWorks: 'Wie es funktioniert',
         logout: 'Abmelden',
-        
+
         // Search
         searchRequests: 'Anfragen Suchen',
         searchPlaceholder: 'Stichwörter eingeben...',
         allCategories: 'Alle Kategorien',
-        search: 'Suchen',
         searching: 'Suche...',
         searchResults: 'Suchergebnisse',
         viewDetails: 'Details Anzeigen',

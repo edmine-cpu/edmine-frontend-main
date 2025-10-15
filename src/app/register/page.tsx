@@ -7,8 +7,8 @@ import { Lang } from "@/app/(types)/lang";
 export default function RegisterPage() {
     return (
         <div>
-            <Header lang="en" as Lang />
-            <RegisterForms lang="en" as Lang />
+            <Header lang={"en" as Lang} />
+            <RegisterForms lang={"en" as Lang} />
         </div>
     );
 }

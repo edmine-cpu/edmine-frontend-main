@@ -20,7 +20,7 @@ export interface User {
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-	const cookieStore = cookies()
+	const cookieStore = await cookies()
 	// ПРОВЕРЬ ИМЯ COOKIE: Я предполагаю, что cookie называется 'jwt_token'.
 	// Если у тебя она называется по-другому, замени 'jwt_token' на правильное имя.
 	const sessionToken = cookieStore.get('jwt_token')

@@ -640,7 +640,9 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		)
 		setCompanyForm(prev => {
 			const newCategories = [...prev.categories]
-			newCategories[index] = (value as number) || undefined
+			if (value) {
+				newCategories[index] = value as number
+			}
 			return { ...prev, categories: newCategories.filter(Boolean) as number[] }
 		})
 	}
@@ -653,7 +655,9 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 		)
 		setCompanyForm(prev => {
 			const newSubcats = [...prev.subcategories]
-			newSubcats[index] = (value as number) || undefined
+			if (value) {
+				newSubcats[index] = value as number
+			}
 			return { ...prev, subcategories: newSubcats.filter(Boolean) as number[] }
 		})
 	}
@@ -664,7 +668,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
 	const getCurrentDescription = (): string => {
 		return (
-			companyForm[`description_${selectedLang}` as keyof CompanyFormData] || ''
+			(companyForm[`description_${selectedLang}` as keyof CompanyFormData] as string) || ''
 		)
 	}
 
