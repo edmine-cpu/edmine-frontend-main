@@ -345,7 +345,7 @@ export default function KompaniiPage({
 						<div className='flex gap-3'>
 							<button
 								onClick={() => router.push(`/zayavki`)}
-								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-50'
+								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
 							>
 								{t.orders}
 							</button>
