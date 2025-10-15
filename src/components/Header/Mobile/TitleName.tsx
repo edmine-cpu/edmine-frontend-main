@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import { getLangPath } from '@/utils/linkHelper'
 import { Lang } from '@/app/(types)/lang'
+import { getLangPath } from '@/utils/linkHelper'
+import Link from 'next/link'
 
 interface TitleNameProps {
 	lang?: Lang
