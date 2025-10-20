@@ -108,6 +108,11 @@ const T = {
 		resetFilters: 'Скинути',
 		backToAll: 'Всі заявки',
 		totalResults: 'Знайдено',
+		sortBy: 'Сортувати',
+		sortPriceAsc: 'Ціна: від низької до високої',
+		sortPriceDesc: 'Ціна: від високої до низької',
+		sortNewest: 'Найновіші',
+		sortOldest: 'Найстаріші',
 	},
 	en: {
 		title: 'Requests',
@@ -131,6 +136,11 @@ const T = {
 		resetFilters: 'Reset',
 		backToAll: 'All requests',
 		totalResults: 'Found',
+		sortBy: 'Sort by',
+		sortPriceAsc: 'Price: Low to High',
+		sortPriceDesc: 'Price: High to Low',
+		sortNewest: 'Newest First',
+		sortOldest: 'Oldest First',
 	},
 	pl: {
 		title: 'Zlecenia',
@@ -154,6 +164,11 @@ const T = {
 		resetFilters: 'Resetuj',
 		backToAll: 'Wszystkie zlecenia',
 		totalResults: 'Znaleziono',
+		sortBy: 'Sortuj według',
+		sortPriceAsc: 'Cena: od najniższej',
+		sortPriceDesc: 'Cena: od najwyższej',
+		sortNewest: 'Najnowsze',
+		sortOldest: 'Najstarsze',
 	},
 	fr: {
 		title: 'Demandes',
@@ -177,6 +192,11 @@ const T = {
 		resetFilters: 'Réinitialiser',
 		backToAll: 'Toutes les demandes',
 		totalResults: 'Trouvé',
+		sortBy: 'Trier par',
+		sortPriceAsc: 'Prix: du plus bas au plus élevé',
+		sortPriceDesc: 'Prix: du plus élevé au plus bas',
+		sortNewest: 'Plus récents',
+		sortOldest: 'Plus anciens',
 	},
 	de: {
 		title: 'Aufträge',
@@ -200,6 +220,11 @@ const T = {
 		resetFilters: 'Zurücksetzen',
 		backToAll: 'Alle Aufträge',
 		totalResults: 'Gefunden',
+		sortBy: 'Sortieren nach',
+		sortPriceAsc: 'Preis: Niedrig bis Hoch',
+		sortPriceDesc: 'Preis: Hoch bis Niedrig',
+		sortNewest: 'Neueste zuerst',
+		sortOldest: 'Älteste zuerst',
 	},
 } as const
 
@@ -229,6 +254,7 @@ export default function RequestsFilteredPage({
 	const searchQuery = (resolvedSearchParams.search as string) || ''
 	const minCost = (resolvedSearchParams.min_cost as string) || ''
 	const maxCost = (resolvedSearchParams.max_cost as string) || ''
+	const sortParam = (resolvedSearchParams.sort as string) || ''
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
@@ -242,6 +268,21 @@ export default function RequestsFilteredPage({
 	const [searchInput, setSearchInput] = useState(searchQuery)
 	const [minCostInput, setMinCostInput] = useState(minCost)
 	const [maxCostInput, setMaxCostInput] = useState(maxCost)
+	const [sortInput, setSortInput] = useState(sortParam)
+
+	// Selected filters for pathname
+	const [selectedCategory, setSelectedCategory] = useState(category)
+	const [selectedSubcategory, setSelectedSubcategory] = useState(undercategory)
+	const [selectedCountry, setSelectedCountry] = useState(country)
+	const [selectedCity, setSelectedCity] = useState(city)
+
+	// Sync state with URL params on change
+	useEffect(() => {
+		setSelectedCategory(category)
+		setSelectedSubcategory(undercategory)
+		setSelectedCountry(country)
+		setSelectedCity(city)
+	}, [category, undercategory, country, city])
 
 	// Load initial data
 	useEffect(() => {
@@ -263,66 +304,104 @@ export default function RequestsFilteredPage({
 	// Find IDs from slugs
 	const getCategoryIdFromSlug = (slug: string): string | null => {
 		if (slug === 'all' || !slug) return null
-		const cat = categories.find(
-			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
-					?.toLowerCase()
-					.replace(/\s+/g, '-')
-					.replace(/[^a-z0-9-]/g, '') === slug
-		)
+
+		// Normalize slug to snake_case for comparison with 'name' field
+		const normalizedSlug = slug.toLowerCase().replace(/-/g, '_')
+
+		const cat = categories.find(c => {
+			// Check slug fields first (if they exist)
+			if (c[`slug_${langTyped}`] === slug) return true
+
+			// Check the 'name' field (snake_case) - THIS IS THE KEY FIX
+			if (c.name === normalizedSlug) return true
+
+			// Check localized name converted to kebab-case
+			const localizedKebab = c[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+			if (localizedKebab === slug) return true
+
+			return false
+		})
+
 		return cat ? String(cat.id) : null
 	}
 
 	const getSubcategoryIdFromSlug = (slug: string): string | null => {
 		if (slug === 'all' || !slug) return null
-		const subcat = subcategories.find(
-			s =>
-				s[`name_${langTyped}`]
-					?.toLowerCase()
-					.replace(/\s+/g, '-')
-					.replace(/[^a-z0-9-]/g, '') === slug
-		)
+
+		const subcat = subcategories.find(s => {
+			// Check localized name converted to kebab-case
+			const localizedKebab = s[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+			if (localizedKebab === slug) return true
+
+			return false
+		})
+
 		return subcat ? String(subcat.id) : null
 	}
 
 	const getCountryIdFromSlug = (slug: string): string | null => {
 		if (slug === 'all' || !slug) return null
-		const country = countries.find(
-			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
-					?.toLowerCase()
-					.replace(/\s+/g, '-')
-					.replace(/[^a-z0-9-]/g, '') === slug
-		)
+
+		const country = countries.find(c => {
+			// Check slug fields first
+			if (c[`slug_${langTyped}`] === slug) return true
+
+			// Check localized name converted to kebab-case
+			const localizedKebab = c[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+			if (localizedKebab === slug) return true
+
+			return false
+		})
+
 		return country ? String(country.id) : null
 	}
 
 	const getCityIdFromSlug = (slug: string): string | null => {
 		if (slug === 'all' || !slug) return null
-		const city = cities.find(
-			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
-					?.toLowerCase()
-					.replace(/\s+/g, '-')
-					.replace(/[^a-z0-9-]/g, '') === slug
-		)
+
+		const city = cities.find(c => {
+			// Check slug fields first
+			if (c[`slug_${langTyped}`] === slug) return true
+
+			// Check localized name converted to kebab-case
+			const localizedKebab = c[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+			if (localizedKebab === slug) return true
+
+			return false
+		})
+
 		return city ? String(city.id) : null
 	}
 
 	// Get names from slugs
 	const getCategoryName = (slug: string): string => {
 		if (slug === 'all') return t.allCategories
-		const cat = categories.find(
-			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
-					?.toLowerCase()
-					.replace(/\s+/g, '-')
-					.replace(/[^a-z0-9-]/g, '') === slug
-		)
+
+		const normalizedSlug = slug.toLowerCase().replace(/-/g, '_')
+
+		const cat = categories.find(c => {
+			if (c[`slug_${langTyped}`] === slug) return true
+			if (c.name === normalizedSlug) return true
+			const localizedKebab = c[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '')
+			if (localizedKebab === slug) return true
+			return false
+		})
+
 		return cat?.[`name_${langTyped}`] || cat?.name_en || slug
 	}
 
@@ -375,6 +454,95 @@ export default function RequestsFilteredPage({
 		return subcat?.[`name_${langTyped}`] || subcat?.name_en || ''
 	}
 
+	// Get slug from ID
+	const getCategorySlugById = (id: string): string => {
+		if (id === 'all' || !id) return 'all'
+		const cat = categories.find(c => String(c.id) === id)
+		if (!cat) return 'all'
+
+		// Check slug field first
+		if (cat[`slug_${langTyped}`]) return cat[`slug_${langTyped}`]
+
+		// Convert 'name' field from snake_case to kebab-case
+		if (cat.name) return cat.name.replace(/_/g, '-')
+
+		// Fallback to localized name
+		return (
+			cat[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '') || 'all'
+		)
+	}
+
+	const getSubcategorySlugById = (id: string): string => {
+		if (id === 'all' || !id) return 'all'
+		const subcat = subcategories.find(s => String(s.id) === id)
+		return (
+			subcat?.[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '') || 'all'
+		)
+	}
+
+	const getCountrySlugById = (id: string): string => {
+		if (id === 'all' || !id) return 'all'
+		const country = countries.find(c => String(c.id) === id)
+		return (
+			country?.[`slug_${langTyped}`] ||
+			country?.[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '') ||
+			'all'
+		)
+	}
+
+	const getCitySlugById = (id: string): string => {
+		if (id === 'all' || !id) return 'all'
+		const city = cities.find(c => String(c.id) === id)
+		return (
+			city?.[`slug_${langTyped}`] ||
+			city?.[`name_${langTyped}`]
+				?.toLowerCase()
+				.replace(/\s+/g, '-')
+				.replace(/[^a-z0-9-]/g, '') ||
+			'all'
+		)
+	}
+
+	// Get filtered subcategories based on selected category
+	const filteredSubcategories = useMemo(() => {
+		if (selectedCategory === 'all' || !selectedCategory) return subcategories
+		const categoryId = getCategoryIdFromSlug(selectedCategory)
+		if (!categoryId) return subcategories
+		return subcategories.filter(
+			s => String(s.full_category_id) === categoryId
+		)
+	}, [selectedCategory, subcategories])
+
+	// Update pathname filters
+	const updatePathnameFilters = () => {
+		const queryParams = new URLSearchParams()
+		if (searchInput) queryParams.set('search', searchInput)
+		if (minCostInput) queryParams.set('min_cost', minCostInput)
+		if (maxCostInput) queryParams.set('max_cost', maxCostInput)
+		if (sortInput) queryParams.set('sort', sortInput)
+
+		// Selected values are already slugs
+		const categorySlug = selectedCategory || 'all'
+		const subcategorySlug = selectedSubcategory || 'all'
+		const countrySlug = selectedCountry || 'all'
+		const citySlug = selectedCity || 'all'
+
+		const queryString = queryParams.toString()
+		const newUrl = `/${langTyped}/test/requests/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}${
+			queryString ? '?' + queryString : ''
+		}`
+		router.push(newUrl)
+	}
+
 	// Fetch bids with pathname and query filters
 	useEffect(() => {
 		if (
@@ -392,47 +560,27 @@ export default function RequestsFilteredPage({
 		const apiParams = new URLSearchParams()
 		apiParams.set('language', langTyped)
 
-		// Convert slugs to IDs/names for API
+		// Convert slugs to IDs for API
 		const categoryId = getCategoryIdFromSlug(category)
 		const subcategoryId = getSubcategoryIdFromSlug(undercategory)
 		const countryId = getCountryIdFromSlug(country)
 		const cityId = getCityIdFromSlug(city)
 
-		// Get actual names for API (API expects names like "Ukraine", not IDs)
+		// Send IDs to API
 		if (countryId) {
-			const countryObj = countries.find(c => String(c.id) === countryId)
-			if (countryObj) {
-				apiParams.set(
-					'country',
-					countryObj.name_en || countryObj.name_uk || ''
-				)
-			}
+			apiParams.set('country_id', countryId)
 		}
 
 		if (cityId) {
-			const cityObj = cities.find(c => String(c.id) === cityId)
-			if (cityObj) {
-				apiParams.set('city', cityObj.name_en || cityObj.name_uk || '')
-			}
+			apiParams.set('city_id', cityId)
 		}
 
 		if (categoryId) {
-			const categoryObj = categories.find(c => String(c.id) === categoryId)
-			if (categoryObj) {
-				apiParams.set('category', categoryObj.name_en || categoryObj.name || '')
-			}
+			apiParams.set('category_id', categoryId)
 		}
 
 		if (subcategoryId) {
-			const subcategoryObj = subcategories.find(
-				s => String(s.id) === subcategoryId
-			)
-			if (subcategoryObj) {
-				apiParams.set(
-					'subcategory',
-					subcategoryObj.name_en || subcategoryObj.name_uk || ''
-				)
-			}
+			apiParams.set('subcategory_id', subcategoryId)
 		}
 
 		// Add query params
@@ -463,12 +611,33 @@ export default function RequestsFilteredPage({
 		cities,
 	])
 
+	// Apply sorting to results
+	const sortedBids = useMemo(() => {
+		const sorted = [...bids]
+
+		switch (sortParam) {
+			case 'price_asc':
+				return sorted.sort((a, b) => a.cost - b.cost)
+			case 'price_desc':
+				return sorted.sort((a, b) => b.cost - a.cost)
+			default:
+				return sorted
+		}
+	}, [bids, sortParam])
+
 	// Update query params in URL when manually triggered
 	const updateQueryParams = () => {
+		updatePathnameFilters()
+	}
+
+	// Handle sort change
+	const handleSortChange = (newSort: string) => {
+		setSortInput(newSort)
 		const queryParams = new URLSearchParams()
-		if (searchInput) queryParams.set('search', searchInput)
-		if (minCostInput) queryParams.set('min_cost', minCostInput)
-		if (maxCostInput) queryParams.set('max_cost', maxCostInput)
+		if (searchQuery) queryParams.set('search', searchQuery)
+		if (minCost) queryParams.set('min_cost', minCost)
+		if (maxCost) queryParams.set('max_cost', maxCost)
+		if (newSort) queryParams.set('sort', newSort)
 
 		const queryString = queryParams.toString()
 		const newUrl = `/${langTyped}/test/requests/${country}/${city}/${category}/${undercategory}${
@@ -560,6 +729,189 @@ export default function RequestsFilteredPage({
 							</button>
 						</div>
 
+						{/* Category & Subcategory Selectors */}
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+							<div>
+								<label className='block text-sm text-gray-700 mb-1'>
+									{t.category}
+								</label>
+								<select
+									value={selectedCategory}
+									onChange={e => {
+										setSelectedCategory(e.target.value)
+										// Reset subcategory when category changes
+										if (e.target.value === 'all') {
+											setSelectedSubcategory('all')
+										} else {
+											const categoryId = getCategoryIdFromSlug(e.target.value)
+											const validSubcategories = subcategories.filter(
+												s => String(s.full_category_id) === categoryId
+											)
+											if (
+												validSubcategories.length > 0 &&
+												!validSubcategories.some(
+													s =>
+														s[`name_${langTyped}`]
+															?.toLowerCase()
+															.replace(/\s+/g, '-')
+															.replace(/[^a-z0-9-]/g, '') ===
+														selectedSubcategory
+												)
+											) {
+												setSelectedSubcategory('all')
+											}
+										}
+									}}
+									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
+								>
+									<option value='all'>{t.allCategories}</option>
+									{categories.map(cat => (
+										<option
+											key={cat.id}
+											value={
+												cat[`slug_${langTyped}`] ||
+												cat[`name_${langTyped}`]
+													?.toLowerCase()
+													.replace(/\s+/g, '-')
+													.replace(/[^a-z0-9-]/g, '')
+											}
+										>
+											{cat[`name_${langTyped}`] || cat.name_en}
+										</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label className='block text-sm text-gray-700 mb-1'>
+									{t.subcategory}
+								</label>
+								<select
+									value={selectedSubcategory}
+									onChange={e => setSelectedSubcategory(e.target.value)}
+									disabled={selectedCategory === 'all'}
+									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-200 disabled:cursor-not-allowed'
+								>
+									<option value='all'>{t.allCategories}</option>
+									{filteredSubcategories.map(subcat => (
+										<option
+											key={subcat.id}
+											value={
+												subcat[`name_${langTyped}`]
+													?.toLowerCase()
+													.replace(/\s+/g, '-')
+													.replace(/[^a-z0-9-]/g, '') || String(subcat.id)
+											}
+										>
+											{subcat[`name_${langTyped}`] || subcat.name_en}
+										</option>
+									))}
+								</select>
+							</div>
+						</div>
+
+						{/* Country & City Selectors */}
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+							<div>
+								<label className='block text-sm text-gray-700 mb-1'>
+									{t.country}
+								</label>
+								<select
+									value={selectedCountry}
+									onChange={e => {
+										setSelectedCountry(e.target.value)
+										// Reset city when country changes
+										if (e.target.value === 'all') {
+											setSelectedCity('all')
+										} else {
+											const countryId = getCountryIdFromSlug(e.target.value)
+											const validCities = cities.filter(
+												c => String(c.country_id) === countryId
+											)
+											if (
+												validCities.length > 0 &&
+												!validCities.some(
+													c =>
+														(c[`slug_${langTyped}`] ||
+															c[`name_${langTyped}`]
+																?.toLowerCase()
+																.replace(/\s+/g, '-')
+																.replace(/[^a-z0-9-]/g, '')) === selectedCity
+												)
+											) {
+												setSelectedCity('all')
+											}
+										}
+									}}
+									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
+								>
+									<option value='all'>{t.allCountries}</option>
+									{countries.map(c => (
+										<option
+											key={c.id}
+											value={
+												c[`slug_${langTyped}`] ||
+												c[`name_${langTyped}`]
+													?.toLowerCase()
+													.replace(/\s+/g, '-')
+													.replace(/[^a-z0-9-]/g, '')
+											}
+										>
+											{c[`name_${langTyped}`] || c.name_en}
+										</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label className='block text-sm text-gray-700 mb-1'>
+									{t.city}
+								</label>
+								<select
+									value={selectedCity}
+									onChange={e => setSelectedCity(e.target.value)}
+									disabled={selectedCountry === 'all'}
+									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:bg-gray-200 disabled:cursor-not-allowed'
+								>
+									<option value='all'>{t.allCities}</option>
+									{cities
+										.filter(c => {
+											if (selectedCountry === 'all') return true
+											const countryId = getCountryIdFromSlug(selectedCountry)
+											return String(c.country_id) === countryId
+										})
+										.map(c => (
+											<option
+												key={c.id}
+												value={
+													c[`slug_${langTyped}`] ||
+													c[`name_${langTyped}`]
+														?.toLowerCase()
+														.replace(/\s+/g, '-')
+														.replace(/[^a-z0-9-]/g, '')
+												}
+											>
+												{c[`name_${langTyped}`] || c.name_en}
+											</option>
+										))}
+								</select>
+							</div>
+						</div>
+
+						{/* Sort */}
+						<div className='mb-4'>
+							<label className='block text-sm text-gray-700 mb-1'>
+								{t.sortBy}
+							</label>
+							<select
+								value={sortInput}
+								onChange={e => handleSortChange(e.target.value)}
+								className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
+							>
+								<option value=''>-</option>
+								<option value='price_asc'>{t.sortPriceAsc}</option>
+								<option value='price_desc'>{t.sortPriceDesc}</option>
+							</select>
+						</div>
+
 						{/* Search */}
 						<div className='mb-4'>
 							<label className='block text-sm text-gray-700 mb-1'>
@@ -641,7 +993,7 @@ export default function RequestsFilteredPage({
 							<div className='text-sm text-gray-600 mb-2'>
 								{t.totalResults}: {total} {t.title.toLowerCase()}
 							</div>
-							{bids.map((bid, index) => (
+							{sortedBids.map((bid, index) => (
 								<div
 									key={`${bid.slug}-${index}`}
 									className='bg-white rounded-sm shadow p-4 border border-gray-200'
@@ -687,7 +1039,7 @@ export default function RequestsFilteredPage({
 									</div>
 								</div>
 							))}
-							{bids.length === 0 && !loading && (
+							{sortedBids.length === 0 && !loading && (
 								<div className='text-center text-gray-500 py-8'>
 									{t.noResults}
 								</div>
