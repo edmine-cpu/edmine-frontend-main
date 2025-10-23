@@ -13,13 +13,13 @@ export function Navigations({ lang }: Props) {
 	return (
 		<>
 			<Link
-				href={getLangPath('/zayavki', lang)}
+				href={getLangPath('/requests', lang)}
 				className='text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50'
 			>
 				{t.catalog}
 			</Link>
 			<Link
-				href={getLangPath('/company', lang)}
+				href={getLangPath('/companies', lang)}
 				className='text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50'
 			>
 				COMPANIES

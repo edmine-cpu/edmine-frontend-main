@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
+import { getLangFromPathname, getLangPath } from '@/utils/linkHelper'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -224,15 +225,13 @@ const T = {
 } as const
 
 export default function RequestsPage({
-	params,
 	searchParams,
 }: {
-	params: Promise<{ lang: string }>
 	searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-	const resolvedParams = React.use(params)
 	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
-	const lang = ((resolvedParams.lang as string) || 'en') as Lang
+	const pathname = usePathname()
+	const lang = getLangFromPathname(pathname)
 	const t = T[lang]
 	const router = useRouter()
 
@@ -406,7 +405,7 @@ export default function RequestsPage({
 		const citySlug = getCitySlug(updatedFilters.city)
 		const subcategorySlug = getSubcategorySlug(updatedFilters.subcategory)
 
-		const path = `/${lang}/test/requests/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}`
+		const path = getLangPath(`/requests/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}`, lang)
 		const queryString = queryParams.toString()
 		const newUrl = queryString ? `${path}?${queryString}` : path
 
@@ -479,7 +478,7 @@ export default function RequestsPage({
 		fetchBidsWithFilters(emptyFilters)
 
 		// Update URL without navigation
-		window.history.pushState({}, '', `/${lang}/test/requests/all/all/all/all`)
+		window.history.pushState({}, '', getLangPath('/requests/all/all/all/all', lang))
 	}
 
 	// Fetch bids on initial load only
@@ -498,13 +497,13 @@ export default function RequestsPage({
 						<h1 className='text-2xl font-semibold text-red-600'>{t.title}</h1>
 						<div className='flex gap-3'>
 							<button
-								onClick={() => router.push(`/${lang}/test/requests`)}
+								onClick={() => router.push(getLangPath('/requests', lang))}
 								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
 								{t.title}
 							</button>
 							<button
-								onClick={() => router.push(`/${lang}/test/companies`)}
+								onClick={() => router.push(getLangPath('/companies', lang))}
 								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
 							>
 								{t.companies}
@@ -820,7 +819,7 @@ export default function RequestsPage({
 											</span>
 										</div>
 										<a
-											href={`/${lang}/test/requests/order/${bid.slug}`}
+											href={getLangPath(`/requests/order/${bid.slug}`, lang)}
 											className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 										>
 											{t.details}

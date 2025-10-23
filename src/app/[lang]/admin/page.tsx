@@ -266,7 +266,7 @@ export default function AdminPanel({
 
 	if (loading) {
 		return (
-			<div className='min-h-screen bg-gray-50'>
+			<div className='min-h-screen'>
 				<Header lang={lang as any} />
 				<div className='flex items-center justify-center py-12'>
 					<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-red-600'></div>

@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { getLangFromPathname, getLangPath } from '@/utils/linkHelper'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -132,7 +133,6 @@ const T = {
 } as const
 
 type Params = {
-	lang: string
 	slug: string
 }
 
@@ -153,10 +153,11 @@ export default function CompanyDetailPage({
 }: {
 	params: Promise<Params>
 }) {
+	const pathname = usePathname()
 	const resolvedParams = React.use(params)
-	const { lang, slug } = resolvedParams
-	const langTyped = ((lang as string) || 'en') as Lang
-	const t = T[langTyped]
+	const { slug } = resolvedParams
+	const lang = getLangFromPathname(pathname)
+	const t = T[lang]
 	const router = useRouter()
 
 	const [company, setCompany] = useState<CompanyDetail | null>(null)
@@ -228,7 +229,7 @@ export default function CompanyDetailPage({
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${langTyped}/chat/${data.chat_id}`)
+				router.push(getLangPath(`/chat/${data.chat_id}`, lang))
 			} else {
 				const errorData = await response.json()
 				console.error('Failed to create chat:', response.status, errorData)
@@ -251,7 +252,7 @@ export default function CompanyDetailPage({
 	if (loading) {
 		return (
 			<div className='min-h-screen flex flex-col'>
-				<Header lang={langTyped} />
+				<Header lang={lang} />
 				<div className='flex-1 flex items-center justify-center'>
 					<div className='text-center'>
 						<div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-600'></div>
@@ -265,12 +266,12 @@ export default function CompanyDetailPage({
 	if (error || !company) {
 		return (
 			<div className='min-h-screen flex flex-col'>
-				<Header lang={langTyped} />
+				<Header lang={lang} />
 				<div className='flex-1 flex items-center justify-center'>
 					<div className='text-center'>
 						<p className='text-xl text-gray-600 mb-4'>{t.notFound}</p>
 						<button
-							onClick={() => router.push(`/${langTyped}/test/companies`)}
+							onClick={() => router.push(getLangPath('/companies', lang))}
 							className='px-6 py-2 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700'
 						>
 							{t.backToList}
@@ -282,18 +283,15 @@ export default function CompanyDetailPage({
 	}
 
 	// Get localized name and description
-	const companyName =
-		company[`name_${langTyped}` as keyof CompanyDetail] ||
-		company.name_en ||
-		company.name
-	const description =
-		company[`description_${langTyped}` as keyof CompanyDetail] ||
-		company.description_en ||
-		''
+	const nameKey = `name_${lang}` as 'name_uk' | 'name_en' | 'name_pl' | 'name_fr' | 'name_de'
+	const descriptionKey = `description_${lang}` as 'description_uk' | 'description_en' | 'description_pl' | 'description_fr' | 'description_de'
+
+	const companyName: string = company[nameKey] || company.name_en || company.name
+	const description: string = company[descriptionKey] || company.description_en || ''
 
 	const getCategoryName = (category: Category | Subcategory) => {
 		return (
-			(category as any)[`name_${langTyped}`] ||
+			(category as any)[`name_${lang}`] ||
 			category.name_en ||
 			category.name
 		)
@@ -301,19 +299,19 @@ export default function CompanyDetailPage({
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang={langTyped} />
+			<Header lang={lang} />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-4xl'>
 					{/* Header with back button */}
 					<div className='flex justify-between items-center mb-6'>
 						<button
-							onClick={() => router.push(`/${langTyped}/test/companies`)}
+							onClick={() => router.push(getLangPath('/companies', lang))}
 							className='text-red-600 hover:text-red-700 font-semibold'
 						>
 							← {t.backToList}
 						</button>
 						<button
-							onClick={() => router.push(`/${langTyped}/test/requests`)}
+							onClick={() => router.push(getLangPath('/requests', lang))}
 							className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-100'
 						>
 							{t.requests}
@@ -362,7 +360,7 @@ export default function CompanyDetailPage({
 									</button>
 								) : (
 									<button
-										onClick={() => router.push(`/${langTyped}/login`)}
+										onClick={() => router.push(getLangPath('/login', lang))}
 										className='flex justify-center items-center mr-auto bg-red-100 rounded-md pr-3 pl-3 hover:bg-red-200 transition durations-200'
 									>
 										<span className='text-3xl'>🔐 </span>

@@ -705,7 +705,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	// Loading and auth states
 	if (loading || isAuthenticated === null) {
 		return (
-			<div className='min-h-screen bg-gray-50'>
+			<div className='min-h-screen'>
 				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='flex items-center justify-center'>
@@ -718,7 +718,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
 	if (isAuthenticated === false || !profile) {
 		return (
-			<div className='min-h-screen bg-gray-50'>
+			<div className='min-h-screen'>
 				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='text-center'>

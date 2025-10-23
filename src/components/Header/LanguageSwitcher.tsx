@@ -39,7 +39,7 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 			</button>
 
 			{open && (
-				<div className='absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border-black min-w-max flex flex-col'>
+				<div className='absolute mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border-black min-w-max flex flex-col z-50'>
 					{Object.entries(LANG_LABELS).map(([langKey, label]) => (
 						<button
 							key={langKey}

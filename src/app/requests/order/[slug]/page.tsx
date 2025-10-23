@@ -3,8 +3,9 @@
 import { Header } from '@/components/Header/Header'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { getLangFromPathname, getLangPath } from '@/utils/linkHelper'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -112,7 +113,7 @@ function BidAuthorContact({
 
 			if (response.ok) {
 				const data = await response.json()
-				router.push(`/${lang}/chat/${data.chat_id}`)
+				router.push(getLangPath(`/chat/${data.chat_id}`, lang))
 			} else {
 				const errorData = await response.json()
 				console.error('Failed to create chat:', response.status, errorData)
@@ -152,7 +153,7 @@ function BidAuthorContact({
 						</button>
 					) : (
 						<button
-							onClick={() => router.push(`/${lang}/login`)}
+							onClick={() => router.push(getLangPath('/login', lang))}
 							className='flex justify-center items-center mr-auto bg-red-100 rounded-md pr-3 pl-3 py-2 hover:bg-red-200 transition durations-200'
 						>
 							<span className='text-2xl mr-1'>🔐 </span>
@@ -264,7 +265,6 @@ const T = {
 } as const
 
 type Params = {
-	lang: string
 	slug: string
 }
 
@@ -274,9 +274,10 @@ export default function RequestDetailPage({
 	params: Promise<Params>
 }) {
 	const resolvedParams = React.use(params)
-	const { lang, slug } = resolvedParams
-	const langTyped = ((lang as string) || 'en') as Lang
-	const t = T[langTyped]
+	const { slug } = resolvedParams
+	const pathname = usePathname()
+	const lang = getLangFromPathname(pathname)
+	const t = T[lang]
 
 	const [bid, setBid] = useState<BidDetail | null>(null)
 	const [loading, setLoading] = useState(true)
@@ -317,7 +318,7 @@ export default function RequestDetailPage({
 	useEffect(() => {
 		setLoading(true)
 		const apiParams = new URLSearchParams()
-		apiParams.set('language', langTyped)
+		apiParams.set('language', lang)
 
 		fetch(`${API_ENDPOINTS.bidsV2}/?${apiParams.toString()}`)
 			.then(res => res.json())
@@ -336,7 +337,7 @@ export default function RequestDetailPage({
 				setError(true)
 			})
 			.finally(() => setLoading(false))
-	}, [slug, langTyped])
+	}, [slug, lang])
 
 	// Load author data
 	useEffect(() => {
@@ -365,7 +366,7 @@ export default function RequestDetailPage({
 					const category = categories.find(c => c.id === id)
 					if (!category) return ''
 					return (
-						category[`name_${langTyped}`] || category.name_en || category.name
+						category[`name_${lang}`] || category.name_en || category.name
 					)
 				})
 				.filter(Boolean)
@@ -381,7 +382,7 @@ export default function RequestDetailPage({
 					const subcategory = subcategories.find(s => s.id === id)
 					if (!subcategory) return ''
 					return (
-						subcategory[`name_${langTyped}`] ||
+						subcategory[`name_${lang}`] ||
 						subcategory.name_en ||
 						subcategory.name_uk ||
 						''
@@ -407,7 +408,7 @@ export default function RequestDetailPage({
 	if (loading)
 		return (
 			<div className='min-h-screen'>
-				<Header lang={langTyped} />
+				<Header lang={lang} />
 				<div className='flex items-center justify-center min-h-screen'>
 					<div className='text-lg'>Loading...</div>
 				</div>
@@ -417,7 +418,7 @@ export default function RequestDetailPage({
 	if (error || !bid)
 		return (
 			<div className='min-h-screen'>
-				<Header lang={langTyped} />
+				<Header lang={lang} />
 				<div className='flex items-center justify-center min-h-screen'>
 					<div className='text-lg text-red-600'>Request not found</div>
 				</div>
@@ -426,10 +427,10 @@ export default function RequestDetailPage({
 
 	return (
 		<div className='min-h-screen'>
-			<Header lang={langTyped} />
+			<Header lang={lang} />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
 				<Link
-					href={`/${langTyped}/test/requests`}
+					href={getLangPath('/requests', lang)}
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}
@@ -489,7 +490,7 @@ export default function RequestDetailPage({
 							</h3>
 							{author && (
 								<BidAuthorContact
-									lang={langTyped}
+									lang={lang}
 									name={
 										author.name ||
 										[author.first_name, author.last_name]

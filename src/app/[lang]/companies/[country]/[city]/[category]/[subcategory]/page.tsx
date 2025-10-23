@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/Header/Header'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
+import { getLangFromPathname, getLangPath } from '@/utils/linkHelper'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -210,7 +211,6 @@ const T = {
 } as const
 
 type Params = {
-	lang: string
 	country: string
 	city: string
 	category: string
@@ -224,12 +224,13 @@ export default function CompaniesFilteredPage({
 	params: Promise<Params>
 	searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+	const pathname = usePathname()
 	const resolvedParams = React.use(params)
 	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
 
-	const { lang, country, city, category, subcategory } = resolvedParams
-	const langTyped = ((lang as string) || 'en') as Lang
-	const t = T[langTyped]
+	const { country, city, category, subcategory } = resolvedParams
+	const lang = getLangFromPathname(pathname)
+	const t = T[lang]
 	const router = useRouter()
 
 	const searchQuery = (resolvedSearchParams.search as string) || ''
@@ -287,13 +288,13 @@ export default function CompaniesFilteredPage({
 
 		const cat = categories.find(c => {
 			// Check slug fields first (if they exist)
-			if (c[`slug_${langTyped}`] === slug) return true
+			if (c[`slug_${lang}`] === slug) return true
 
 			// Check the 'name' field (snake_case)
 			if (c.name === normalizedSlug) return true
 
 			// Check localized name converted to kebab-case
-			const localizedKebab = c[`name_${langTyped}`]
+			const localizedKebab = c[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '')
@@ -310,7 +311,7 @@ export default function CompaniesFilteredPage({
 
 		const subcat = subcategories.find(s => {
 			// Check localized name converted to kebab-case
-			const localizedKebab = s[`name_${langTyped}`]
+			const localizedKebab = s[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '')
@@ -327,10 +328,10 @@ export default function CompaniesFilteredPage({
 
 		const country = countries.find(c => {
 			// Check slug fields first
-			if (c[`slug_${langTyped}`] === slug) return true
+			if (c[`slug_${lang}`] === slug) return true
 
 			// Check localized name converted to kebab-case
-			const localizedKebab = c[`name_${langTyped}`]
+			const localizedKebab = c[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '')
@@ -347,10 +348,10 @@ export default function CompaniesFilteredPage({
 
 		const city = cities.find(c => {
 			// Check slug fields first
-			if (c[`slug_${langTyped}`] === slug) return true
+			if (c[`slug_${lang}`] === slug) return true
 
 			// Check localized name converted to kebab-case
-			const localizedKebab = c[`name_${langTyped}`]
+			const localizedKebab = c[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '')
@@ -369,9 +370,9 @@ export default function CompaniesFilteredPage({
 		const normalizedSlug = slug.toLowerCase().replace(/-/g, '_')
 
 		const cat = categories.find(c => {
-			if (c[`slug_${langTyped}`] === slug) return true
+			if (c[`slug_${lang}`] === slug) return true
 			if (c.name === normalizedSlug) return true
-			const localizedKebab = c[`name_${langTyped}`]
+			const localizedKebab = c[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '')
@@ -379,56 +380,56 @@ export default function CompaniesFilteredPage({
 			return false
 		})
 
-		return cat?.[`name_${langTyped}`] || cat?.name_en || slug
+		return cat?.[`name_${lang}`] || cat?.name_en || slug
 	}
 
 	const getSubcategoryName = (slug: string): string => {
 		if (slug === 'all') return t.allCategories
 		const subcat = subcategories.find(
 			s =>
-				s[`name_${langTyped}`]
+				s[`name_${lang}`]
 					?.toLowerCase()
 					.replace(/\s+/g, '-')
 					.replace(/[^a-z0-9-]/g, '') === slug
 		)
-		return subcat?.[`name_${langTyped}`] || subcat?.name_en || slug
+		return subcat?.[`name_${lang}`] || subcat?.name_en || slug
 	}
 
 	const getCountryName = (slug: string): string => {
 		if (slug === 'all') return t.allCountries
 		const country = countries.find(
 			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
+				c[`slug_${lang}`] === slug ||
+				c[`name_${lang}`]
 					?.toLowerCase()
 					.replace(/\s+/g, '-')
 					.replace(/[^a-z0-9-]/g, '') === slug
 		)
-		return country?.[`name_${langTyped}`] || country?.name_en || slug
+		return country?.[`name_${lang}`] || country?.name_en || slug
 	}
 
 	const getCityName = (slug: string): string => {
 		if (slug === 'all') return t.allCities
 		const city = cities.find(
 			c =>
-				c[`slug_${langTyped}`] === slug ||
-				c[`name_${langTyped}`]
+				c[`slug_${lang}`] === slug ||
+				c[`name_${lang}`]
 					?.toLowerCase()
 					.replace(/\s+/g, '-')
 					.replace(/[^a-z0-9-]/g, '') === slug
 		)
-		return city?.[`name_${langTyped}`] || city?.name_en || slug
+		return city?.[`name_${lang}`] || city?.name_en || slug
 	}
 
 	// Get name by ID for display
 	const getCategoryNameById = (id: string) => {
 		const cat = categories.find(c => String(c.id) === id)
-		return cat?.[`name_${langTyped}`] || cat?.name_en || ''
+		return cat?.[`name_${lang}`] || cat?.name_en || ''
 	}
 
 	const getSubcategoryNameById = (id: string) => {
 		const subcat = subcategories.find(s => String(s.id) === id)
-		return subcat?.[`name_${langTyped}`] || subcat?.name_en || ''
+		return subcat?.[`name_${lang}`] || subcat?.name_en || ''
 	}
 
 	// Get slug from ID
@@ -438,7 +439,7 @@ export default function CompaniesFilteredPage({
 		if (!cat) return 'all'
 
 		// Check slug field first
-		const slug = cat[`slug_${langTyped}`]
+		const slug = cat[`slug_${lang}`]
 		if (slug) return slug
 
 		// Convert 'name' field from snake_case to kebab-case
@@ -446,7 +447,7 @@ export default function CompaniesFilteredPage({
 
 		// Fallback to localized name
 		return (
-			cat[`name_${langTyped}`]
+			cat[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '') || 'all'
@@ -457,7 +458,7 @@ export default function CompaniesFilteredPage({
 		if (id === 'all' || !id) return 'all'
 		const subcat = subcategories.find(s => String(s.id) === id)
 		return (
-			subcat?.[`name_${langTyped}`]
+			subcat?.[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '') || 'all'
@@ -468,8 +469,8 @@ export default function CompaniesFilteredPage({
 		if (id === 'all' || !id) return 'all'
 		const country = countries.find(c => String(c.id) === id)
 		return (
-			country?.[`slug_${langTyped}`] ||
-			country?.[`name_${langTyped}`]
+			country?.[`slug_${lang}`] ||
+			country?.[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '') ||
@@ -481,8 +482,8 @@ export default function CompaniesFilteredPage({
 		if (id === 'all' || !id) return 'all'
 		const city = cities.find(c => String(c.id) === id)
 		return (
-			city?.[`slug_${langTyped}`] ||
-			city?.[`name_${langTyped}`]
+			city?.[`slug_${lang}`] ||
+			city?.[`name_${lang}`]
 				?.toLowerCase()
 				.replace(/\s+/g, '-')
 				.replace(/[^a-z0-9-]/g, '') ||
@@ -513,7 +514,7 @@ export default function CompaniesFilteredPage({
 		const citySlug = selectedCity || 'all'
 
 		const queryString = queryParams.toString()
-		const newUrl = `/${langTyped}/test/companies/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}${
+		const newUrl = `${getLangPath('/companies', lang)}/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}${
 			queryString ? '?' + queryString : ''
 		}`
 		router.push(newUrl)
@@ -534,7 +535,7 @@ export default function CompaniesFilteredPage({
 
 		// Build API params from pathname
 		const apiParams = new URLSearchParams()
-		apiParams.set('language', langTyped)
+		apiParams.set('language', lang)
 
 		// Convert slugs to IDs for API
 		const categoryId = getCategoryIdFromSlug(category)
@@ -571,7 +572,7 @@ export default function CompaniesFilteredPage({
 			.catch(console.error)
 			.finally(() => setLoading(false))
 	}, [
-		langTyped,
+		lang,
 		category,
 		subcategory,
 		country,
@@ -610,7 +611,7 @@ export default function CompaniesFilteredPage({
 		if (newSort) queryParams.set('sort', newSort)
 
 		const queryString = queryParams.toString()
-		const newUrl = `/${langTyped}/test/companies/${country}/${city}/${category}/${subcategory}${
+		const newUrl = `${getLangPath('/companies', lang)}/${country}/${city}/${category}/${subcategory}${
 			queryString ? '?' + queryString : ''
 		}`
 		router.push(newUrl)
@@ -618,7 +619,7 @@ export default function CompaniesFilteredPage({
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang={langTyped} />
+			<Header lang={lang} />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
 					{/* Header */}
@@ -627,13 +628,13 @@ export default function CompaniesFilteredPage({
 							<h1 className='text-2xl font-semibold text-red-600'>{t.title}</h1>
 							<div className='flex gap-3'>
 								<button
-									onClick={() => router.push(`/${langTyped}/test/requests`)}
+									onClick={() => router.push(getLangPath('/requests', lang))}
 									className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
 								>
 									{t.requests}
 								</button>
 								<button
-									onClick={() => router.push(`/${langTyped}/test/companies`)}
+									onClick={() => router.push(getLangPath('/companies', lang))}
 									className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 								>
 									{t.title}
@@ -644,7 +645,7 @@ export default function CompaniesFilteredPage({
 						{/* Breadcrumbs - Active Filters */}
 						<div className='flex flex-wrap gap-2 items-center'>
 							<button
-								onClick={() => router.push(`/${langTyped}/test/companies`)}
+								onClick={() => router.push(`${getLangPath('/companies', lang)}`)}
 								className='text-sm text-gray-600 hover:text-red-600 hover:underline'
 							>
 								{t.title}
@@ -731,7 +732,7 @@ export default function CompaniesFilteredPage({
 												validSubcategories.length > 0 &&
 												!validSubcategories.some(
 													s =>
-														s[`name_${langTyped}`]
+														s[`name_${lang}`]
 															?.toLowerCase()
 															.replace(/\s+/g, '-')
 															.replace(/[^a-z0-9-]/g, '') ===
@@ -749,15 +750,15 @@ export default function CompaniesFilteredPage({
 										<option
 											key={cat.id}
 											value={
-												cat[`slug_${langTyped}`] ||
+												cat[`slug_${lang}`] ||
 												cat.name?.replace(/_/g, '-') ||
-												cat[`name_${langTyped}`]
+												cat[`name_${lang}`]
 													?.toLowerCase()
 													.replace(/\s+/g, '-')
 													.replace(/[^a-z0-9-]/g, '')
 											}
 										>
-											{cat[`name_${langTyped}`] || cat.name_en}
+											{cat[`name_${lang}`] || cat.name_en}
 										</option>
 									))}
 								</select>
@@ -777,13 +778,13 @@ export default function CompaniesFilteredPage({
 										<option
 											key={subcat.id}
 											value={
-												subcat[`name_${langTyped}`]
+												subcat[`name_${lang}`]
 													?.toLowerCase()
 													.replace(/\s+/g, '-')
 													.replace(/[^a-z0-9-]/g, '') || String(subcat.id)
 											}
 										>
-											{subcat[`name_${langTyped}`] || subcat.name_en}
+											{subcat[`name_${lang}`] || subcat.name_en}
 										</option>
 									))}
 								</select>
@@ -807,8 +808,8 @@ export default function CompaniesFilteredPage({
 												validCities.length > 0 &&
 												!validCities.some(
 													c =>
-														(c[`slug_${langTyped}`] ||
-															c[`name_${langTyped}`]
+														(c[`slug_${lang}`] ||
+															c[`name_${lang}`]
 																?.toLowerCase()
 																.replace(/\s+/g, '-')
 																.replace(/[^a-z0-9-]/g, '')) === selectedCity
@@ -825,14 +826,14 @@ export default function CompaniesFilteredPage({
 										<option
 											key={c.id}
 											value={
-												c[`slug_${langTyped}`] ||
-												c[`name_${langTyped}`]
+												c[`slug_${lang}`] ||
+												c[`name_${lang}`]
 													?.toLowerCase()
 													.replace(/\s+/g, '-')
 													.replace(/[^a-z0-9-]/g, '')
 											}
 										>
-											{c[`name_${langTyped}`] || c.name_en}
+											{c[`name_${lang}`] || c.name_en}
 										</option>
 									))}
 								</select>
@@ -858,14 +859,14 @@ export default function CompaniesFilteredPage({
 											<option
 												key={c.id}
 												value={
-													c[`slug_${langTyped}`] ||
-													c[`name_${langTyped}`]
+													c[`slug_${lang}`] ||
+													c[`name_${lang}`]
 														?.toLowerCase()
 														.replace(/\s+/g, '-')
 														.replace(/[^a-z0-9-]/g, '')
 												}
 											>
-												{c[`name_${langTyped}`] || c.name_en}
+												{c[`name_${lang}`] || c.name_en}
 											</option>
 										))}
 								</select>
@@ -900,7 +901,7 @@ export default function CompaniesFilteredPage({
 							</button>
 							<button
 								onClick={() =>
-									router.push(`/${langTyped}/test/companies/all/all/all/all`)
+									router.push(`${getLangPath('/companies', lang)}/all/all/all/all`)
 								}
 								className='px-6 py-2 rounded-md bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400'
 							>
@@ -970,7 +971,7 @@ export default function CompaniesFilteredPage({
 											</div>
 										)}
 										<a
-											href={`/${langTyped}/test/companies/detail/${company.slug}`}
+											href={`${getLangPath('/companies', lang)}/detail/${company.slug}`}
 											className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 										>
 											{t.details}

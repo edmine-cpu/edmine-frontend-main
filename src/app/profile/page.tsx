@@ -8,7 +8,8 @@ import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
 import { useTranslation, type Lang } from '@/translations'
 import { checkAuth } from '@/utils/auth'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
+import { getLangFromPathname } from '@/utils/linkHelper'
 import React, { useEffect, useState } from 'react'
 
 interface Profile {
@@ -106,6 +107,276 @@ interface CompanyFormData {
 	subcategories: number[]
 }
 
+const translations = {
+	uk: {
+		personalInfo: 'Персональна інформація',
+		myCompanies: 'Мої компанії',
+		fullName: 'Повне ім\'я',
+		description: 'Опис',
+		role: 'Роль',
+		location: 'Розташування',
+		language: 'Мова',
+		edit: 'Редагувати',
+		save: 'Зберегти',
+		cancel: 'Скасувати',
+		change: 'Змінити',
+		upload: 'Завантажити',
+		add: 'Додати',
+		nameNotSpecified: 'Ім\'я не вказано',
+		enterFullName: 'Введіть повне ім\'я',
+		descriptionNotSpecified: 'Опис не вказано',
+		tellAboutYourself: 'Розкажіть про себе',
+		roleNotSet: 'Роль не встановлена',
+		customer: 'Замовник',
+		executor: 'Виконавець',
+		both: 'Замовник + Виконавець',
+		selectCountry: 'Виберіть країну',
+		selectCity: 'Виберіть місто',
+		countryNotSpecified: 'Країна не вказана',
+		cityNotSpecified: 'Місто не вказано',
+		languageNotSet: 'Не встановлено',
+		noCompaniesYet: 'У вас ще немає компаній',
+		addFirstCompany: 'Додайте свою першу компанію',
+		editCompany: 'Редагувати компанію',
+		createCompany: 'Створити компанію',
+		companyName: 'Назва компанії',
+		country: 'Країна',
+		city: 'Місто',
+		companyCategories: 'Категорії компанії',
+		selectCategory: 'Виберіть категорію',
+		selectSubcategory: 'Виберіть підкатегорію',
+		addAnotherCategory: 'Додати ще одну категорію',
+		descriptionLanguage: 'Мова опису:',
+		companyDescription: 'Опис компанії',
+		updateCompany: 'Оновити компанію',
+		previewDescriptions: 'Попередній перегляд описів:',
+		deleteConfirm: 'Ви впевнені, що хочете видалити цю компанію?',
+		nameUpdated: 'Ім\'я успішно оновлено',
+		descriptionUpdated: 'Опис успішно оновлено',
+		locationUpdated: 'Розташування успішно оновлено',
+		roleUpdated: 'Роль успішно оновлена',
+		avatarUpdated: 'Аватар успішно оновлено',
+		avatarDeleted: 'Аватар видалено',
+		companyCreated: 'Компанію успішно створено',
+		companyUpdated: 'Компанію успішно оновлено',
+		companyDeleted: 'Компанію успішно видалено',
+	},
+	en: {
+		personalInfo: 'Personal Information',
+		myCompanies: 'My Companies',
+		fullName: 'Full Name',
+		description: 'Description',
+		role: 'Role',
+		location: 'Location',
+		language: 'Language',
+		edit: 'Edit',
+		save: 'Save',
+		cancel: 'Cancel',
+		change: 'Change',
+		upload: 'Upload',
+		add: 'Add',
+		nameNotSpecified: 'Name not specified',
+		enterFullName: 'Enter full name',
+		descriptionNotSpecified: 'Description not specified',
+		tellAboutYourself: 'Tell about yourself',
+		roleNotSet: 'Role not set',
+		customer: 'Customer',
+		executor: 'Executor',
+		both: 'Customer + Executor',
+		selectCountry: 'Select country',
+		selectCity: 'Select city',
+		countryNotSpecified: 'Country not specified',
+		cityNotSpecified: 'City not specified',
+		languageNotSet: 'Not set',
+		noCompaniesYet: 'You don\'t have any companies yet',
+		addFirstCompany: 'Add your first company',
+		editCompany: 'Edit company',
+		createCompany: 'Create company',
+		companyName: 'Company name',
+		country: 'Country',
+		city: 'City',
+		companyCategories: 'Company categories',
+		selectCategory: 'Select category',
+		selectSubcategory: 'Select subcategory',
+		addAnotherCategory: 'Add another category',
+		descriptionLanguage: 'Description language:',
+		companyDescription: 'Company description',
+		updateCompany: 'Update company',
+		previewDescriptions: 'Preview descriptions:',
+		deleteConfirm: 'Are you sure you want to delete this company?',
+		nameUpdated: 'Name updated successfully',
+		descriptionUpdated: 'Description updated successfully',
+		locationUpdated: 'Location updated successfully',
+		roleUpdated: 'Role updated successfully',
+		avatarUpdated: 'Avatar updated successfully',
+		avatarDeleted: 'Avatar deleted',
+		companyCreated: 'Company created successfully',
+		companyUpdated: 'Company updated successfully',
+		companyDeleted: 'Company deleted successfully',
+	},
+	pl: {
+		personalInfo: 'Informacje osobiste',
+		myCompanies: 'Moje firmy',
+		fullName: 'Pełne imię',
+		description: 'Opis',
+		role: 'Rola',
+		location: 'Lokalizacja',
+		language: 'Język',
+		edit: 'Edytuj',
+		save: 'Zapisz',
+		cancel: 'Anuluj',
+		change: 'Zmień',
+		upload: 'Prześlij',
+		add: 'Dodaj',
+		nameNotSpecified: 'Nie podano imienia',
+		enterFullName: 'Wpisz pełne imię',
+		descriptionNotSpecified: 'Nie podano opisu',
+		tellAboutYourself: 'Opowiedz o sobie',
+		roleNotSet: 'Rola nie ustawiona',
+		customer: 'Klient',
+		executor: 'Wykonawca',
+		both: 'Klient + Wykonawca',
+		selectCountry: 'Wybierz kraj',
+		selectCity: 'Wybierz miasto',
+		countryNotSpecified: 'Nie podano kraju',
+		cityNotSpecified: 'Nie podano miasta',
+		languageNotSet: 'Nie ustawiono',
+		noCompaniesYet: 'Nie masz jeszcze żadnych firm',
+		addFirstCompany: 'Dodaj swoją pierwszą firmę',
+		editCompany: 'Edytuj firmę',
+		createCompany: 'Utwórz firmę',
+		companyName: 'Nazwa firmy',
+		country: 'Kraj',
+		city: 'Miasto',
+		companyCategories: 'Kategorie firmy',
+		selectCategory: 'Wybierz kategorię',
+		selectSubcategory: 'Wybierz podkategorię',
+		addAnotherCategory: 'Dodaj kolejną kategorię',
+		descriptionLanguage: 'Język opisu:',
+		companyDescription: 'Opis firmy',
+		updateCompany: 'Zaktualizuj firmę',
+		previewDescriptions: 'Podgląd opisów:',
+		deleteConfirm: 'Czy na pewno chcesz usunąć tę firmę?',
+		nameUpdated: 'Imię pomyślnie zaktualizowane',
+		descriptionUpdated: 'Opis pomyślnie zaktualizowany',
+		locationUpdated: 'Lokalizacja pomyślnie zaktualizowana',
+		roleUpdated: 'Rola pomyślnie zaktualizowana',
+		avatarUpdated: 'Avatar pomyślnie zaktualizowany',
+		avatarDeleted: 'Avatar usunięty',
+		companyCreated: 'Firma pomyślnie utworzona',
+		companyUpdated: 'Firma pomyślnie zaktualizowana',
+		companyDeleted: 'Firma pomyślnie usunięta',
+	},
+	fr: {
+		personalInfo: 'Informations personnelles',
+		myCompanies: 'Mes entreprises',
+		fullName: 'Nom complet',
+		description: 'Description',
+		role: 'Rôle',
+		location: 'Emplacement',
+		language: 'Langue',
+		edit: 'Modifier',
+		save: 'Enregistrer',
+		cancel: 'Annuler',
+		change: 'Changer',
+		upload: 'Télécharger',
+		add: 'Ajouter',
+		nameNotSpecified: 'Nom non spécifié',
+		enterFullName: 'Entrez le nom complet',
+		descriptionNotSpecified: 'Description non spécifiée',
+		tellAboutYourself: 'Parlez de vous',
+		roleNotSet: 'Rôle non défini',
+		customer: 'Client',
+		executor: 'Exécuteur',
+		both: 'Client + Exécuteur',
+		selectCountry: 'Sélectionnez le pays',
+		selectCity: 'Sélectionnez la ville',
+		countryNotSpecified: 'Pays non spécifié',
+		cityNotSpecified: 'Ville non spécifiée',
+		languageNotSet: 'Non défini',
+		noCompaniesYet: 'Vous n\'avez pas encore d\'entreprises',
+		addFirstCompany: 'Ajoutez votre première entreprise',
+		editCompany: 'Modifier l\'entreprise',
+		createCompany: 'Créer une entreprise',
+		companyName: 'Nom de l\'entreprise',
+		country: 'Pays',
+		city: 'Ville',
+		companyCategories: 'Catégories d\'entreprise',
+		selectCategory: 'Sélectionnez la catégorie',
+		selectSubcategory: 'Sélectionnez la sous-catégorie',
+		addAnotherCategory: 'Ajouter une autre catégorie',
+		descriptionLanguage: 'Langue de description:',
+		companyDescription: 'Description de l\'entreprise',
+		updateCompany: 'Mettre à jour l\'entreprise',
+		previewDescriptions: 'Aperçu des descriptions:',
+		deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette entreprise?',
+		nameUpdated: 'Nom mis à jour avec succès',
+		descriptionUpdated: 'Description mise à jour avec succès',
+		locationUpdated: 'Emplacement mis à jour avec succès',
+		roleUpdated: 'Rôle mis à jour avec succès',
+		avatarUpdated: 'Avatar mis à jour avec succès',
+		avatarDeleted: 'Avatar supprimé',
+		companyCreated: 'Entreprise créée avec succès',
+		companyUpdated: 'Entreprise mise à jour avec succès',
+		companyDeleted: 'Entreprise supprimée avec succès',
+	},
+	de: {
+		personalInfo: 'Persönliche Informationen',
+		myCompanies: 'Meine Unternehmen',
+		fullName: 'Vollständiger Name',
+		description: 'Beschreibung',
+		role: 'Rolle',
+		location: 'Standort',
+		language: 'Sprache',
+		edit: 'Bearbeiten',
+		save: 'Speichern',
+		cancel: 'Abbrechen',
+		change: 'Ändern',
+		upload: 'Hochladen',
+		add: 'Hinzufügen',
+		nameNotSpecified: 'Name nicht angegeben',
+		enterFullName: 'Vollständigen Namen eingeben',
+		descriptionNotSpecified: 'Beschreibung nicht angegeben',
+		tellAboutYourself: 'Erzählen Sie über sich',
+		roleNotSet: 'Rolle nicht festgelegt',
+		customer: 'Kunde',
+		executor: 'Ausführender',
+		both: 'Kunde + Ausführender',
+		selectCountry: 'Land auswählen',
+		selectCity: 'Stadt auswählen',
+		countryNotSpecified: 'Land nicht angegeben',
+		cityNotSpecified: 'Stadt nicht angegeben',
+		languageNotSet: 'Nicht festgelegt',
+		noCompaniesYet: 'Sie haben noch keine Unternehmen',
+		addFirstCompany: 'Fügen Sie Ihr erstes Unternehmen hinzu',
+		editCompany: 'Unternehmen bearbeiten',
+		createCompany: 'Unternehmen erstellen',
+		companyName: 'Unternehmensname',
+		country: 'Land',
+		city: 'Stadt',
+		companyCategories: 'Unternehmenskategorien',
+		selectCategory: 'Kategorie auswählen',
+		selectSubcategory: 'Unterkategorie auswählen',
+		addAnotherCategory: 'Weitere Kategorie hinzufügen',
+		descriptionLanguage: 'Beschreibungssprache:',
+		companyDescription: 'Unternehmensbeschreibung',
+		updateCompany: 'Unternehmen aktualisieren',
+		previewDescriptions: 'Vorschau der Beschreibungen:',
+		deleteConfirm: 'Sind Sie sicher, dass Sie dieses Unternehmen löschen möchten?',
+		nameUpdated: 'Name erfolgreich aktualisiert',
+		descriptionUpdated: 'Beschreibung erfolgreich aktualisiert',
+		locationUpdated: 'Standort erfolgreich aktualisiert',
+		roleUpdated: 'Rolle erfolgreich aktualisiert',
+		avatarUpdated: 'Avatar erfolgreich aktualisiert',
+		avatarDeleted: 'Avatar gelöscht',
+		companyCreated: 'Unternehmen erfolgreich erstellt',
+		companyUpdated: 'Unternehmen erfolgreich aktualisiert',
+		companyDeleted: 'Unternehmen erfolgreich gelöscht',
+	},
+} as const
+
+type ProfileTranslations = typeof translations.uk
+
 // Custom hook for profile state management
 const useProfileState = () => {
 	const [profile, setProfile] = useState<Profile | null>(null)
@@ -161,6 +432,9 @@ interface EditableFieldProps {
 	onCancel: () => void
 	children: React.ReactNode
 	placeholder?: string
+	editText?: string
+	saveText?: string
+	cancelText?: string
 }
 
 const EditableField: React.FC<EditableFieldProps> = ({
@@ -172,6 +446,9 @@ const EditableField: React.FC<EditableFieldProps> = ({
 	onCancel,
 	children,
 	placeholder = '',
+	editText = 'Edit',
+	saveText = 'Save',
+	cancelText = 'Cancel',
 }) => (
 	<div className='mb-6'>
 		<div className='flex justify-between items-center mb-3'>
@@ -181,7 +458,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 					onClick={onEdit}
 					className='text-red-600 hover:text-red-800 text-sm'
 				>
-					Edit
+					{editText}
 				</button>
 			)}
 		</div>
@@ -193,13 +470,13 @@ const EditableField: React.FC<EditableFieldProps> = ({
 						onClick={onSave}
 						className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 					>
-						Save
+						{saveText}
 					</button>
 					<button
 						onClick={onCancel}
 						className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm'
 					>
-						Cancel
+						{cancelText}
 					</button>
 				</div>
 			</div>
@@ -212,7 +489,9 @@ const EditableField: React.FC<EditableFieldProps> = ({
 )
 
 export default function ProfilePage() {
-	const lang = "en" as const
+	const pathname = usePathname()
+	const lang = getLangFromPathname(pathname)
+	const tr: ProfileTranslations = translations[lang]
 	const t = useTranslation(lang)
 	const router = useRouter()
 
@@ -436,7 +715,7 @@ export default function ProfilePage() {
 			})
 
 			if (response.ok) {
-				setSuccess('Location updated successfully')
+				setSuccess(tr.locationUpdated)
 				setEditStates(prev => ({ ...prev, location: false }))
 				await fetchProfile()
 			} else {
@@ -462,7 +741,7 @@ export default function ProfilePage() {
 			})
 
 			if (response.ok) {
-				setSuccess('Avatar updated successfully')
+				setSuccess(tr.avatarUpdated)
 				setAvatarFile(null)
 				await fetchProfile()
 			} else {
@@ -561,8 +840,8 @@ export default function ProfilePage() {
 			if (response.ok) {
 				setSuccess(
 					editingCompanyId
-						? 'Company updated successfully'
-						: 'Company created successfully'
+						? tr.companyUpdated
+						: tr.companyCreated
 				)
 				resetCompanyForm()
 				await fetchCompanies()
@@ -576,7 +855,7 @@ export default function ProfilePage() {
 	}
 
 	const deleteCompany = async (companyId: number) => {
-		if (!confirm('Are you sure you want to delete this company?')) return
+		if (!confirm(tr.deleteConfirm)) return
 
 		try {
 			const response = await fetch(`${API_ENDPOINTS.companies}/${companyId}`, {
@@ -585,7 +864,7 @@ export default function ProfilePage() {
 			})
 
 			if (response.ok) {
-				setSuccess('Company deleted successfully')
+				setSuccess(tr.companyDeleted)
 				await fetchCompanies()
 			} else {
 				setError('Failed to delete company')
@@ -602,7 +881,7 @@ export default function ProfilePage() {
 				credentials: 'include',
 			})
 			if (response.ok) {
-				setSuccess('Avatar deleted')
+				setSuccess(tr.avatarDeleted)
 				await fetchProfile()
 			} else {
 				setError('Failed to delete avatar')
@@ -670,11 +949,11 @@ export default function ProfilePage() {
 	const getRoleDisplayName = (role: string): string => {
 		switch (role) {
 			case 'customer':
-				return 'Customer'
+				return tr.customer
 			case 'executor':
-				return 'Executor'
+				return tr.executor
 			case 'both':
-				return 'Customer + Executor'
+				return tr.both
 			default:
 				return role
 		}
@@ -683,17 +962,17 @@ export default function ProfilePage() {
 	const getCountryDisplayName = (
 		country: Profile['country'] | Company['country']
 	): string => {
-		if (!country) return 'Country not specified'
+		if (!country) return tr.countryNotSpecified
 		if (typeof country === 'string') return country
 		return (
-			country.name_en || country.name_uk || country.name || 'Unknown country'
+			country.name_en || country.name_uk || country.name || tr.countryNotSpecified
 		)
 	}
 
 	const getCityDisplayName = (city: any): string => {
-		if (!city) return 'City not specified'
+		if (!city) return tr.cityNotSpecified
 		if (typeof city === 'string') return city
-		return city.name_en || city.name_uk || city.name || 'Unknown city'
+		return city.name_en || city.name_uk || city.name || tr.cityNotSpecified
 	}
 
 	const getFilteredCities = (countryId: string) => {
@@ -704,7 +983,7 @@ export default function ProfilePage() {
 	// Loading and auth states
 	if (loading || isAuthenticated === null) {
 		return (
-			<div className='min-h-screen bg-gray-50'>
+			<div className='min-h-screen'>
 				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='flex items-center justify-center'>
@@ -717,7 +996,7 @@ export default function ProfilePage() {
 
 	if (isAuthenticated === false || !profile) {
 		return (
-			<div className='min-h-screen bg-gray-50'>
+			<div className='min-h-screen'>
 				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='text-center'>
@@ -788,7 +1067,7 @@ export default function ProfilePage() {
 												d='M15 13a3 3 0 11-6 0 3 3 0 016 0z'
 											/>
 										</svg>
-										<span>Change</span>
+										<span>{tr.change}</span>
 									</label>
 
 									{profile.avatar && (
@@ -851,13 +1130,13 @@ export default function ProfilePage() {
 												onClick={updateAvatar}
 												className='flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium'
 											>
-												Upload
+												{tr.upload}
 											</button>
 											<button
 												onClick={() => setAvatarFile(null)}
 												className='px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors text-sm'
 											>
-												Cancel
+												{tr.cancel}
 											</button>
 										</div>
 									</div>
@@ -943,11 +1222,11 @@ export default function ProfilePage() {
 									d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
 								/>
 							</svg>
-							Personal Information
+							{tr.personalInfo}
 						</h2>
 
 						<EditableField
-							label="Full Name"
+							label={tr.fullName}
 							value={profile.name}
 							isEditing={editStates.name}
 							onEdit={() => updateEditState('name', true)}
@@ -955,24 +1234,27 @@ export default function ProfilePage() {
 								updateField(
 									API_ENDPOINTS.profileName,
 									formData.name,
-									"Name updated successfully",
+									tr.nameUpdated,
 									'name'
 								)
 							}
 							onCancel={() => updateEditState('name', false)}
-							placeholder="Name not specified"
+							placeholder={tr.nameNotSpecified}
+							editText={tr.edit}
+							saveText={tr.save}
+							cancelText={tr.cancel}
 						>
 							<input
 								type='text'
 								value={formData.name}
 								onChange={e => updateFormData('name', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
-								placeholder="Enter full name"
+								placeholder={tr.enterFullName}
 							/>
 						</EditableField>
 
 						<EditableField
-							label='Description'
+							label={tr.description}
 							value={profile.profile_description || ''}
 							isEditing={editStates.description}
 							onEdit={() => updateEditState('description', true)}
@@ -980,25 +1262,28 @@ export default function ProfilePage() {
 								updateField(
 									API_ENDPOINTS.profileDescription,
 									formData.description,
-									'Description updated successfully',
+									tr.descriptionUpdated,
 									'description'
 								)
 							}
 							onCancel={() => updateEditState('description', false)}
-							placeholder='Description not specified'
+							placeholder={tr.descriptionNotSpecified}
+							editText={tr.edit}
+							saveText={tr.save}
+							cancelText={tr.cancel}
 						>
 							<textarea
 								rows={4}
 								value={formData.description}
 								onChange={e => updateFormData('description', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none'
-								placeholder='Tell about yourself'
+								placeholder={tr.tellAboutYourself}
 							/>
 						</EditableField>
 
 						{/* Role */}
 						<EditableField
-							label='Role'
+							label={tr.role}
 							value={getRoleDisplayName(profile.user_role)}
 							isEditing={editStates.role}
 							onEdit={() => updateEditState('role', true)}
@@ -1006,21 +1291,24 @@ export default function ProfilePage() {
 								updateField(
 									API_ENDPOINTS.profileRole,
 									formData.role,
-									'Role updated successfully',
+									tr.roleUpdated,
 									'role'
 								)
 							}
 							onCancel={() => updateEditState('role', false)}
-							placeholder='Role not set'
+							placeholder={tr.roleNotSet}
+							editText={tr.edit}
+							saveText={tr.save}
+							cancelText={tr.cancel}
 						>
 							<select
 								value={formData.role}
 								onChange={e => updateFormData('role', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 							>
-								<option value='customer'>Customer</option>
-								<option value='executor'>Executor</option>
-								<option value='both'>Customer + Executor</option>
+								<option value='customer'>{tr.customer}</option>
+								<option value='executor'>{tr.executor}</option>
+								<option value='both'>{tr.both}</option>
 							</select>
 						</EditableField>
 
@@ -1028,14 +1316,14 @@ export default function ProfilePage() {
 						<div className='mb-6'>
 							<div className='flex justify-between items-center mb-3'>
 								<label className='text-sm font-medium text-gray-700'>
-									Location
+									{tr.location}
 								</label>
 								{!editStates.location && (
 									<button
 										onClick={() => updateEditState('location', true)}
 										className='text-red-600 hover:text-red-800 text-sm'
 									>
-										Edit
+										{tr.edit}
 									</button>
 								)}
 							</div>
@@ -1049,7 +1337,7 @@ export default function ProfilePage() {
 										}}
 										className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 									>
-										<option value=''>Select country</option>
+										<option value=''>{tr.selectCountry}</option>
 										{allCountries.map(country => (
 											<option key={country.id} value={country.id}>
 												{country.name_en || country.name_uk || country.name}
@@ -1062,7 +1350,7 @@ export default function ProfilePage() {
 										disabled={!formData.country}
 										className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
 									>
-										<option value=''>Select city</option>
+										<option value=''>{tr.selectCity}</option>
 										{getFilteredCities(formData.country).map(city => (
 											<option key={city.id} value={city.id}>
 												{city.name_en || city.name_uk || city.name}
@@ -1074,13 +1362,13 @@ export default function ProfilePage() {
 											onClick={updateLocation}
 											className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 										>
-											Save
+											{tr.save}
 										</button>
 										<button
 											onClick={() => updateEditState('location', false)}
 											className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm'
 										>
-											Cancel
+											{tr.cancel}
 										</button>
 									</div>
 								</div>
@@ -1118,7 +1406,7 @@ export default function ProfilePage() {
 						{/* Language - Read only */}
 						<div>
 							<label className='text-sm font-medium text-gray-700 mb-3 block'>
-								Language
+								{tr.language}
 							</label>
 							<div className='bg-gray-50 p-3 rounded-lg'>
 								<div className='flex items-center'>
@@ -1136,7 +1424,7 @@ export default function ProfilePage() {
 										/>
 									</svg>
 									<span className='text-gray-900 uppercase'>
-										{profile.language || 'Not set'}
+										{profile.language || tr.languageNotSet}
 									</span>
 								</div>
 							</div>
@@ -1160,7 +1448,7 @@ export default function ProfilePage() {
 										d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
 									/>
 								</svg>
-								Мої компанії
+								{tr.myCompanies}
 							</h2>
 							{!showCompanyForm && (
 								<button
@@ -1180,7 +1468,7 @@ export default function ProfilePage() {
 											d='M12 4v16m8-8H4'
 										/>
 									</svg>
-									<span>Додати</span>
+									<span>{tr.add}</span>
 								</button>
 							)}
 						</div>
@@ -1327,9 +1615,9 @@ export default function ProfilePage() {
 									/>
 								</svg>
 								<p className='text-lg font-medium mb-2'>
-									У вас ще немає компаній
+									{tr.noCompaniesYet}
 								</p>
-								<p className='text-sm'>Додайте свою першу компанію</p>
+								<p className='text-sm'>{tr.addFirstCompany}</p>
 							</div>
 						)}
 
@@ -1339,8 +1627,8 @@ export default function ProfilePage() {
 								<div className='flex justify-between items-center mb-4'>
 									<h3 className='text-lg font-semibold text-gray-900'>
 										{editingCompanyId
-											? 'Редагувати компанію'
-											: 'Створити компанію'}
+											? tr.editCompany
+											: tr.createCompany}
 									</h3>
 									<button
 										onClick={resetCompanyForm}
@@ -1365,7 +1653,7 @@ export default function ProfilePage() {
 								{/* Company Name - Multilingual */}
 								<div className='mb-6'>
 									<label className='text-sm font-medium text-gray-700 mb-3 block'>
-										Назва компанії
+										{tr.companyName}
 									</label>
 
 									{/* Language Switcher for Company Name */}
@@ -1426,7 +1714,7 @@ export default function ProfilePage() {
 								<div className='mb-4 grid grid-cols-1 md:grid-cols-2 gap-4'>
 									<div>
 										<label className='text-sm font-medium text-gray-700 mb-2 block'>
-											Країна
+											{tr.country}
 										</label>
 										<select
 											value={companyForm.country}
@@ -1439,7 +1727,7 @@ export default function ProfilePage() {
 											}}
 											className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 										>
-											<option value=''>Виберіть країну</option>
+											<option value=''>{tr.selectCountry}</option>
 											{allCountries.map(country => (
 												<option key={country.id} value={country.id}>
 													{country.name_uk || country.name_en || country.name}
@@ -1449,7 +1737,7 @@ export default function ProfilePage() {
 									</div>
 									<div>
 										<label className='text-sm font-medium text-gray-700 mb-2 block'>
-											Місто
+											{tr.city}
 										</label>
 										<select
 											value={companyForm.city}
@@ -1462,7 +1750,7 @@ export default function ProfilePage() {
 											disabled={!companyForm.country}
 											className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
 										>
-											<option value=''>Виберіть місто</option>
+											<option value=''>{tr.selectCity}</option>
 											{getFilteredCities(companyForm.country).map(city => (
 												<option key={city.id} value={city.id}>
 													{city.name_uk || city.name_en || city.name}
@@ -1475,7 +1763,7 @@ export default function ProfilePage() {
 								{/* Categories Selection */}
 								<div className='mb-4'>
 									<label className='text-sm font-medium text-gray-700 mb-2 block'>
-										Категорії компанії
+										{tr.companyCategories}
 									</label>
 									{categoryBlocks.map((block, index) => (
 										<div key={index} className='mb-4 space-y-2'>
@@ -1489,7 +1777,7 @@ export default function ProfilePage() {
 												}
 												className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 											>
-												<option value=''>Виберіть категорію</option>
+												<option value=''>{tr.selectCategory}</option>
 												{allCategories.map(cat => (
 													<option key={cat.id} value={cat.id}>
 														{(cat as any)[`name_${lang}`] ||
@@ -1510,7 +1798,7 @@ export default function ProfilePage() {
 													}
 													className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 												>
-													<option value=''>Виберіть підкатегорію</option>
+													<option value=''>{tr.selectSubcategory}</option>
 													{allSubcategories
 														.filter(
 															sc =>
@@ -1533,14 +1821,14 @@ export default function ProfilePage() {
 										onClick={addCategoryBlock}
 										className='mt-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors'
 									>
-										➕ Додати ще одну категорію
+										{`\u27A5 ${tr.addAnotherCategory}`}
 									</button>
 								</div>
 
 								{/* Language Switcher for Description */}
 								<div className='mb-4'>
 									<label className='text-sm font-medium text-gray-700 mb-2 block'>
-										Мова опису:
+										{tr.descriptionLanguage}
 									</label>
 									<LanguageSwitcher
 										current={selectedLang}
@@ -1551,7 +1839,7 @@ export default function ProfilePage() {
 								{/* Company Description for Selected Language */}
 								<div className='mb-6'>
 									<label className='text-sm font-medium text-gray-700 mb-2 block'>
-										Опис компанії ({LANG_LABELS[selectedLang]})
+										{tr.companyDescription} ({LANG_LABELS[selectedLang]})
 									</label>
 									<textarea
 										rows={4}
@@ -1576,14 +1864,14 @@ export default function ProfilePage() {
 										className='flex-1 bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium'
 									>
 										{editingCompanyId
-											? 'Оновити компанію'
-											: 'Створити компанію'}
+											? tr.updateCompany
+											: tr.createCompany}
 									</button>
 									<button
 										onClick={resetCompanyForm}
 										className='px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-medium'
 									>
-										Скасувати
+										{tr.cancel}
 									</button>
 								</div>
 
@@ -1595,7 +1883,7 @@ export default function ProfilePage() {
 									companyForm.description_de) && (
 									<div className='mt-6 p-4 bg-white rounded-lg border'>
 										<h4 className='text-sm font-medium text-gray-700 mb-3'>
-											Попередній перегляд описів:
+											{tr.previewDescriptions}
 										</h4>
 										<div className='space-y-2 text-sm'>
 											{companyForm.description_uk && (
