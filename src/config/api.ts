@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
 
 	//bids
 	bids: `${API_BASE_URL}/api/bids`,
-	bidsV2: `${API_BASE_URL}/api/v2`,
+	bidsV2: `${API_BASE_URL}/api/v2/request`,
 	createBid: (lang: string) =>
 		`${API_BASE_URL}/api/${lang}/create-request-fast`,
 	createBidSlow: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,
@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
 
 	//companies
 	companies: `${API_BASE_URL}/api/companies`,
+	companiesv2: `${API_BASE_URL}/api/v2/company`,
 	companies_profile: `${API_BASE_URL}/api/companies/profile/get_companies`,
 	company_by_id: (id: number) => `${API_BASE_URL}/api/companies/${id}`,
 	company_by_slug: (slug: string) =>

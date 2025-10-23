@@ -61,14 +61,13 @@ interface City {
 	slug_de?: string
 }
 
-interface BidItem {
-	title: string
-	subcprice: string
-	cost: number
-	category: number[]
-	undercategory: number[]
-	country: string
-	city: string
+interface CompanyItem {
+	name: string
+	description?: string
+	category_ids?: number[]
+	subcategory_ids?: number[]
+	country?: string
+	city?: string
 	slug: string
 	owner_id: number
 }
@@ -78,17 +77,19 @@ interface ApiResponse {
 	city: string | null
 	category: string | null
 	subcategory: string | null
+	country_id: number | null
+	city_id: number | null
+	category_id: number | null
+	subcategory_id: number | null
 	lang_search: string
-	min_cost: number
-	max_cost: number
-	results: BidItem[]
+	results: CompanyItem[]
 	total: number
 }
 
 const T = {
 	uk: {
-		title: 'Заявки',
-		companies: 'Компанії',
+		title: 'Компанії',
+		requests: 'Заявки',
 		filters: 'Фільтри',
 		category: 'Категорія',
 		subcategory: 'Підкатегорія',
@@ -96,26 +97,23 @@ const T = {
 		city: 'Місто',
 		search: 'Пошук',
 		searchPlaceholder: 'Введіть ключові слова для пошуку...',
-		minCost: 'Мін. ціна',
-		maxCost: 'Макс. ціна',
 		details: 'Детальніше',
 		sort: 'Сортування',
 		byRelevance: 'За релевантністю',
 		byDate: 'За датою',
-		byPrice: 'За ціною',
 		recent: 'Нові',
 		allCategories: 'Всі категорії',
 		anyRegions: 'Будь-які регіони',
 		allCountries: 'Всі країни',
 		allCities: 'Всі міста',
-		noResults: 'Заявки не знайдено',
+		noResults: 'Компанії не знайдено',
 		applyFilters: 'Застосувати',
 		resetFilters: 'Скинути',
 		totalResults: 'Знайдено',
 	},
 	en: {
-		title: 'Requests',
-		companies: 'Companies',
+		title: 'Companies',
+		requests: 'Requests',
 		filters: 'Filters',
 		category: 'Category',
 		subcategory: 'Subcategory',
@@ -123,26 +121,23 @@ const T = {
 		city: 'City',
 		search: 'Search',
 		searchPlaceholder: 'Enter keywords to search...',
-		minCost: 'Min. price',
-		maxCost: 'Max. price',
 		details: 'Details',
 		sort: 'Sort',
 		byRelevance: 'By relevance',
 		byDate: 'By date',
-		byPrice: 'By price',
 		recent: 'Recent',
 		allCategories: 'All categories',
 		anyRegions: 'Any regions',
 		allCountries: 'All countries',
 		allCities: 'All cities',
-		noResults: 'No requests found',
+		noResults: 'No companies found',
 		applyFilters: 'Apply',
 		resetFilters: 'Reset',
 		totalResults: 'Found',
 	},
 	pl: {
-		title: 'Zlecenia',
-		companies: 'Firmy',
+		title: 'Firmy',
+		requests: 'Zlecenia',
 		filters: 'Filtry',
 		category: 'Kategoria',
 		subcategory: 'Podkategoria',
@@ -150,26 +145,23 @@ const T = {
 		city: 'Miasto',
 		search: 'Szukaj',
 		searchPlaceholder: 'Wpisz słowa kluczowe...',
-		minCost: 'Min. cena',
-		maxCost: 'Maks. cena',
 		details: 'Szczegóły',
 		sort: 'Sortowanie',
 		byRelevance: 'Według trafności',
 		byDate: 'Po dacie',
-		byPrice: 'Po cenie',
 		recent: 'Najnowsze',
 		allCategories: 'Wszystkie kategorie',
 		anyRegions: 'Dowolne regiony',
 		allCountries: 'Wszystkie kraje',
 		allCities: 'Wszystkie miasta',
-		noResults: 'Nie znaleziono zleceń',
+		noResults: 'Nie znaleziono firm',
 		applyFilters: 'Zastosuj',
 		resetFilters: 'Resetuj',
 		totalResults: 'Znaleziono',
 	},
 	fr: {
-		title: 'Demandes',
-		companies: 'Entreprises',
+		title: 'Entreprises',
+		requests: 'Demandes',
 		filters: 'Filtres',
 		category: 'Catégorie',
 		subcategory: 'Sous-catégorie',
@@ -177,26 +169,23 @@ const T = {
 		city: 'Ville',
 		search: 'Recherche',
 		searchPlaceholder: 'Entrez des mots-clés...',
-		minCost: 'Prix min.',
-		maxCost: 'Prix max.',
 		details: 'Détails',
 		sort: 'Tri',
 		byRelevance: 'Par pertinence',
 		byDate: 'Par date',
-		byPrice: 'Par prix',
 		recent: 'Récents',
 		allCategories: 'Toutes les catégories',
 		anyRegions: 'Toutes régions',
 		allCountries: 'Tous les pays',
 		allCities: 'Toutes les villes',
-		noResults: 'Aucune demande trouvée',
+		noResults: 'Aucune entreprise trouvée',
 		applyFilters: 'Appliquer',
 		resetFilters: 'Réinitialiser',
 		totalResults: 'Trouvé',
 	},
 	de: {
-		title: 'Aufträge',
-		companies: 'Unternehmen',
+		title: 'Unternehmen',
+		requests: 'Aufträge',
 		filters: 'Filter',
 		category: 'Kategorie',
 		subcategory: 'Unterkategorie',
@@ -204,26 +193,23 @@ const T = {
 		city: 'Stadt',
 		search: 'Suche',
 		searchPlaceholder: 'Suchbegriffe eingeben...',
-		minCost: 'Min. Preis',
-		maxCost: 'Max. Preis',
 		details: 'Details',
 		sort: 'Sortierung',
 		byRelevance: 'Nach Relevanz',
 		byDate: 'Nach Datum',
-		byPrice: 'Nach Preis',
 		recent: 'Neu',
 		allCategories: 'Alle Kategorien',
 		anyRegions: 'Beliebige Regionen',
 		allCountries: 'Alle Länder',
 		allCities: 'Alle Städte',
-		noResults: 'Keine Aufträge gefunden',
+		noResults: 'Keine Unternehmen gefunden',
 		applyFilters: 'Anwenden',
 		resetFilters: 'Zurücksetzen',
 		totalResults: 'Gefunden',
 	},
 } as const
 
-export default function RequestsPage({
+export default function CompaniesPage({
 	params,
 	searchParams,
 }: {
@@ -237,14 +223,12 @@ export default function RequestsPage({
 	const router = useRouter()
 
 	const searchQuery = (resolvedSearchParams.search as string) || ''
-	const minCost = (resolvedSearchParams.min_cost as string) || ''
-	const maxCost = (resolvedSearchParams.max_cost as string) || ''
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 	const [countries, setCountries] = useState<Country[]>([])
 	const [cities, setCities] = useState<City[]>([])
-	const [bids, setBids] = useState<BidItem[]>([])
+	const [companies, setCompanies] = useState<CompanyItem[]>([])
 	const [loading, setLoading] = useState(false)
 	const [total, setTotal] = useState(0)
 
@@ -254,8 +238,6 @@ export default function RequestsPage({
 		country: '',
 		city: '',
 		search: searchQuery,
-		minCost: minCost,
-		maxCost: maxCost,
 		sort: 'relevance',
 	})
 
@@ -390,13 +372,11 @@ export default function RequestsPage({
 		setFilters(updatedFilters)
 
 		// Fetch with new filters
-		fetchBidsWithFilters(updatedFilters)
+		fetchCompaniesWithFilters(updatedFilters)
 
 		// Update URL without navigation
 		const queryParams = new URLSearchParams()
 		if (searchInput) queryParams.set('search', searchInput)
-		if (updatedFilters.minCost) queryParams.set('min_cost', updatedFilters.minCost)
-		if (updatedFilters.maxCost) queryParams.set('max_cost', updatedFilters.maxCost)
 		if (updatedFilters.sort && updatedFilters.sort !== 'relevance')
 			queryParams.set('sort', updatedFilters.sort)
 
@@ -406,7 +386,7 @@ export default function RequestsPage({
 		const citySlug = getCitySlug(updatedFilters.city)
 		const subcategorySlug = getSubcategorySlug(updatedFilters.subcategory)
 
-		const path = `/${lang}/test/requests/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}`
+		const path = `/${lang}/test/companies/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}`
 		const queryString = queryParams.toString()
 		const newUrl = queryString ? `${path}?${queryString}` : path
 
@@ -414,50 +394,42 @@ export default function RequestsPage({
 		window.history.pushState({}, '', newUrl)
 	}
 
-	// Fetch bids with given filters
-	const fetchBidsWithFilters = (filterParams: typeof filters) => {
+	// Fetch companies with given filters
+	const fetchCompaniesWithFilters = (filterParams: typeof filters) => {
 		setLoading(true)
 		const apiParams = new URLSearchParams()
 		apiParams.set('language', lang)
 
-		// Add all filters
+		// Add all filters - send IDs to API
 		if (filterParams.category) {
-			const cat = categories.find(c => String(c.id) === filterParams.category)
-			if (cat) apiParams.set('category', cat.name_en || cat.name || '')
+			apiParams.set('category_id', filterParams.category)
 		}
 		if (filterParams.subcategory) {
-			const subcat = subcategories.find(
-				s => String(s.id) === filterParams.subcategory
-			)
-			if (subcat) apiParams.set('subcategory', subcat.name_en || subcat.name_uk || '')
+			apiParams.set('subcategory_id', filterParams.subcategory)
 		}
 		if (filterParams.country) {
-			const country = countries.find(c => String(c.id) === filterParams.country)
-			if (country) apiParams.set('country', country.name_en || country.name_uk || '')
+			apiParams.set('country_id', filterParams.country)
 		}
 		if (filterParams.city) {
-			const city = cities.find(c => String(c.id) === filterParams.city)
-			if (city) apiParams.set('city', city.name_en || city.name_uk || '')
+			apiParams.set('city_id', filterParams.city)
 		}
 		if (filterParams.search) apiParams.set('search', filterParams.search)
-		if (filterParams.minCost) apiParams.set('min_cost', filterParams.minCost)
-		if (filterParams.maxCost) apiParams.set('max_cost', filterParams.maxCost)
 		if (filterParams.sort && filterParams.sort !== 'relevance')
 			apiParams.set('sort', filterParams.sort)
 
-		fetch(`${API_ENDPOINTS.bidsV2}/?${apiParams.toString()}`)
+		fetch(`${API_ENDPOINTS.companiesv2}/?${apiParams.toString()}`)
 			.then(res => res.json())
 			.then((data: ApiResponse) => {
-				setBids(data.results || [])
+				setCompanies(data.results || [])
 				setTotal(data.total || 0)
 			})
 			.catch(console.error)
 			.finally(() => setLoading(false))
 	}
 
-	// Fetch bids function
-	const fetchBids = () => {
-		fetchBidsWithFilters(filters)
+	// Fetch companies function
+	const fetchCompanies = () => {
+		fetchCompaniesWithFilters(filters)
 	}
 
 	// Reset filters
@@ -468,24 +440,22 @@ export default function RequestsPage({
 			country: '',
 			city: '',
 			search: '',
-			minCost: '',
-			maxCost: '',
 			sort: 'relevance',
 		}
 		setFilters(emptyFilters)
 		setSearchInput('')
 
 		// Fetch with empty filters
-		fetchBidsWithFilters(emptyFilters)
+		fetchCompaniesWithFilters(emptyFilters)
 
 		// Update URL without navigation
-		window.history.pushState({}, '', `/${lang}/test/requests/all/all/all/all`)
+		window.history.pushState({}, '', `/${lang}/test/companies/all/all/all/all`)
 	}
 
-	// Fetch bids on initial load only
+	// Fetch companies on initial load only
 	useEffect(() => {
 		if (categories.length > 0 && countries.length > 0) {
-			fetchBids()
+			fetchCompanies()
 		}
 	}, [categories, countries])
 
@@ -499,15 +469,15 @@ export default function RequestsPage({
 						<div className='flex gap-3'>
 							<button
 								onClick={() => router.push(`/${lang}/test/requests`)}
-								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
+								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
 							>
-								{t.title}
+								{t.requests}
 							</button>
 							<button
 								onClick={() => router.push(`/${lang}/test/companies`)}
-								className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
+								className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 							>
-								{t.companies}
+								{t.title}
 							</button>
 						</div>
 					</div>
@@ -694,46 +664,8 @@ export default function RequestsPage({
 							</div>
 						</div>
 
-						{/* Price Range and Sort */}
+						{/* Sort */}
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-							<div>
-								<label className='block text-sm text-gray-700 mb-1'>
-									{t.minCost}
-								</label>
-								<input
-									type='number'
-									value={filters.minCost}
-									onChange={e =>
-										setFilters(f => ({ ...f, minCost: e.target.value }))
-									}
-									onKeyDown={e => {
-										if (e.key === 'Enter') {
-											applyFilters()
-										}
-									}}
-									placeholder='0'
-									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
-								/>
-							</div>
-							<div>
-								<label className='block text-sm text-gray-700 mb-1'>
-									{t.maxCost}
-								</label>
-								<input
-									type='number'
-									value={filters.maxCost}
-									onChange={e =>
-										setFilters(f => ({ ...f, maxCost: e.target.value }))
-									}
-									onKeyDown={e => {
-										if (e.key === 'Enter') {
-											applyFilters()
-										}
-									}}
-									placeholder='10000'
-									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
-								/>
-							</div>
 							<div>
 								<label className='block text-sm text-gray-700 mb-1'>
 									{t.sort}
@@ -746,8 +678,6 @@ export default function RequestsPage({
 									<option value='relevance'>{t.byRelevance}</option>
 									<option value='date_desc'>{t.byDate} (↓ {t.recent})</option>
 									<option value='date_asc'>{t.byDate} (↑ {t.recent})</option>
-									<option value='price_asc'>{t.byPrice} (↑)</option>
-									<option value='price_desc'>{t.byPrice} (↓)</option>
 								</select>
 							</div>
 						</div>
@@ -782,45 +712,55 @@ export default function RequestsPage({
 							<div className='text-sm text-gray-600 mb-2'>
 								{t.totalResults}: {total} {t.title.toLowerCase()}
 							</div>
-							{bids.map((bid, index) => (
+							{companies.map((company, index) => (
 								<div
-									key={`${bid.slug}-${index}`}
+									key={`${company.slug}-${index}`}
 									className='bg-white rounded-sm shadow p-4 border border-gray-200'
 								>
 									<div className='flex justify-between items-start mb-2'>
 										<h3 className='text-blue-700 font-semibold pr-4'>
-											{bid.title}
+											{company.name}
 										</h3>
-										<span className='text-lg font-bold text-green-600'>
-											${bid.cost}
-										</span>
 									</div>
 
+									{company.description && (
+										<p className='text-sm text-gray-600 mb-2'>
+											{company.description}
+										</p>
+									)}
+
 									<div className='text-xs text-gray-600 mb-2'>
-										<div>
-											<span className='font-medium'>{t.category}:</span>{' '}
-											{bid.category
-												.map(id => getCategoryName(String(id)))
-												.join(', ')}
-										</div>
-										{bid.undercategory.length > 0 && (
+										{company.category_ids && company.category_ids.length > 0 && (
 											<div>
-												<span className='font-medium'>{t.subcategory}:</span>{' '}
-												{bid.undercategory
-													.map(id => getSubcategoryName(String(id)))
+												<span className='font-medium'>{t.category}:</span>{' '}
+												{company.category_ids
+													.map(id => getCategoryName(String(id)))
 													.join(', ')}
 											</div>
 										)}
+										{company.subcategory_ids &&
+											company.subcategory_ids.length > 0 && (
+												<div>
+													<span className='font-medium'>{t.subcategory}:</span>{' '}
+													{company.subcategory_ids
+														.map(id => getSubcategoryName(String(id)))
+														.join(', ')}
+												</div>
+											)}
 									</div>
 
 									<div className='flex items-center justify-between text-sm text-gray-600'>
-										<div className='flex items-center space-x-2'>
-											<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
-												📍 {bid.city}, {bid.country}
-											</span>
-										</div>
+										{(company.city || company.country) && (
+											<div className='flex items-center space-x-2'>
+												<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
+													📍 {company.city}
+													{company.city && company.country && ', '}
+													{company.country}
+												</span>
+											</div>
+										)}
 										<a
-											href={`/${lang}/test/requests/order/${bid.slug}`}
+											href={`/${lang}/test/companies/detail/${company.slug}`}
 											className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 										>
 											{t.details}
@@ -828,7 +768,7 @@ export default function RequestsPage({
 									</div>
 								</div>
 							))}
-							{bids.length === 0 && !loading && (
+							{companies.length === 0 && !loading && (
 								<div className='text-center text-gray-500 py-8'>
 									{t.noResults}
 								</div>

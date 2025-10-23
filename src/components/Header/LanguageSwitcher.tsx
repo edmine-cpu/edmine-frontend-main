@@ -1,8 +1,9 @@
 'use client'
 
 import { Lang } from '@/app/(types)/lang'
-import { switchLang } from '@/utils/linkHelper'
+import { switchLang, getLangFromPathname } from '@/utils/linkHelper'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const LANG_LABELS: Record<Lang, string> = {
 	uk: 'UA',
@@ -13,11 +14,14 @@ const LANG_LABELS: Record<Lang, string> = {
 }
 
 interface LanguageSwitcherProps {
-	currentLang: Lang
+	currentLang?: Lang
 }
 
 export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
+	const pathname = usePathname()
 	const [open, setOpen] = useState(false)
+	// Определяем текущий язык из URL, а не из пропса
+	const actualLang = getLangFromPathname(pathname)
 
 	const handleLanguageChange = (newLang: Lang) => {
 		const currentPath = window.location.pathname
@@ -31,7 +35,7 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 				onClick={() => setOpen(!open)}
 				className='flex justify-center items-center mx-auto text-center px-2 py-2 text-sm font-semibold rounded border border-gray-300 bg-white hover:bg-gray-50 transition sm:w-11.5 sm:h-11.5 w-10 h-10 '
 			>
-				{LANG_LABELS[currentLang]}
+				{LANG_LABELS[actualLang]}
 			</button>
 
 			{open && (
@@ -44,7 +48,7 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 								setOpen(false)
 							}}
 							className={`inline-block text-center px-3 py-2 text-md transition-colors rounded ${
-								currentLang === langKey
+								actualLang === langKey
 									? 'bg-red-600 text-white'
 									: 'text-gray-700 hover:bg-red-50 hover:text-red-600'
 							}`}

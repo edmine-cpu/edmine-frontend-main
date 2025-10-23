@@ -73,10 +73,6 @@ interface City {
 	country_id: number
 }
 
-interface ProfilePageProps {
-	params: Promise<{ lang: Lang }>
-}
-
 interface EditStates {
 	name: boolean
 	description: boolean
@@ -185,7 +181,7 @@ const EditableField: React.FC<EditableFieldProps> = ({
 					onClick={onEdit}
 					className='text-red-600 hover:text-red-800 text-sm'
 				>
-					Редагувати
+					Edit
 				</button>
 			)}
 		</div>
@@ -197,13 +193,13 @@ const EditableField: React.FC<EditableFieldProps> = ({
 						onClick={onSave}
 						className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 					>
-						Зберегти
+						Save
 					</button>
 					<button
 						onClick={onCancel}
 						className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm'
 					>
-						Скасувати
+						Cancel
 					</button>
 				</div>
 			</div>
@@ -215,10 +211,9 @@ const EditableField: React.FC<EditableFieldProps> = ({
 	</div>
 )
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-	
-	
-	const t = useTranslation("en")
+export default function ProfilePage() {
+	const lang = "en" as const
+	const t = useTranslation(lang)
 	const router = useRouter()
 
 	const {
@@ -299,7 +294,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			}
 		}
 		checkAuthentication()
-	}, ["en", router])
+	}, [router])
 
 	// API calls
 	const fetchProfile = async () => {
@@ -441,7 +436,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			})
 
 			if (response.ok) {
-				setSuccess('Локацію оновлено успішно')
+				setSuccess('Location updated successfully')
 				setEditStates(prev => ({ ...prev, location: false }))
 				await fetchProfile()
 			} else {
@@ -467,7 +462,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			})
 
 			if (response.ok) {
-				setSuccess('Аватар оновлено успішно')
+				setSuccess('Avatar updated successfully')
 				setAvatarFile(null)
 				await fetchProfile()
 			} else {
@@ -566,8 +561,8 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			if (response.ok) {
 				setSuccess(
 					editingCompanyId
-						? 'Компанію оновлено успішно'
-						: 'Компанію створено успішно'
+						? 'Company updated successfully'
+						: 'Company created successfully'
 				)
 				resetCompanyForm()
 				await fetchCompanies()
@@ -581,7 +576,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	}
 
 	const deleteCompany = async (companyId: number) => {
-		if (!confirm('Ви впевнені, що хочете видалити цю компанію?')) return
+		if (!confirm('Are you sure you want to delete this company?')) return
 
 		try {
 			const response = await fetch(`${API_ENDPOINTS.companies}/${companyId}`, {
@@ -590,7 +585,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 			})
 
 			if (response.ok) {
-				setSuccess('Компанію видалено успішно')
+				setSuccess('Company deleted successfully')
 				await fetchCompanies()
 			} else {
 				setError('Failed to delete company')
@@ -607,7 +602,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 				credentials: 'include',
 			})
 			if (response.ok) {
-				setSuccess('Аватар видалено')
+				setSuccess('Avatar deleted')
 				await fetchProfile()
 			} else {
 				setError('Failed to delete avatar')
@@ -675,11 +670,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	const getRoleDisplayName = (role: string): string => {
 		switch (role) {
 			case 'customer':
-				return 'Замовник'
+				return 'Customer'
 			case 'executor':
-				return 'Виконавець'
+				return 'Executor'
 			case 'both':
-				return 'Замовник + Виконавець'
+				return 'Customer + Executor'
 			default:
 				return role
 		}
@@ -688,17 +683,17 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	const getCountryDisplayName = (
 		country: Profile['country'] | Company['country']
 	): string => {
-		if (!country) return 'Країна не вказана'
-		if (typeof country === 'string') return country // просто возвращаем строку
+		if (!country) return 'Country not specified'
+		if (typeof country === 'string') return country
 		return (
-			country.name_uk || country.name_en || country.name || 'Невідома країна'
+			country.name_en || country.name_uk || country.name || 'Unknown country'
 		)
 	}
 
 	const getCityDisplayName = (city: any): string => {
-		if (!city) return 'Місто не вказане'
+		if (!city) return 'City not specified'
 		if (typeof city === 'string') return city
-		return city.name_uk || city.name_en || city.name || 'Невідоме місто'
+		return city.name_en || city.name_uk || city.name || 'Unknown city'
 	}
 
 	const getFilteredCities = (countryId: string) => {
@@ -710,7 +705,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	if (loading || isAuthenticated === null) {
 		return (
 			<div className='min-h-screen bg-gray-50'>
-				<Header lang="en" />
+				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='flex items-center justify-center'>
 						<div className='animate-spin rounded-full h-32 w-32 border-b-2 border-red-500'></div>
@@ -723,12 +718,12 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 	if (isAuthenticated === false || !profile) {
 		return (
 			<div className='min-h-screen bg-gray-50'>
-				<Header lang="en" />
+				<Header lang={lang} />
 				<div className='container mx-auto px-4 py-8'>
 					<div className='text-center'>
 						{isAuthenticated === false
 							? 'Redirecting to login...'
-							: 'Помилка завантаження профілю'}
+							: 'Error loading profile'}
 					</div>
 				</div>
 			</div>
@@ -737,7 +732,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
 	return (
 		<div className='min-h-screen'>
-			<Header lang="en" />
+			<Header lang={lang} />
 			<div className='container mx-auto px-4 py-8 max-w-6xl'>
 				{/* Profile Header */}
 				<div className='bg-white rounded-xl shadow-sm p-8 mb-8'>
@@ -793,7 +788,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 												d='M15 13a3 3 0 11-6 0 3 3 0 016 0z'
 											/>
 										</svg>
-										<span>Змінити</span>
+										<span>Change</span>
 									</label>
 
 									{profile.avatar && (
@@ -856,13 +851,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 												onClick={updateAvatar}
 												className='flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium'
 											>
-												Завантажити
+												Upload
 											</button>
 											<button
 												onClick={() => setAvatarFile(null)}
 												className='px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors text-sm'
 											>
-												Скасувати
+												Cancel
 											</button>
 										</div>
 									</div>
@@ -948,11 +943,11 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 									d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
 								/>
 							</svg>
-							Особиста інформація
+							Personal Information
 						</h2>
 
 						<EditableField
-							label="Повне ім'я"
+							label="Full Name"
 							value={profile.name}
 							isEditing={editStates.name}
 							onEdit={() => updateEditState('name', true)}
@@ -960,24 +955,24 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 								updateField(
 									API_ENDPOINTS.profileName,
 									formData.name,
-									"Ім'я оновлено успішно",
+									"Name updated successfully",
 									'name'
 								)
 							}
 							onCancel={() => updateEditState('name', false)}
-							placeholder="Ім'я не вказане"
+							placeholder="Name not specified"
 						>
 							<input
 								type='text'
 								value={formData.name}
 								onChange={e => updateFormData('name', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
-								placeholder="Введіть повне ім'я"
+								placeholder="Enter full name"
 							/>
 						</EditableField>
 
 						<EditableField
-							label='Опис'
+							label='Description'
 							value={profile.profile_description || ''}
 							isEditing={editStates.description}
 							onEdit={() => updateEditState('description', true)}
@@ -985,25 +980,25 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 								updateField(
 									API_ENDPOINTS.profileDescription,
 									formData.description,
-									'Опис оновлено успішно',
+									'Description updated successfully',
 									'description'
 								)
 							}
 							onCancel={() => updateEditState('description', false)}
-							placeholder='Опис не вказаний'
+							placeholder='Description not specified'
 						>
 							<textarea
 								rows={4}
 								value={formData.description}
 								onChange={e => updateFormData('description', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none'
-								placeholder='Розкажіть про себе'
+								placeholder='Tell about yourself'
 							/>
 						</EditableField>
 
 						{/* Role */}
 						<EditableField
-							label='Роль'
+							label='Role'
 							value={getRoleDisplayName(profile.user_role)}
 							isEditing={editStates.role}
 							onEdit={() => updateEditState('role', true)}
@@ -1011,21 +1006,21 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 								updateField(
 									API_ENDPOINTS.profileRole,
 									formData.role,
-									'Роль оновлено успішно',
+									'Role updated successfully',
 									'role'
 								)
 							}
 							onCancel={() => updateEditState('role', false)}
-							placeholder='Роль не встановлена'
+							placeholder='Role not set'
 						>
 							<select
 								value={formData.role}
 								onChange={e => updateFormData('role', e.target.value)}
 								className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 							>
-								<option value='customer'>Замовник</option>
-								<option value='executor'>Виконавець</option>
-								<option value='both'>Замовник + Виконавець</option>
+								<option value='customer'>Customer</option>
+								<option value='executor'>Executor</option>
+								<option value='both'>Customer + Executor</option>
 							</select>
 						</EditableField>
 
@@ -1033,14 +1028,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 						<div className='mb-6'>
 							<div className='flex justify-between items-center mb-3'>
 								<label className='text-sm font-medium text-gray-700'>
-									Локація
+									Location
 								</label>
 								{!editStates.location && (
 									<button
 										onClick={() => updateEditState('location', true)}
 										className='text-red-600 hover:text-red-800 text-sm'
 									>
-										Редагувати
+										Edit
 									</button>
 								)}
 							</div>
@@ -1050,14 +1045,14 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 										value={formData.country}
 										onChange={e => {
 											updateFormData('country', e.target.value)
-											updateFormData('city', '') // Reset city when country changes
+											updateFormData('city', '')
 										}}
 										className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
 									>
-										<option value=''>Виберіть країну</option>
+										<option value=''>Select country</option>
 										{allCountries.map(country => (
 											<option key={country.id} value={country.id}>
-												{country.name_uk || country.name_en || country.name}
+												{country.name_en || country.name_uk || country.name}
 											</option>
 										))}
 									</select>
@@ -1067,10 +1062,10 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 										disabled={!formData.country}
 										className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
 									>
-										<option value=''>Виберіть місто</option>
+										<option value=''>Select city</option>
 										{getFilteredCities(formData.country).map(city => (
 											<option key={city.id} value={city.id}>
-												{city.name_uk || city.name_en || city.name}
+												{city.name_en || city.name_uk || city.name}
 											</option>
 										))}
 									</select>
@@ -1079,13 +1074,13 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 											onClick={updateLocation}
 											className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 										>
-											Зберегти
+											Save
 										</button>
 										<button
 											onClick={() => updateEditState('location', false)}
 											className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm'
 										>
-											Скасувати
+											Cancel
 										</button>
 									</div>
 								</div>
@@ -1123,7 +1118,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 						{/* Language - Read only */}
 						<div>
 							<label className='text-sm font-medium text-gray-700 mb-3 block'>
-								Мова
+								Language
 							</label>
 							<div className='bg-gray-50 p-3 rounded-lg'>
 								<div className='flex items-center'>
@@ -1141,7 +1136,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 										/>
 									</svg>
 									<span className='text-gray-900 uppercase'>
-										{profile.language || 'Не встановлено'}
+										{profile.language || 'Not set'}
 									</span>
 								</div>
 							</div>
@@ -1497,7 +1492,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 												<option value=''>Виберіть категорію</option>
 												{allCategories.map(cat => (
 													<option key={cat.id} value={cat.id}>
-														{(cat as any)[`name_${"en"}`] ||
+														{(cat as any)[`name_${lang}`] ||
 															cat.name_en ||
 															cat.name}
 													</option>
@@ -1524,7 +1519,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 														)
 														.map(sc => (
 															<option key={sc.id} value={sc.id}>
-																{(sc as any)[`name_${"en"}`] ||
+																{(sc as any)[`name_${lang}`] ||
 																	sc.name_en ||
 																	sc.name}
 															</option>

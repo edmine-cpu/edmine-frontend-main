@@ -20,10 +20,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-            <body className="
-        font-inter antialiased mx-auto 
-        max-w-[320px] sm:max-w-[480px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1440px]
-      ">
+      <body
+        className="font-inter antialiased mx-auto max-w-[320px] sm:max-w-[480px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px] 2xl:max-w-[1440px]"
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>

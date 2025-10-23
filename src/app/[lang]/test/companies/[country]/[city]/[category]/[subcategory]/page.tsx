@@ -61,14 +61,13 @@ interface City {
 	slug_de?: string
 }
 
-interface BidItem {
-	title: string
-	subcprice: string
-	cost: number
-	category: number[]
-	undercategory: number[]
-	country: string
-	city: string
+interface CompanyItem {
+	name: string
+	description?: string
+	category_ids?: number[]
+	subcategory_ids?: number[]
+	country?: string
+	city?: string
 	slug: string
 	owner_id: number
 }
@@ -78,17 +77,19 @@ interface ApiResponse {
 	city: string | null
 	category: string | null
 	subcategory: string | null
+	country_id: number | null
+	city_id: number | null
+	category_id: number | null
+	subcategory_id: number | null
 	lang_search: string
-	min_cost: number
-	max_cost: number
-	results: BidItem[]
+	results: CompanyItem[]
 	total: number
 }
 
 const T = {
 	uk: {
-		title: 'Заявки',
-		companies: 'Компанії',
+		title: 'Компанії',
+		requests: 'Заявки',
 		filters: 'Фільтри',
 		category: 'Категорія',
 		subcategory: 'Підкатегорія',
@@ -96,27 +97,23 @@ const T = {
 		city: 'Місто',
 		search: 'Пошук',
 		searchPlaceholder: 'Введіть ключові слова для пошуку...',
-		minCost: 'Мін. ціна',
-		maxCost: 'Макс. ціна',
 		details: 'Детальніше',
 		allCategories: 'Всі категорії',
 		anyRegions: 'Будь-які регіони',
 		allCountries: 'Всі країни',
 		allCities: 'Всі міста',
-		noResults: 'Заявки не знайдено',
+		noResults: 'Компанії не знайдено',
 		applyFilters: 'Застосувати',
 		resetFilters: 'Скинути',
-		backToAll: 'Всі заявки',
+		backToAll: 'Всі компанії',
 		totalResults: 'Знайдено',
 		sortBy: 'Сортувати',
-		sortPriceAsc: 'Ціна: від низької до високої',
-		sortPriceDesc: 'Ціна: від високої до низької',
-		sortNewest: 'Найновіші',
-		sortOldest: 'Найстаріші',
+		sortDateDesc: 'За датою (↓ Нові)',
+		sortDateAsc: 'За датою (↑ Старі)',
 	},
 	en: {
-		title: 'Requests',
-		companies: 'Companies',
+		title: 'Companies',
+		requests: 'Requests',
 		filters: 'Filters',
 		category: 'Category',
 		subcategory: 'Subcategory',
@@ -124,27 +121,23 @@ const T = {
 		city: 'City',
 		search: 'Search',
 		searchPlaceholder: 'Enter keywords to search...',
-		minCost: 'Min. price',
-		maxCost: 'Max. price',
 		details: 'Details',
 		allCategories: 'All categories',
 		anyRegions: 'Any regions',
 		allCountries: 'All countries',
 		allCities: 'All cities',
-		noResults: 'No requests found',
+		noResults: 'No companies found',
 		applyFilters: 'Apply',
 		resetFilters: 'Reset',
-		backToAll: 'All requests',
+		backToAll: 'All companies',
 		totalResults: 'Found',
 		sortBy: 'Sort by',
-		sortPriceAsc: 'Price: Low to High',
-		sortPriceDesc: 'Price: High to Low',
-		sortNewest: 'Newest First',
-		sortOldest: 'Oldest First',
+		sortDateDesc: 'By date (↓ Newest)',
+		sortDateAsc: 'By date (↑ Oldest)',
 	},
 	pl: {
-		title: 'Zlecenia',
-		companies: 'Firmy',
+		title: 'Firmy',
+		requests: 'Zlecenia',
 		filters: 'Filtry',
 		category: 'Kategoria',
 		subcategory: 'Podkategoria',
@@ -152,27 +145,23 @@ const T = {
 		city: 'Miasto',
 		search: 'Szukaj',
 		searchPlaceholder: 'Wpisz słowa kluczowe...',
-		minCost: 'Min. cena',
-		maxCost: 'Maks. cena',
 		details: 'Szczegóły',
 		allCategories: 'Wszystkie kategorie',
 		anyRegions: 'Dowolne regiony',
 		allCountries: 'Wszystkie kraje',
 		allCities: 'Wszystkie miasta',
-		noResults: 'Nie znaleziono zleceń',
+		noResults: 'Nie znaleziono firm',
 		applyFilters: 'Zastosuj',
 		resetFilters: 'Resetuj',
-		backToAll: 'Wszystkie zlecenia',
+		backToAll: 'Wszystkie firmy',
 		totalResults: 'Znaleziono',
 		sortBy: 'Sortuj według',
-		sortPriceAsc: 'Cena: od najniższej',
-		sortPriceDesc: 'Cena: od najwyższej',
-		sortNewest: 'Najnowsze',
-		sortOldest: 'Najstarsze',
+		sortDateDesc: 'Po dacie (↓ Najnowsze)',
+		sortDateAsc: 'Po dacie (↑ Najstarsze)',
 	},
 	fr: {
-		title: 'Demandes',
-		companies: 'Entreprises',
+		title: 'Entreprises',
+		requests: 'Demandes',
 		filters: 'Filtres',
 		category: 'Catégorie',
 		subcategory: 'Sous-catégorie',
@@ -180,27 +169,23 @@ const T = {
 		city: 'Ville',
 		search: 'Recherche',
 		searchPlaceholder: 'Entrez des mots-clés...',
-		minCost: 'Prix min.',
-		maxCost: 'Prix max.',
 		details: 'Détails',
 		allCategories: 'Toutes les catégories',
 		anyRegions: 'Toutes régions',
 		allCountries: 'Tous les pays',
 		allCities: 'Toutes les villes',
-		noResults: 'Aucune demande trouvée',
+		noResults: 'Aucune entreprise trouvée',
 		applyFilters: 'Appliquer',
 		resetFilters: 'Réinitialiser',
-		backToAll: 'Toutes les demandes',
+		backToAll: 'Toutes les entreprises',
 		totalResults: 'Trouvé',
 		sortBy: 'Trier par',
-		sortPriceAsc: 'Prix: du plus bas au plus élevé',
-		sortPriceDesc: 'Prix: du plus élevé au plus bas',
-		sortNewest: 'Plus récents',
-		sortOldest: 'Plus anciens',
+		sortDateDesc: 'Par date (↓ Récents)',
+		sortDateAsc: 'Par date (↑ Anciens)',
 	},
 	de: {
-		title: 'Aufträge',
-		companies: 'Unternehmen',
+		title: 'Unternehmen',
+		requests: 'Aufträge',
 		filters: 'Filter',
 		category: 'Kategorie',
 		subcategory: 'Unterkategorie',
@@ -208,23 +193,19 @@ const T = {
 		city: 'Stadt',
 		search: 'Suche',
 		searchPlaceholder: 'Suchbegriffe eingeben...',
-		minCost: 'Min. Preis',
-		maxCost: 'Max. Preis',
 		details: 'Details',
 		allCategories: 'Alle Kategorien',
 		anyRegions: 'Beliebige Regionen',
 		allCountries: 'Alle Länder',
 		allCities: 'Alle Städte',
-		noResults: 'Keine Aufträge gefunden',
+		noResults: 'Keine Unternehmen gefunden',
 		applyFilters: 'Anwenden',
 		resetFilters: 'Zurücksetzen',
-		backToAll: 'Alle Aufträge',
+		backToAll: 'Alle Unternehmen',
 		totalResults: 'Gefunden',
 		sortBy: 'Sortieren nach',
-		sortPriceAsc: 'Preis: Niedrig bis Hoch',
-		sortPriceDesc: 'Preis: Hoch bis Niedrig',
-		sortNewest: 'Neueste zuerst',
-		sortOldest: 'Älteste zuerst',
+		sortDateDesc: 'Nach Datum (↓ Neueste)',
+		sortDateAsc: 'Nach Datum (↑ Älteste)',
 	},
 } as const
 
@@ -233,10 +214,10 @@ type Params = {
 	country: string
 	city: string
 	category: string
-	undercategory: string
+	subcategory: string
 }
 
-export default function RequestsFilteredPage({
+export default function CompaniesFilteredPage({
 	params,
 	searchParams,
 }: {
@@ -246,43 +227,39 @@ export default function RequestsFilteredPage({
 	const resolvedParams = React.use(params)
 	const resolvedSearchParams = searchParams ? React.use(searchParams) : {}
 
-	const { lang, country, city, category, undercategory } = resolvedParams
+	const { lang, country, city, category, subcategory } = resolvedParams
 	const langTyped = ((lang as string) || 'en') as Lang
 	const t = T[langTyped]
 	const router = useRouter()
 
 	const searchQuery = (resolvedSearchParams.search as string) || ''
-	const minCost = (resolvedSearchParams.min_cost as string) || ''
-	const maxCost = (resolvedSearchParams.max_cost as string) || ''
 	const sortParam = (resolvedSearchParams.sort as string) || ''
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 	const [countries, setCountries] = useState<Country[]>([])
 	const [cities, setCities] = useState<City[]>([])
-	const [bids, setBids] = useState<BidItem[]>([])
+	const [companies, setCompanies] = useState<CompanyItem[]>([])
 	const [loading, setLoading] = useState(false)
 	const [total, setTotal] = useState(0)
 
 	// Direct input - no debounce, user applies manually
 	const [searchInput, setSearchInput] = useState(searchQuery)
-	const [minCostInput, setMinCostInput] = useState(minCost)
-	const [maxCostInput, setMaxCostInput] = useState(maxCost)
 	const [sortInput, setSortInput] = useState(sortParam)
 
 	// Selected filters for pathname
 	const [selectedCategory, setSelectedCategory] = useState(category)
-	const [selectedSubcategory, setSelectedSubcategory] = useState(undercategory)
+	const [selectedSubcategory, setSelectedSubcategory] = useState(subcategory)
 	const [selectedCountry, setSelectedCountry] = useState(country)
 	const [selectedCity, setSelectedCity] = useState(city)
 
 	// Sync state with URL params on change
 	useEffect(() => {
 		setSelectedCategory(category)
-		setSelectedSubcategory(undercategory)
+		setSelectedSubcategory(subcategory)
 		setSelectedCountry(country)
 		setSelectedCity(city)
-	}, [category, undercategory, country, city])
+	}, [category, subcategory, country, city])
 
 	// Load initial data
 	useEffect(() => {
@@ -312,7 +289,7 @@ export default function RequestsFilteredPage({
 			// Check slug fields first (if they exist)
 			if (c[`slug_${langTyped}`] === slug) return true
 
-			// Check the 'name' field (snake_case) - THIS IS THE KEY FIX
+			// Check the 'name' field (snake_case)
 			if (c.name === normalizedSlug) return true
 
 			// Check localized name converted to kebab-case
@@ -527,8 +504,6 @@ export default function RequestsFilteredPage({
 	const updatePathnameFilters = () => {
 		const queryParams = new URLSearchParams()
 		if (searchInput) queryParams.set('search', searchInput)
-		if (minCostInput) queryParams.set('min_cost', minCostInput)
-		if (maxCostInput) queryParams.set('max_cost', maxCostInput)
 		if (sortInput) queryParams.set('sort', sortInput)
 
 		// Selected values are already slugs
@@ -538,13 +513,13 @@ export default function RequestsFilteredPage({
 		const citySlug = selectedCity || 'all'
 
 		const queryString = queryParams.toString()
-		const newUrl = `/${langTyped}/test/requests/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}${
+		const newUrl = `/${langTyped}/test/companies/${countrySlug}/${citySlug}/${categorySlug}/${subcategorySlug}${
 			queryString ? '?' + queryString : ''
 		}`
 		router.push(newUrl)
 	}
 
-	// Fetch bids with pathname and query filters
+	// Fetch companies with pathname and query filters
 	useEffect(() => {
 		if (
 			categories.length === 0 ||
@@ -563,7 +538,7 @@ export default function RequestsFilteredPage({
 
 		// Convert slugs to IDs for API
 		const categoryId = getCategoryIdFromSlug(category)
-		const subcategoryId = getSubcategoryIdFromSlug(undercategory)
+		const subcategoryId = getSubcategoryIdFromSlug(subcategory)
 		const countryId = getCountryIdFromSlug(country)
 		const cityId = getCityIdFromSlug(city)
 
@@ -586,13 +561,11 @@ export default function RequestsFilteredPage({
 
 		// Add query params
 		if (searchQuery) apiParams.set('search', searchQuery)
-		if (minCost) apiParams.set('min_cost', minCost)
-		if (maxCost) apiParams.set('max_cost', maxCost)
 
-		fetch(`${API_ENDPOINTS.bidsV2}/?${apiParams.toString()}`)
+		fetch(`${API_ENDPOINTS.companiesv2}/?${apiParams.toString()}`)
 			.then(res => res.json())
 			.then((data: ApiResponse) => {
-				setBids(data.results || [])
+				setCompanies(data.results || [])
 				setTotal(data.total || 0)
 			})
 			.catch(console.error)
@@ -600,12 +573,10 @@ export default function RequestsFilteredPage({
 	}, [
 		langTyped,
 		category,
-		undercategory,
+		subcategory,
 		country,
 		city,
 		searchQuery,
-		minCost,
-		maxCost,
 		categories,
 		subcategories,
 		countries,
@@ -613,18 +584,18 @@ export default function RequestsFilteredPage({
 	])
 
 	// Apply sorting to results
-	const sortedBids = useMemo(() => {
-		const sorted = [...bids]
+	const sortedCompanies = useMemo(() => {
+		const sorted = [...companies]
 
 		switch (sortParam) {
-			case 'price_asc':
-				return sorted.sort((a, b) => a.cost - b.cost)
-			case 'price_desc':
-				return sorted.sort((a, b) => b.cost - a.cost)
+			case 'date_desc':
+			case 'date_asc':
+				// Sorting by date would require date field from API
+				return sorted
 			default:
 				return sorted
 		}
-	}, [bids, sortParam])
+	}, [companies, sortParam])
 
 	// Update query params in URL when manually triggered
 	const updateQueryParams = () => {
@@ -636,12 +607,10 @@ export default function RequestsFilteredPage({
 		setSortInput(newSort)
 		const queryParams = new URLSearchParams()
 		if (searchQuery) queryParams.set('search', searchQuery)
-		if (minCost) queryParams.set('min_cost', minCost)
-		if (maxCost) queryParams.set('max_cost', maxCost)
 		if (newSort) queryParams.set('sort', newSort)
 
 		const queryString = queryParams.toString()
-		const newUrl = `/${langTyped}/test/requests/${country}/${city}/${category}/${undercategory}${
+		const newUrl = `/${langTyped}/test/companies/${country}/${city}/${category}/${subcategory}${
 			queryString ? '?' + queryString : ''
 		}`
 		router.push(newUrl)
@@ -659,15 +628,15 @@ export default function RequestsFilteredPage({
 							<div className='flex gap-3'>
 								<button
 									onClick={() => router.push(`/${langTyped}/test/requests`)}
+									className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
+								>
+									{t.requests}
+								</button>
+								<button
+									onClick={() => router.push(`/${langTyped}/test/companies`)}
 									className='px-4 py-2 rounded-md bg-red-600 text-white font-semibold'
 								>
 									{t.title}
-								</button>
-								<button
-									onClick={() => router.push(`/${langTyped}/test/company`)}
-									className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold'
-								>
-									{t.companies}
 								</button>
 							</div>
 						</div>
@@ -675,7 +644,7 @@ export default function RequestsFilteredPage({
 						{/* Breadcrumbs - Active Filters */}
 						<div className='flex flex-wrap gap-2 items-center'>
 							<button
-								onClick={() => router.push(`/${langTyped}/test/requests`)}
+								onClick={() => router.push(`/${langTyped}/test/companies`)}
 								className='text-sm text-gray-600 hover:text-red-600 hover:underline'
 							>
 								{t.title}
@@ -705,11 +674,11 @@ export default function RequestsFilteredPage({
 									<span className='bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-green-200'>
 										{getCategoryName(category)}
 									</span>
-									{undercategory !== 'all' && (
+									{subcategory !== 'all' && (
 										<>
 											<span className='text-gray-400'>/</span>
 											<span className='bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-green-200'>
-												{getSubcategoryName(undercategory)}
+												{getSubcategoryName(subcategory)}
 											</span>
 										</>
 									)}
@@ -903,42 +872,8 @@ export default function RequestsFilteredPage({
 							</div>
 						</div>
 
-						{/* Price Range & Sort */}
+						{/* Sort */}
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-							<div>
-								<label className='block text-sm text-gray-700 mb-1'>
-									{t.minCost}
-								</label>
-								<input
-									type='number'
-									value={minCostInput}
-									onChange={e => setMinCostInput(e.target.value)}
-									onKeyDown={e => {
-										if (e.key === 'Enter') {
-											updateQueryParams()
-										}
-									}}
-									placeholder='0'
-									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
-								/>
-							</div>
-							<div>
-								<label className='block text-sm text-gray-700 mb-1'>
-									{t.maxCost}
-								</label>
-								<input
-									type='number'
-									value={maxCostInput}
-									onChange={e => setMaxCostInput(e.target.value)}
-									onKeyDown={e => {
-										if (e.key === 'Enter') {
-											updateQueryParams()
-										}
-									}}
-									placeholder='10000'
-									className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500'
-								/>
-							</div>
 							<div>
 								<label className='block text-sm text-gray-700 mb-1'>
 									{t.sortBy}
@@ -949,10 +884,8 @@ export default function RequestsFilteredPage({
 									className='w-full rounded-md border px-3 py-2'
 								>
 									<option value=''>За релевантністю</option>
-									<option value='date_desc'>За датою (↓ Нові)</option>
-									<option value='date_asc'>За датою (↑ Старі)</option>
-									<option value='price_asc'>За ціною (↑)</option>
-									<option value='price_desc'>За ціною (↓)</option>
+									<option value='date_desc'>{t.sortDateDesc}</option>
+									<option value='date_asc'>{t.sortDateAsc}</option>
 								</select>
 							</div>
 						</div>
@@ -967,9 +900,7 @@ export default function RequestsFilteredPage({
 							</button>
 							<button
 								onClick={() =>
-									router.push(
-										`/${langTyped}/test/requests/all/all/all/all`
-									)
+									router.push(`/${langTyped}/test/companies/all/all/all/all`)
 								}
 								className='px-6 py-2 rounded-md bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400'
 							>
@@ -991,45 +922,55 @@ export default function RequestsFilteredPage({
 							<div className='text-sm text-gray-600 mb-2'>
 								{t.totalResults}: {total} {t.title.toLowerCase()}
 							</div>
-							{sortedBids.map((bid, index) => (
+							{sortedCompanies.map((company, index) => (
 								<div
-									key={`${bid.slug}-${index}`}
+									key={`${company.slug}-${index}`}
 									className='bg-white rounded-sm shadow p-4 border border-gray-200'
 								>
 									<div className='flex justify-between items-start mb-2'>
 										<h3 className='text-blue-700 font-semibold pr-4'>
-											{bid.title}
+											{company.name}
 										</h3>
-										<span className='text-lg font-bold text-green-600'>
-											${bid.cost}
-										</span>
 									</div>
 
+									{company.description && (
+										<p className='text-sm text-gray-600 mb-2'>
+											{company.description}
+										</p>
+									)}
+
 									<div className='text-xs text-gray-600 mb-2'>
-										<div>
-											<span className='font-medium'>{t.category}:</span>{' '}
-											{bid.category
-												.map(id => getCategoryNameById(String(id)))
-												.join(', ')}
-										</div>
-										{bid.undercategory.length > 0 && (
+										{company.category_ids && company.category_ids.length > 0 && (
 											<div>
-												<span className='font-medium'>{t.subcategory}:</span>{' '}
-												{bid.undercategory
-													.map(id => getSubcategoryNameById(String(id)))
+												<span className='font-medium'>{t.category}:</span>{' '}
+												{company.category_ids
+													.map(id => getCategoryNameById(String(id)))
 													.join(', ')}
 											</div>
 										)}
+										{company.subcategory_ids &&
+											company.subcategory_ids.length > 0 && (
+												<div>
+													<span className='font-medium'>{t.subcategory}:</span>{' '}
+													{company.subcategory_ids
+														.map(id => getSubcategoryNameById(String(id)))
+														.join(', ')}
+												</div>
+											)}
 									</div>
 
 									<div className='flex items-center justify-between text-sm text-gray-600'>
-										<div className='flex items-center space-x-2'>
-											<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
-												📍 {bid.city}, {bid.country}
-											</span>
-										</div>
+										{(company.city || company.country) && (
+											<div className='flex items-center space-x-2'>
+												<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
+													📍 {company.city}
+													{company.city && company.country && ', '}
+													{company.country}
+												</span>
+											</div>
+										)}
 										<a
-											href={`/${langTyped}/test/requests/order/${bid.slug}`}
+											href={`/${langTyped}/test/companies/detail/${company.slug}`}
 											className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 										>
 											{t.details}
@@ -1037,7 +978,7 @@ export default function RequestsFilteredPage({
 									</div>
 								</div>
 							))}
-							{sortedBids.length === 0 && !loading && (
+							{sortedCompanies.length === 0 && !loading && (
 								<div className='text-center text-gray-500 py-8'>
 									{t.noResults}
 								</div>
