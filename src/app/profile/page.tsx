@@ -6,10 +6,10 @@ import LanguageSwitcher, {
 } from '@/components/createRequest/LanguageSwitcher'
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
-import { useTranslation, type Lang } from '@/translations'
+import { useTranslation } from '@/translations'
 import { checkAuth } from '@/utils/auth'
-import { useRouter, usePathname } from 'next/navigation'
 import { getLangFromPathname } from '@/utils/linkHelper'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 interface Profile {
@@ -111,7 +111,7 @@ const translations = {
 	uk: {
 		personalInfo: 'Персональна інформація',
 		myCompanies: 'Мої компанії',
-		fullName: 'Повне ім\'я',
+		fullName: "Повне ім'я",
 		description: 'Опис',
 		role: 'Роль',
 		location: 'Розташування',
@@ -122,8 +122,8 @@ const translations = {
 		change: 'Змінити',
 		upload: 'Завантажити',
 		add: 'Додати',
-		nameNotSpecified: 'Ім\'я не вказано',
-		enterFullName: 'Введіть повне ім\'я',
+		nameNotSpecified: "Ім'я не вказано",
+		enterFullName: "Введіть повне ім'я",
 		descriptionNotSpecified: 'Опис не вказано',
 		tellAboutYourself: 'Розкажіть про себе',
 		roleNotSet: 'Роль не встановлена',
@@ -151,7 +151,7 @@ const translations = {
 		updateCompany: 'Оновити компанію',
 		previewDescriptions: 'Попередній перегляд описів:',
 		deleteConfirm: 'Ви впевнені, що хочете видалити цю компанію?',
-		nameUpdated: 'Ім\'я успішно оновлено',
+		nameUpdated: "Ім'я успішно оновлено",
 		descriptionUpdated: 'Опис успішно оновлено',
 		locationUpdated: 'Розташування успішно оновлено',
 		roleUpdated: 'Роль успішно оновлена',
@@ -188,7 +188,7 @@ const translations = {
 		countryNotSpecified: 'Country not specified',
 		cityNotSpecified: 'City not specified',
 		languageNotSet: 'Not set',
-		noCompaniesYet: 'You don\'t have any companies yet',
+		noCompaniesYet: "You don't have any companies yet",
 		addFirstCompany: 'Add your first company',
 		editCompany: 'Edit company',
 		createCompany: 'Create company',
@@ -294,20 +294,20 @@ const translations = {
 		countryNotSpecified: 'Pays non spécifié',
 		cityNotSpecified: 'Ville non spécifiée',
 		languageNotSet: 'Non défini',
-		noCompaniesYet: 'Vous n\'avez pas encore d\'entreprises',
+		noCompaniesYet: "Vous n'avez pas encore d'entreprises",
 		addFirstCompany: 'Ajoutez votre première entreprise',
-		editCompany: 'Modifier l\'entreprise',
+		editCompany: "Modifier l'entreprise",
 		createCompany: 'Créer une entreprise',
-		companyName: 'Nom de l\'entreprise',
+		companyName: "Nom de l'entreprise",
 		country: 'Pays',
 		city: 'Ville',
-		companyCategories: 'Catégories d\'entreprise',
+		companyCategories: "Catégories d'entreprise",
 		selectCategory: 'Sélectionnez la catégorie',
 		selectSubcategory: 'Sélectionnez la sous-catégorie',
 		addAnotherCategory: 'Ajouter une autre catégorie',
 		descriptionLanguage: 'Langue de description:',
-		companyDescription: 'Description de l\'entreprise',
-		updateCompany: 'Mettre à jour l\'entreprise',
+		companyDescription: "Description de l'entreprise",
+		updateCompany: "Mettre à jour l'entreprise",
 		previewDescriptions: 'Aperçu des descriptions:',
 		deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cette entreprise?',
 		nameUpdated: 'Nom mis à jour avec succès',
@@ -362,7 +362,8 @@ const translations = {
 		companyDescription: 'Unternehmensbeschreibung',
 		updateCompany: 'Unternehmen aktualisieren',
 		previewDescriptions: 'Vorschau der Beschreibungen:',
-		deleteConfirm: 'Sind Sie sicher, dass Sie dieses Unternehmen löschen möchten?',
+		deleteConfirm:
+			'Sind Sie sicher, dass Sie dieses Unternehmen löschen möchten?',
 		nameUpdated: 'Name erfolgreich aktualisiert',
 		descriptionUpdated: 'Beschreibung erfolgreich aktualisiert',
 		locationUpdated: 'Standort erfolgreich aktualisiert',
@@ -838,11 +839,7 @@ export default function ProfilePage() {
 			})
 
 			if (response.ok) {
-				setSuccess(
-					editingCompanyId
-						? tr.companyUpdated
-						: tr.companyCreated
-				)
+				setSuccess(editingCompanyId ? tr.companyUpdated : tr.companyCreated)
 				resetCompanyForm()
 				await fetchCompanies()
 			} else {
@@ -942,7 +939,9 @@ export default function ProfilePage() {
 
 	const getCurrentDescription = (): string => {
 		return (
-			(companyForm[`description_${selectedLang}` as keyof CompanyFormData] as string) || ''
+			(companyForm[
+				`description_${selectedLang}` as keyof CompanyFormData
+			] as string) || ''
 		)
 	}
 
@@ -965,7 +964,10 @@ export default function ProfilePage() {
 		if (!country) return tr.countryNotSpecified
 		if (typeof country === 'string') return country
 		return (
-			country.name_en || country.name_uk || country.name || tr.countryNotSpecified
+			country.name_en ||
+			country.name_uk ||
+			country.name ||
+			tr.countryNotSpecified
 		)
 	}
 
@@ -1614,9 +1616,7 @@ export default function ProfilePage() {
 										d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
 									/>
 								</svg>
-								<p className='text-lg font-medium mb-2'>
-									{tr.noCompaniesYet}
-								</p>
+								<p className='text-lg font-medium mb-2'>{tr.noCompaniesYet}</p>
 								<p className='text-sm'>{tr.addFirstCompany}</p>
 							</div>
 						)}
@@ -1626,9 +1626,7 @@ export default function ProfilePage() {
 							<div className='border-2 border-dashed border-red-300 rounded-lg p-6 bg-red-50'>
 								<div className='flex justify-between items-center mb-4'>
 									<h3 className='text-lg font-semibold text-gray-900'>
-										{editingCompanyId
-											? tr.editCompany
-											: tr.createCompany}
+										{editingCompanyId ? tr.editCompany : tr.createCompany}
 									</h3>
 									<button
 										onClick={resetCompanyForm}
@@ -1863,9 +1861,7 @@ export default function ProfilePage() {
 										}
 										className='flex-1 bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium'
 									>
-										{editingCompanyId
-											? tr.updateCompany
-											: tr.createCompany}
+										{editingCompanyId ? tr.updateCompany : tr.createCompany}
 									</button>
 									<button
 										onClick={resetCompanyForm}

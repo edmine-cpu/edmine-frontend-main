@@ -204,7 +204,7 @@ const T = {
 } as const
 
 export default function ZayavkiPage() {
-	const lang = 'en' as Lang
+	const lang = 'uk' as Lang
 	const t = T[lang]
 	const router = useRouter()
 
@@ -386,7 +386,7 @@ export default function ZayavkiPage() {
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang='en' />
+			<Header lang={lang as any} />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-6xl'>
 					<div className='flex justify-between items-center mb-6'>
