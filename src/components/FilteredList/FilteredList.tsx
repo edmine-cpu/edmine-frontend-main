@@ -15,6 +15,7 @@ import {
 	type City,
 } from '@/lib/slug-resolver'
 import type { Lang } from '@/app/(types)/lang'
+import { getCompanyDetailPath, getRequestDetailPath } from '@/lib/i18n-routes'
 
 interface FilteredListProps {
 	type: 'companies' | 'requests'
@@ -661,7 +662,11 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 												</span>
 											</div>
 											<a
-												href={buildFilterUrl({ lang, type }) + `/detail/${item.slug}`}
+												href={
+													isCompany
+														? getCompanyDetailPath(item.slug, lang)
+														: getRequestDetailPath(item.slug, lang)
+												}
 												className='px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors inline-block'
 											>
 												{t.details}

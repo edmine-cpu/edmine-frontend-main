@@ -1,18 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getInternalRoute } from './lib/i18n-routes'
 
 /**
  * Middleware для мультиязычной поддержки
  *
  * Логика работы:
  * 1. Определяет язык из URL префикса (uk/pl/de/fr) или использует английский (без префикса)
- * 2. Добавляет язык в headers (x-locale) для использования в Server Components
- * 3. Обрабатывает редиректы для английского языка: /en/* -> /*
+ * 2. Обрабатывает локализованные маршруты для компаний и заявок
+ * 3. Добавляет язык в headers (x-locale) для использования в Server Components
+ * 4. Обрабатывает редиректы для английского языка: /en/* -> /*
  *
  * Примеры URL:
  * - / -> английский (en)
  * - /uk/blog -> украинский (uk)
- * - /de/companies -> немецкий (de)
+ * - /kompanii/test-123 -> rewrite на /companies/test-123 с lang=uk
+ * - /firmy/test-123 -> rewrite на /companies/test-123 с lang=pl
+ * - /zayavki/test-123 -> rewrite на /requests/test-123 с lang=uk
  * - /en/blog -> редирект на /blog (убираем префикс en)
  */
 export function middleware(request: NextRequest) {
@@ -32,6 +36,18 @@ export function middleware(request: NextRequest) {
 		const url = request.nextUrl.clone()
 		url.pathname = newPathname || '/'
 		return NextResponse.redirect(url)
+	}
+
+	// Проверяем, является ли путь локализованным маршрутом компаний или заявок
+	const internalRoute = getInternalRoute(pathname)
+	if (internalRoute) {
+		// Делаем rewrite на внутренний маршрут с сохранением языка
+		const url = request.nextUrl.clone()
+		url.pathname = internalRoute.rewritePath
+
+		const response = NextResponse.rewrite(url)
+		response.headers.set('x-locale', internalRoute.lang)
+		return response
 	}
 
 	// Определяем язык из URL

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterButton } from "@/components/register/ButtonsRegisterPage";
 
-import { useFormState, Lang } from "@/app/[lang]/register/useFormState";
+import { useFormState, Lang } from "@/hooks/useFormState";
 import { RegisterTitleText } from "@/components/register/TextRegister";
 import { CountryCitySelector } from "@/components/register/CountryCitySelector";
 import { API_ENDPOINTS } from '@/config/api';

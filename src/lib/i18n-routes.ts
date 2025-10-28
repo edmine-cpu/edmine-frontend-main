@@ -30,25 +30,25 @@ export const REQUEST_ROUTES: Record<Lang, string> = {
 }
 
 /**
- * Переводы слова "компания" (единственное число) для детальных страниц
+ * Получить локализованный путь для детальной страницы компании
+ * @param slug - slug компании
+ * @param lang - язык
+ * @returns полный путь к детальной странице компании
+ * Пример: getCompanyDetailPath('test-company-123', 'uk') => '/kompanii/test-company-123'
  */
-export const COMPANY_DETAIL_ROUTES: Record<Lang, string> = {
-	uk: 'kompaniya',
-	en: 'company',
-	pl: 'firma',
-	fr: 'entreprise',
-	de: 'unternehmen-detail',
+export function getCompanyDetailPath(slug: string, lang: Lang): string {
+	return `/${COMPANY_ROUTES[lang]}/${slug}`
 }
 
 /**
- * Переводы слова "заявка" (единственное число) для детальных страниц
+ * Получить локализованный путь для детальной страницы заявки
+ * @param slug - slug заявки
+ * @param lang - язык
+ * @returns полный путь к детальной странице заявки
+ * Пример: getRequestDetailPath('test-request-123', 'uk') => '/zayavki/test-request-123'
  */
-export const REQUEST_DETAIL_ROUTES: Record<Lang, string> = {
-	uk: 'zayavka',
-	en: 'request',
-	pl: 'zlecenie',
-	fr: 'demande',
-	de: 'auftrag',
+export function getRequestDetailPath(slug: string, lang: Lang): string {
+	return `/${REQUEST_ROUTES[lang]}/${slug}`
 }
 
 /**
