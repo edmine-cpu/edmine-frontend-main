@@ -1,37 +1,46 @@
-import { useParams, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+/**
+ * Хук для автоматического определения языка в Client Components
+ */
 
-export type Language = 'uk' | 'en' | 'pl' | 'fr' | 'de';
+'use client'
 
-const supportedLanguages: Language[] = ['uk', 'en', 'pl', 'fr', 'de'];
-const defaultLanguage: Language = 'en';
+import { usePathname } from 'next/navigation'
+import type { Lang } from '@/app/(types)/lang'
 
-export function useLanguage() {
-    const params = useParams();
-    const router = useRouter();
-    
-    const currentLanguage = useMemo(() => {
-        const lang = params?.lang as Language;
-        return supportedLanguages.includes(lang) ? lang : defaultLanguage;
-    }, [params?.lang]);
+const SUPPORTED_LANGS: Lang[] = ['uk', 'en', 'pl', 'fr', 'de']
+const DEFAULT_LANG: Lang = 'en'
 
-    const changeLanguage = (newLanguage: Language) => {
-        if (!supportedLanguages.includes(newLanguage)) {
-            return;
-        }
+/**
+ * Хук для получения текущего языка из URL
+ * Автоматически определяет язык из pathname
+ *
+ * @returns текущий язык (en, uk, pl, fr, de)
+ *
+ * @example
+ * ```tsx
+ * function MyComponent() {
+ *   const lang = useLanguage()
+ *   return <div>Current language: {lang}</div>
+ * }
+ * ```
+ */
+export function useLanguage(): Lang {
+	const pathname = usePathname()
 
-        const currentPath = window.location.pathname;
-        const pathWithoutLang = currentPath.replace(/^\/[a-z]{2}/, '');
-        const newPath = `/${newLanguage}${pathWithoutLang}`;
-        
-        router.push(newPath);
-    };
+	// Извлекаем первый сегмент пути
+	const segments = pathname.split('/').filter(Boolean)
 
-    return {
-        currentLanguage,
-        changeLanguage,
-        supportedLanguages,
-        defaultLanguage
-    };
+	if (segments.length === 0) {
+		return DEFAULT_LANG
+	}
+
+	const firstSegment = segments[0]
+
+	// Проверяем, является ли первый сегмент языковым префиксом
+	if (SUPPORTED_LANGS.includes(firstSegment as Lang)) {
+		return firstSegment as Lang
+	}
+
+	// Если префикса нет - английский по умолчанию
+	return DEFAULT_LANG
 }
-

@@ -30,6 +30,28 @@ export const REQUEST_ROUTES: Record<Lang, string> = {
 }
 
 /**
+ * Переводы слова "компания" (единственное число) для детальных страниц
+ */
+export const COMPANY_DETAIL_ROUTES: Record<Lang, string> = {
+	uk: 'kompaniya',
+	en: 'company',
+	pl: 'firma',
+	fr: 'entreprise',
+	de: 'unternehmen-detail',
+}
+
+/**
+ * Переводы слова "заявка" (единственное число) для детальных страниц
+ */
+export const REQUEST_DETAIL_ROUTES: Record<Lang, string> = {
+	uk: 'zayavka',
+	en: 'request',
+	pl: 'zlecenie',
+	fr: 'demande',
+	de: 'auftrag',
+}
+
+/**
  * Получить язык по пути компаний
  * @param path - путь без слеша (например, "kompanii")
  * @returns язык или null если путь не распознан

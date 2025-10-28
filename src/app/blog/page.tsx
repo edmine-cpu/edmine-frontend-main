@@ -3,8 +3,8 @@
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useLanguage } from '@/hooks/useLanguage'
 
 interface BlogArticle {
 	id: number
@@ -56,8 +56,8 @@ const texts = {
 }
 
 export default function BlogPage() {
-	const params = useParams()
-	const lang = (params.lang as string) || 'en'
+	// Автоматически определяем язык из URL
+	const lang = useLanguage()
 	const t = texts[lang as keyof typeof texts] || texts.en
 
 	const [articles, setArticles] = useState<BlogArticle[]>([])
@@ -71,7 +71,7 @@ export default function BlogPage() {
 	const fetchArticles = async () => {
 		try {
 			setLoading(true)
-			const response = await fetch(`${API_ENDPOINTS.blogArticles}?lang=`)
+			const response = await fetch(`${API_ENDPOINTS.blogArticles}?lang=${lang}`)
 			if (response.ok) {
 				const data = await response.json()
 				setArticles(data)
@@ -166,7 +166,7 @@ export default function BlogPage() {
 										</p>
 									</div>
 
-									<Link href={`//blog/${article.id}`}>
+									<Link href={`/blog/${article.id}`}>
 										<button className='w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200'>
 											{t.readMore}
 										</button>

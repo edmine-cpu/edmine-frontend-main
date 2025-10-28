@@ -1,27 +1,52 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getInternalRoute } from './lib/i18n-routes'
 
+/**
+ * Middleware для мультиязычной поддержки
+ *
+ * Логика работы:
+ * 1. Определяет язык из URL префикса (uk/pl/de/fr) или использует английский (без префикса)
+ * 2. Добавляет язык в headers (x-locale) для использования в Server Components
+ * 3. Обрабатывает редиректы для английского языка: /en/* -> /*
+ *
+ * Примеры URL:
+ * - / -> английский (en)
+ * - /uk/blog -> украинский (uk)
+ * - /de/companies -> немецкий (de)
+ * - /en/blog -> редирект на /blog (убираем префикс en)
+ */
 export function middleware(request: NextRequest) {
-	const pathname = request.nextUrl.pathname
+	const { pathname } = request.nextUrl
 
-	// Проверяем, является ли путь многоязычным маршрутом компаний или заявок
-	const routeInfo = getInternalRoute(pathname)
+	// Список поддерживаемых языков
+	const supportedLangs = ['uk', 'en', 'pl', 'fr', 'de']
 
-	if (routeInfo) {
-		// Создаем новый URL для rewrite (не редирект!)
+	// Извлекаем первый сегмент пути
+	const segments = pathname.split('/').filter(Boolean)
+	const firstSegment = segments[0]
+
+	// РЕДИРЕКТ: Если URL начинается с /en/ -> убираем префикс
+	// Пример: /en/blog -> /blog
+	if (firstSegment === 'en') {
+		const newPathname = '/' + segments.slice(1).join('/')
 		const url = request.nextUrl.clone()
-		url.pathname = routeInfo.rewritePath
-
-		// Сохраняем язык в заголовках для доступа в компонентах
-		const response = NextResponse.rewrite(url)
-		response.headers.set('x-current-lang', routeInfo.lang)
-
-		return response
+		url.pathname = newPathname || '/'
+		return NextResponse.redirect(url)
 	}
 
-	// Для всех остальных путей - пропускаем
-	return NextResponse.next()
+	// Определяем язык из URL
+	let detectedLang = 'en' // Дефолтный язык - английский
+
+	// Проверяем, является ли первый сегмент языковым префиксом
+	if (firstSegment && supportedLangs.includes(firstSegment)) {
+		detectedLang = firstSegment
+	}
+
+	// Создаём response с добавлением языка в headers
+	const response = NextResponse.next()
+	response.headers.set('x-locale', detectedLang)
+
+	return response
 }
 
 export const config = {
