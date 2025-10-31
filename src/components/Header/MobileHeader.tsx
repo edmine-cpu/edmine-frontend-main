@@ -15,7 +15,7 @@ interface HeaderProps {
 export function MobileHeader({ lang }: HeaderProps) {
 	return (
 		<header className='w-full bg-white py-3'>
-			<div className='flex w-full items-center justify-between px-0'>
+			<div className='flex w-full items-center justify-between'>
 				{/* 1. Logo */}
 				<TitleName lang={lang} />
 

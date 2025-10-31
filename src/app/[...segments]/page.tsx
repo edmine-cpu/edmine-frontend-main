@@ -80,8 +80,8 @@ export async function generateMetadata({
 		lang = companyLang || requestLang || 'en'
 	}
 
-	// Определяем тип
-	const isRequests = resolvedSearchParams?.zayavki === 'true'
+	// Определяем тип (поддерживаем true, True, TRUE)
+	const isRequests = resolvedSearchParams?.zayavki?.toString().toLowerCase() === 'true'
 
 	// Переводы для метаданных
 	const titles = {
@@ -182,8 +182,8 @@ export default function UniversalPage({
 		}
 	}
 
-	// Определяем тип из query параметра
-	const isRequests = resolvedSearchParams?.zayavki === 'true'
+	// Определяем тип из query параметра (поддерживаем true, True, TRUE)
+	const isRequests = resolvedSearchParams?.zayavki?.toString().toLowerCase() === 'true'
 	const type = isRequests ? 'requests' : 'companies'
 
 	return (

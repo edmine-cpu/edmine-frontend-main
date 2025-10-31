@@ -1,21 +1,21 @@
 'use client'
 
+import type { Lang } from '@/app/(types)/lang'
 import { Header } from '@/components/Header/Header'
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
-import { useRouter, usePathname } from 'next/navigation'
-import React, { useEffect, useMemo, useState } from 'react'
-import { getLangFromPathname } from '@/utils/linkHelper'
+import { API_ENDPOINTS } from '@/config/api'
+import { getCompanyDetailPath, getRequestDetailPath } from '@/lib/i18n-routes'
 import {
-	parseFilterUrl,
 	buildFilterUrl,
 	loadAllData,
+	parseFilterUrl,
 	type Category,
-	type Subcategory,
-	type Country,
 	type City,
+	type Country,
+	type Subcategory,
 } from '@/lib/slug-resolver'
-import type { Lang } from '@/app/(types)/lang'
-import { getCompanyDetailPath, getRequestDetailPath } from '@/lib/i18n-routes'
+import { getLangFromPathname } from '@/utils/linkHelper'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 
 interface FilteredListProps {
 	type: 'companies' | 'requests'
@@ -176,7 +176,12 @@ const T = {
 	},
 } as const
 
-export function FilteredList({ type, segments, searchParams = {}, lang: langProp }: FilteredListProps) {
+export function FilteredList({
+	type,
+	segments,
+	searchParams = {},
+	lang: langProp,
+}: FilteredListProps) {
 	const pathname = usePathname()
 	const router = useRouter()
 
@@ -185,8 +190,10 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 	const t = T[lang]
 
 	const searchQuery = (searchParams.search as string) || ''
-	const minCost = type === 'requests' ? ((searchParams.min_cost as string) || '') : ''
-	const maxCost = type === 'requests' ? ((searchParams.max_cost as string) || '') : ''
+	const minCost =
+		type === 'requests' ? (searchParams.min_cost as string) || '' : ''
+	const maxCost =
+		type === 'requests' ? (searchParams.max_cost as string) || '' : ''
 
 	const [categories, setCategories] = useState<Category[]>([])
 	const [subcategories, setSubcategories] = useState<Subcategory[]>([])
@@ -245,7 +252,9 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 	// Фильтрованные подкатегории на основе выбранной категории
 	const filteredSubcategories = useMemo(() => {
 		if (!selectedCategoryId) return []
-		return subcategories.filter(s => String(s.full_category_id) === selectedCategoryId)
+		return subcategories.filter(
+			s => String(s.full_category_id) === selectedCategoryId
+		)
 	}, [selectedCategoryId, subcategories])
 
 	// Фильтрованные города на основе выбранной страны
@@ -255,7 +264,8 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 	}, [selectedCountryId, cities])
 
 	// Helper функции
-	const getName = (item: any) => item?.[`name_${lang}`] || item?.name_en || item?.name || ''
+	const getName = (item: any) =>
+		item?.[`name_${lang}`] || item?.name_en || item?.name || ''
 
 	const getCategoryName = (id: string) => {
 		const category = categories.find(c => String(c.id) === id)
@@ -278,7 +288,13 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 		}
 
 		// Проверяем slug для других языков (fallback)
-		const fallbackSlugs = ['slug_en', 'slug_uk', 'slug_pl', 'slug_fr', 'slug_de']
+		const fallbackSlugs = [
+			'slug_en',
+			'slug_uk',
+			'slug_pl',
+			'slug_fr',
+			'slug_de',
+		]
 		for (const slugKey of fallbackSlugs) {
 			const fallbackSlug = item[slugKey]
 			if (fallbackSlug && fallbackSlug.trim()) {
@@ -296,19 +312,31 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 			.toLowerCase()
 			.trim()
 			.replace(/[^\p{L}\p{N}\s-]/gu, '') // убираем все кроме Unicode букв, цифр, пробелов и дефисов
-			.replace(/[\s_]+/g, '-')  // заменяем пробелы и подчеркивания на дефисы
-			.replace(/-+/g, '-')       // множественные дефисы на один
-			.replace(/^-|-$/g, '')     // убираем дефисы в начале и конце
+			.replace(/[\s_]+/g, '-') // заменяем пробелы и подчеркивания на дефисы
+			.replace(/-+/g, '-') // множественные дефисы на один
+			.replace(/^-|-$/g, '') // убираем дефисы в начале и конце
 
 		return slug
 	}
 
 	// Применение фильтров и обновление URL
 	const applyFilters = () => {
-		const categorySlug = selectedCategoryId ? getSlugFromData(categories.find(c => String(c.id) === selectedCategoryId)) : ''
-		const subcategorySlug = selectedSubcategoryId ? getSlugFromData(subcategories.find(s => String(s.id) === selectedSubcategoryId)) : ''
-		const countrySlug = selectedCountryId ? getSlugFromData(countries.find(c => String(c.id) === selectedCountryId)) : ''
-		const citySlug = selectedCityId ? getSlugFromData(cities.find(c => String(c.id) === selectedCityId)) : ''
+		const categorySlug = selectedCategoryId
+			? getSlugFromData(
+					categories.find(c => String(c.id) === selectedCategoryId)
+			  )
+			: ''
+		const subcategorySlug = selectedSubcategoryId
+			? getSlugFromData(
+					subcategories.find(s => String(s.id) === selectedSubcategoryId)
+			  )
+			: ''
+		const countrySlug = selectedCountryId
+			? getSlugFromData(countries.find(c => String(c.id) === selectedCountryId))
+			: ''
+		const citySlug = selectedCityId
+			? getSlugFromData(cities.find(c => String(c.id) === selectedCityId))
+			: ''
 
 		// Строим новый URL (уже содержит ?zayavki=true для requests)
 		const baseUrl = buildFilterUrl({
@@ -317,7 +345,7 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 			country: countrySlug || undefined,
 			city: citySlug || undefined,
 			lang,
-			type
+			type,
 		})
 
 		// Парсим существующие query параметры из baseUrl
@@ -372,7 +400,8 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 			if (maxCost) apiParams.set('max_cost', maxCost)
 		}
 
-		const endpoint = type === 'companies' ? API_ENDPOINTS.companiesv2 : API_ENDPOINTS.bidsV2
+		const endpoint =
+			type === 'companies' ? API_ENDPOINTS.companiesv2 : API_ENDPOINTS.bidsV2
 
 		fetch(`${endpoint}/?${apiParams.toString()}`)
 			.then(res => res.json())
@@ -399,7 +428,11 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 
 	// Сброс фильтров
 	const resetFilters = () => {
-		router.push(buildFilterUrl({ lang, type }))
+		if (type === 'requests') {
+			router.push('/all?zayavki=true')
+		} else {
+			router.push('/all')
+		}
 	}
 
 	const title = type === 'companies' ? t.companiesTitle : t.requestsTitle
@@ -411,13 +444,11 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 				<div className='w-full max-w-6xl'>
 					{/* Header */}
 					<div className='mb-6'>
-						<div className='flex justify-between items-center mb-3'>
-							<h1 className='text-2xl font-semibold text-red-600'>{title}</h1>
+						<div className='flex justify-center items-center mb-3'>
+							{/* <h1 className='text-2xl font-semibold text-red-600'>{title}</h1> */}
 							<div className='flex gap-3'>
 								<button
-									onClick={() =>
-										router.push(buildFilterUrl({ lang, type: 'requests' }))
-									}
+									onClick={() => router.push('/all?zayavki=true')}
 									className={`px-4 py-2 rounded-md font-semibold ${
 										type === 'requests'
 											? 'bg-red-600 text-white'
@@ -427,9 +458,7 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 									{t.requestsTitle}
 								</button>
 								<button
-									onClick={() =>
-										router.push(buildFilterUrl({ lang, type: 'companies' }))
-									}
+									onClick={() => router.push('/all')}
 									className={`px-4 py-2 rounded-md font-semibold ${
 										type === 'companies'
 											? 'bg-red-600 text-white'
@@ -448,7 +477,9 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 
 						{/* Search */}
 						<div className='mb-4'>
-							<label className='block text-sm text-gray-700 mb-1'>{t.search}</label>
+							<label className='block text-sm text-gray-700 mb-1'>
+								{t.search}
+							</label>
 							<input
 								type='text'
 								value={searchInput}
@@ -528,7 +559,9 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 
 							{/* City */}
 							<div>
-								<label className='block text-sm text-gray-700 mb-1'>{t.city}</label>
+								<label className='block text-sm text-gray-700 mb-1'>
+									{t.city}
+								</label>
 								<select
 									value={selectedCityId}
 									onChange={e => setSelectedCityId(e.target.value)}
@@ -639,25 +672,35 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 										)}
 
 										<div className='text-xs text-gray-600 mb-2'>
-											{isCompany && company?.category_ids && company.category_ids.length > 0 && (
-												<div>
-													<span className='font-medium'>{t.category}:</span>{' '}
-													{company.category_ids.map(id => getCategoryName(String(id))).join(', ')}
-												</div>
-											)}
-											{!isCompany && bid?.category && bid.category.length > 0 && (
-												<div>
-													<span className='font-medium'>{t.category}:</span>{' '}
-													{bid.category.map(id => getCategoryName(String(id))).join(', ')}
-												</div>
-											)}
+											{isCompany &&
+												company?.category_ids &&
+												company.category_ids.length > 0 && (
+													<div>
+														<span className='font-medium'>{t.category}:</span>{' '}
+														{company.category_ids
+															.map(id => getCategoryName(String(id)))
+															.join(', ')}
+													</div>
+												)}
+											{!isCompany &&
+												bid?.category &&
+												bid.category.length > 0 && (
+													<div>
+														<span className='font-medium'>{t.category}:</span>{' '}
+														{bid.category
+															.map(id => getCategoryName(String(id)))
+															.join(', ')}
+													</div>
+												)}
 										</div>
 
 										<div className='flex items-center justify-between text-sm text-gray-600'>
 											<div className='flex items-center space-x-2'>
 												<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
 													📍 {isCompany ? company?.city : bid?.city}
-													{isCompany && company?.country && `, ${company.country}`}
+													{isCompany &&
+														company?.country &&
+														`, ${company.country}`}
 													{!isCompany && bid?.country && `, ${bid.country}`}
 												</span>
 											</div>
@@ -676,7 +719,9 @@ export function FilteredList({ type, segments, searchParams = {}, lang: langProp
 								)
 							})}
 							{items.length === 0 && (
-								<div className='text-center text-gray-500 py-8'>{t.noResults}</div>
+								<div className='text-center text-gray-500 py-8'>
+									{t.noResults}
+								</div>
 							)}
 						</div>
 					)}

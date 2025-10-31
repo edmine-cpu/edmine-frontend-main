@@ -272,7 +272,7 @@ export default function CompanyDetailPage({
 					<div className='text-center'>
 						<p className='text-xl text-gray-600 mb-4'>{t.notFound}</p>
 						<button
-							onClick={() => router.push(getLangPath('/companies', lang))}
+							onClick={() => router.push('/all')}
 							className='px-6 py-2 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700'
 						>
 							{t.backToList}
@@ -306,13 +306,13 @@ export default function CompanyDetailPage({
 					{/* Header with back button */}
 					<div className='flex justify-between items-center mb-6'>
 						<button
-							onClick={() => router.push(getLangPath('/companies', lang))}
+							onClick={() => router.push('/all')}
 							className='text-red-600 hover:text-red-700 font-semibold'
 						>
 							← {t.backToList}
 						</button>
 						<button
-							onClick={() => router.push(getLangPath('/requests', lang))}
+							onClick={() => router.push('/all?zayavki=True')}
 							className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-100'
 						>
 							{t.requests}

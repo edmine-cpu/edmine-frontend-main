@@ -25,8 +25,7 @@
 .hamburger-line {
 	display: block !important;
 	background-color: #1f2937 !important;
-	min-height: 3px !important;
-	width: 100% !important;
+	height: 3px !important;
 	border-radius: 2px;
 	transition: all 0.2s ease;
 }

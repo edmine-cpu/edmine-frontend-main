@@ -97,7 +97,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 						e.preventDefault()
 						setIsMenuOpen(!isMenuOpen)
 					}}
-					className='flex flex-col justify-center w-12 h-12 cursor-pointer group p-3 space-y-1 bg-transparent hover:bg-gray-100 rounded-md transition-colors hamburger-button mobile-button'
+					className='flex flex-col justify-center w-12 h-12 cursor-pointer group space-y-1 bg-transparent hover:bg-gray-100 rounded-md transition-colors hamburger-button mobile-button p-3'
 					aria-label={t('home')}
 					type='button'
 				>
@@ -135,7 +135,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 										{t('chat')}
 									</Link>
 									<Link
-										href={getLangPath('/zayavki', lang)}
+										href={getLangPath('/all?zayavki=True', lang)}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => {
 											setIsMenuOpen(false)
@@ -167,7 +167,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 							) : (
 								<>
 									<Link
-										href={getLangPath('/zayavki', lang)}
+										href={getLangPath('/all?zayavki=True', lang)}
 										className='block px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg mx-2'
 										onClick={() => {
 											setIsMenuOpen(false)

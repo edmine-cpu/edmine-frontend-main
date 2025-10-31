@@ -431,7 +431,7 @@ export default function RequestDetailPage({
 			<Header lang={lang} />
 			<div className='max-w-4xl mx-auto px-4 py-8'>
 				<Link
-					href={getLangPath('/requests', lang)}
+					href='/all?zayavki=True'
 					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
 				>
 					{t.back}
