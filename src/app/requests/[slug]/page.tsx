@@ -425,102 +425,98 @@ export default function RequestDetailPage({
     );
 
   return (
-    <div>
+    <div className="min-h-screen">
       <Header lang={lang} />
-			<main>
-				
-			</main>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Link
+          href="/all?zayavki=True"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
+        >
+          {t.back}
+        </Link>
+
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">{bid.title}</h1>
+
+          {bid.description && (
+            <div className="prose max-w-none mb-8">
+              <p className="text-gray-700 text-lg leading-relaxed">
+                {bid.description}
+              </p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t.category}
+              </h3>
+              <p className="text-gray-700">{getCategoryNames(bid.category)}</p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t.subcategory}
+              </h3>
+              <p className="text-gray-700">
+                {getSubcategoryNames(bid.undercategory)}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t.location}
+              </h3>
+              <p className="text-gray-700">
+                {getLocationString(bid.city, bid.country)}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t.budget}
+              </h3>
+              <p className="text-gray-700">
+                {bid.cost || bid.subcprice
+                  ? `${bid.cost || bid.subcprice}${
+                      bid.budget_type ? ` ${bid.budget_type}` : ""
+                    }`
+                  : "—"}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {t.contact}
+              </h3>
+              {author && (
+                <BidAuthorContact
+                  lang={lang}
+                  name={
+                    author.name ||
+                    [author.first_name, author.last_name]
+                      .filter(Boolean)
+                      .join(" ") ||
+                    t.author
+                  }
+                  id={author.id}
+                />
+              )}
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t.created}
+              </h3>
+              <p className="text-gray-700">
+                {bid.created_at
+                  ? new Date(bid.created_at).toLocaleDateString()
+                  : "—"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-/*		<div className='min-h-screen'>
-			<Header lang={lang} />
-			<div className='max-w-4xl mx-auto px-4 py-8'>
-				<Link
-					href='/all?zayavki=True'
-					className='inline-flex items-center text-blue-600 hover:text-blue-800 mb-6'
-				>
-					{t.back}
-				</Link>
-
-				<div className='bg-white rounded-lg shadow-md p-8'>
-					<h1 className='text-3xl font-bold text-gray-900 mb-6'>{bid.title}</h1>
-
-					{bid.description && (
-						<div className='prose max-w-none mb-8'>
-							<p className='text-gray-700 text-lg leading-relaxed'>
-								{bid.description}
-							</p>
-						</div>
-					)}
-
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-2'>
-								{t.category}
-							</h3>
-							<p className='text-gray-700'>{getCategoryNames(bid.category)}</p>
-						</div>
-
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-2'>
-								{t.subcategory}
-							</h3>
-							<p className='text-gray-700'>
-								{getSubcategoryNames(bid.undercategory)}
-							</p>
-						</div>
-
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-2'>
-								{t.location}
-							</h3>
-							<p className='text-gray-700'>
-								{getLocationString(bid.city, bid.country)}
-							</p>
-						</div>
-
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-2'>
-								{t.budget}
-							</h3>
-							<p className='text-gray-700'>
-								{bid.cost || bid.subcprice
-									? `${bid.cost || bid.subcprice}${bid.budget_type ? ` ${bid.budget_type}` : ''}`
-									: '—'}
-							</p>
-						</div>
-
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-4'>
-								{t.contact}
-							</h3>
-							{author && (
-								<BidAuthorContact
-									lang={lang}
-									name={
-										author.name ||
-										[author.first_name, author.last_name]
-											.filter(Boolean)
-											.join(' ') ||
-										t.author
-									}
-									id={author.id}
-								/>
-							)}
-						</div>
-
-						<div>
-							<h3 className='text-lg font-semibold text-gray-900 mb-2'>
-								{t.created}
-							</h3>
-							<p className='text-gray-700'>
-								{bid.created_at
-									? new Date(bid.created_at).toLocaleDateString()
-									: '—'}
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>*/
