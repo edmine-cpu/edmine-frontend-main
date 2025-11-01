@@ -14,6 +14,7 @@ import {
 	type Subcategory,
 } from '@/lib/slug-resolver'
 import { getLangFromPathname } from '@/utils/linkHelper'
+import { transliterate } from '@/utils/transliterate'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -302,19 +303,13 @@ export function FilteredList({
 			}
 		}
 
-		// Иначе создаем из имени (поддерживаем Unicode символы)
+		// Иначе создаем из имени с транслитерацией для SEO
 		const name = getName(item)
 
 		if (!name || !name.trim()) return ''
 
-		// Создание slug с поддержкой Unicode: сохраняем все буквы и цифры (включая кириллицу, польские символы и т.д.)
-		const slug = name
-			.toLowerCase()
-			.trim()
-			.replace(/[^\p{L}\p{N}\s-]/gu, '') // убираем все кроме Unicode букв, цифр, пробелов и дефисов
-			.replace(/[\s_]+/g, '-') // заменяем пробелы и подчеркивания на дефисы
-			.replace(/-+/g, '-') // множественные дефисы на один
-			.replace(/^-|-$/g, '') // убираем дефисы в начале и конце
+		// Используем транслитерацию для создания SEO-friendly slug
+		const slug = transliterate(name)
 
 		return slug
 	}
@@ -428,10 +423,11 @@ export function FilteredList({
 
 	// Сброс фильтров
 	const resetFilters = () => {
+		const basePath = lang === 'en' ? '/all' : `/${lang}/all`
 		if (type === 'requests') {
-			router.push('/all?zayavki=true')
+			router.push(`${basePath}?zayavki=true`)
 		} else {
-			router.push('/all')
+			router.push(basePath)
 		}
 	}
 
@@ -448,7 +444,10 @@ export function FilteredList({
 							{/* <h1 className='text-2xl font-semibold text-red-600'>{title}</h1> */}
 							<div className='flex gap-3'>
 								<button
-									onClick={() => router.push('/all?zayavki=true')}
+									onClick={() => {
+										const basePath = lang === 'en' ? '/all' : `/${lang}/all`
+										router.push(`${basePath}?zayavki=true`)
+									}}
 									className={`px-4 py-2 rounded-md font-semibold ${
 										type === 'requests'
 											? 'bg-red-600 text-white'
@@ -458,7 +457,10 @@ export function FilteredList({
 									{t.requestsTitle}
 								</button>
 								<button
-									onClick={() => router.push('/all')}
+									onClick={() => {
+										const basePath = lang === 'en' ? '/all' : `/${lang}/all`
+										router.push(basePath)
+									}}
 									className={`px-4 py-2 rounded-md font-semibold ${
 										type === 'companies'
 											? 'bg-red-600 text-white'

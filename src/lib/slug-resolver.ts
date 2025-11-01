@@ -5,6 +5,7 @@
 
 import { API_BASE_URL } from '@/config/api'
 import type { Lang } from '@/app/(types)/lang'
+import { transliterate } from '@/utils/transliterate'
 
 export interface Category {
 	id: number
@@ -132,25 +133,22 @@ export async function loadAllData(): Promise<{
 
 /**
  * Создает slug из текста (для сравнения)
+ * Использует транслитерацию для поддержки разных языков
  */
 function createSlug(text: string): string {
 	if (!text) return ''
-	return text
-		.toLowerCase()
-		.trim()
-		.replace(/\s+/g, '-')
-		.replace(/[^a-z0-9-]/g, '')
-		.replace(/-+/g, '-')
-		.replace(/^-|-$/g, '')
+	// Используем транслитерацию для создания SEO-friendly slug
+	return transliterate(text)
 }
 
 /**
  * Проверяет соответствие slug-а для всех языков
+ * Поддерживает как транслитерированные так и оригинальные (кириллица) slug'и для обратной совместимости
  */
 function matchesSlug(item: any, slug: string, lang: Lang): boolean {
 	const slugToCheck = slug.toLowerCase()
 
-	// Проверяем slug для всех языков
+	// Проверяем существующие slug для всех языков (с транслитерацией)
 	const slugs = [
 		item[`slug_${lang}`],
 		item.slug_uk,
@@ -166,7 +164,7 @@ function matchesSlug(item: any, slug: string, lang: Lang): boolean {
 		return true
 	}
 
-	// Проверяем имена для всех языков
+	// Проверяем имена для всех языков с транслитерацией
 	const names = [
 		item[`name_${lang}`],
 		item.name_uk,
@@ -175,11 +173,26 @@ function matchesSlug(item: any, slug: string, lang: Lang): boolean {
 		item.name_fr,
 		item.name_de,
 		item.name,
-	]
-		.filter(Boolean)
-		.map(n => createSlug(n))
+	].filter(Boolean)
 
-	return names.some(n => n === slugToCheck)
+	// Проверяем транслитерированные имена
+	if (names.map(n => createSlug(n)).some(n => n === slugToCheck)) {
+		return true
+	}
+
+	// Для обратной совместимости: проверяем оригинальные имена с кириллицей
+	// Создаем slug с сохранением Unicode символов (как было раньше)
+	const unicodeSlugs = names.map(name =>
+		name
+			.toLowerCase()
+			.trim()
+			.replace(/[^\p{L}\p{N}\s-]/gu, '')
+			.replace(/[\s_]+/g, '-')
+			.replace(/-+/g, '-')
+			.replace(/^-|-$/g, '')
+	)
+
+	return unicodeSlugs.some(s => s === slugToCheck)
 }
 
 /**
@@ -318,6 +331,7 @@ export function analyzeUrlStructure(segments: ResolvedSegment[]): {
 
 /**
  * Создает slug из ID и данных
+ * Использует транслитерацию для SEO-friendly URL
  */
 export function createSlugFromData(item: any, lang: Lang): string {
 	if (!item) return 'all'
@@ -325,7 +339,7 @@ export function createSlugFromData(item: any, lang: Lang): string {
 	// Проверяем существующие slug-и
 	if (item[`slug_${lang}`]) return item[`slug_${lang}`]
 
-	// Создаем из имени
+	// Создаем из имени с транслитерацией
 	const name = item[`name_${lang}`] || item.name_en || item.name || ''
 	return createSlug(name)
 }
