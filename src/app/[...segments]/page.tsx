@@ -150,7 +150,7 @@ export default function UniversalPage({
 	searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
 	const resolvedParams = React.use(params)
-	const resolvedSearchParams = React.use(searchParams)
+	const resolvedSearchParams = React.use(searchParams ?? Promise.resolve<{ [key: string]: string | string[] | undefined }>({}))
 	const allSegments = resolvedParams?.segments || []
 
 	// Определяем язык из URL

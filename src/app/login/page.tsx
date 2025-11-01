@@ -1,5 +1,3 @@
-'use client'
-
 import { Lang } from '@/app/(types)/lang'
 import LoginForm from '@/components/login/LoginForm'
 

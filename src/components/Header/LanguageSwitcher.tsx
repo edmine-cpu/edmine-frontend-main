@@ -20,7 +20,6 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 	const pathname = usePathname()
 	const [open, setOpen] = useState(false)
-	// Определяем текущий язык из URL, а не из пропса
 	const actualLang = getLangFromPathname(pathname)
 
 	const handleLanguageChange = (newLang: Lang) => {

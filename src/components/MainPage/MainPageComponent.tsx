@@ -1,4 +1,4 @@
-import {IndexButtons} from "@/components/indexMain/ButtonsIndexPage"
+import {IndexButtons} from "@/components/MainPage/ButtonsIndexPage"
 type Lang = 'en' | 'de' | 'fr' | 'pl' | 'uk';
 
 

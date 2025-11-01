@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header/Header";
-import { MainPage } from "@/components/indexMain/MainPageComponent";
+import { MainPage } from "@/components/MainPage/MainPageComponent";
 import { headers } from 'next/headers';
 import type { Lang } from '@/app/(types)/lang';
 export default async function Home() {

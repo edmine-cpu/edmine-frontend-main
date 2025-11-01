@@ -1,5 +1,3 @@
-'use client'
-
 import { DesktopHeader } from '@/components/Header/DesktopHeader'
 import { MobileHeader } from '@/components/Header/MobileHeader'
 import { TabletHeader } from '@/components/Header/TabletHeader'

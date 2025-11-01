@@ -1,5 +1,3 @@
-'use client';
-
 import { Header } from "@/components/Header/Header";
 import { RegisterForms } from "@/components/register/RegisterForms";
 import { Lang } from "@/app/(types)/lang";
