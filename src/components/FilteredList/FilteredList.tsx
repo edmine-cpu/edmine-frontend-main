@@ -673,38 +673,46 @@ export function FilteredList({
 											</p>
 										)}
 
-										<div className='text-xs text-gray-600 mb-2'>
-											{isCompany &&
-												company?.category_ids &&
-												company.category_ids.length > 0 && (
-													<div>
-														<span className='font-medium'>{t.category}:</span>{' '}
-														{company.category_ids
-															.map(id => getCategoryName(String(id)))
-															.join(', ')}
-													</div>
-												)}
-											{!isCompany &&
-												bid?.category &&
-												bid.category.length > 0 && (
-													<div>
-														<span className='font-medium'>{t.category}:</span>{' '}
-														{bid.category
-															.map(id => getCategoryName(String(id)))
-															.join(', ')}
-													</div>
-												)}
-										</div>
+										{/* Отображаем блок категорий только если они есть */}
+										{((isCompany && company?.category_ids && company.category_ids.length > 0) ||
+											(!isCompany && bid?.category && bid.category.length > 0)) && (
+											<div className='text-xs text-gray-600 mb-2'>
+												{isCompany &&
+													company?.category_ids &&
+													company.category_ids.length > 0 && (
+														<div>
+															<span className='font-medium'>{t.category}:</span>{' '}
+															{company.category_ids
+																.map(id => getCategoryName(String(id)))
+																.join(', ')}
+														</div>
+													)}
+												{!isCompany &&
+													bid?.category &&
+													bid.category.length > 0 && (
+														<div>
+															<span className='font-medium'>{t.category}:</span>{' '}
+															{bid.category
+																.map(id => getCategoryName(String(id)))
+																.join(', ')}
+														</div>
+													)}
+											</div>
+										)}
 
 										<div className='flex items-center justify-between text-sm text-gray-600'>
 											<div className='flex items-center space-x-2'>
-												<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
-													📍 {isCompany ? company?.city : bid?.city}
-													{isCompany &&
-														company?.country &&
-														`, ${company.country}`}
-													{!isCompany && bid?.country && `, ${bid.country}`}
-												</span>
+												{/* Отображаем локацию только если есть город или страна */}
+												{((isCompany && (company?.city || company?.country)) ||
+													(!isCompany && (bid?.city || bid?.country))) && (
+													<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
+														📍 {isCompany ? company?.city : bid?.city}
+														{isCompany &&
+															company?.country &&
+															`, ${company.country}`}
+														{!isCompany && bid?.country && `, ${bid.country}`}
+													</span>
+												)}
 											</div>
 											<a
 												href={
