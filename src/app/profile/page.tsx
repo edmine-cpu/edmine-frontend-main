@@ -10,6 +10,7 @@ import { useTranslation } from '@/translations'
 import { checkAuth } from '@/utils/auth'
 import { getLangFromPathname } from '@/utils/linkHelper'
 import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 interface Profile {
@@ -1020,12 +1021,19 @@ export default function ProfilePage() {
 					<div className='flex flex-col lg:flex-row items-center lg:items-start gap-8'>
 						{/* Avatar Section */}
 						<div className='flex flex-col items-center space-y-6'>
-							<div className='relative'>
+							<div className='relative w-32 h-32'>
 								{profile.avatar ? (
-									<img
+									<Image
 										src={`${STATIC_FILES_URL}/${profile.avatar}`}
 										alt='Avatar'
-										className='w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg'
+										width={128}
+										height={128}
+										className='rounded-full object-cover border-4 border-red-100 shadow-lg'
+										unoptimized
+										onError={(e) => {
+											const target = e.target as HTMLImageElement;
+											target.style.display = 'none';
+										}}
 									/>
 								) : (
 									<div className='w-32 h-32 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-lg'>

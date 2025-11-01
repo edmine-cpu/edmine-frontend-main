@@ -8,6 +8,24 @@ const nextConfig: NextConfig = {
 	productionBrowserSourceMaps: false,
 	output: 'standalone',
 
+	// Конфигурация для внешних изображений
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'http',
+				hostname: '82.25.86.30',
+				port: '8888',
+				pathname: '/static/**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'makeasap.com',
+				pathname: '/static/**',
+			},
+		],
+		unoptimized: false,
+	},
+
 	// Заголовки (объединено)
 	async headers() {
 		return [
