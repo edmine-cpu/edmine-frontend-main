@@ -38,6 +38,7 @@ interface CompanyItem {
 
 interface BidItem {
 	title: string
+	description?: string
 	subcprice: string
 	cost: number
 	category?: number[]
@@ -86,6 +87,9 @@ const T = {
 		resetFilters: 'Скинути',
 		totalResults: 'Знайдено',
 		sortBy: 'Сортувати',
+		budgetNotSpecified: 'Бюджет не вказано',
+		regionNotSpecified: 'Регіон не вказано',
+		categoryNotSpecified: 'Категорія не вказана',
 	},
 	en: {
 		companiesTitle: 'Companies',
@@ -108,6 +112,9 @@ const T = {
 		resetFilters: 'Reset',
 		totalResults: 'Found',
 		sortBy: 'Sort by',
+		budgetNotSpecified: 'Budget not specified',
+		regionNotSpecified: 'Region not specified',
+		categoryNotSpecified: 'Category not specified',
 	},
 	pl: {
 		companiesTitle: 'Firmy',
@@ -130,6 +137,9 @@ const T = {
 		resetFilters: 'Resetuj',
 		totalResults: 'Znaleziono',
 		sortBy: 'Sortuj według',
+		budgetNotSpecified: 'Budżet nieokreślony',
+		regionNotSpecified: 'Region nieokreślony',
+		categoryNotSpecified: 'Kategoria nieokreślona',
 	},
 	fr: {
 		companiesTitle: 'Entreprises',
@@ -152,6 +162,9 @@ const T = {
 		resetFilters: 'Réinitialiser',
 		totalResults: 'Trouvé',
 		sortBy: 'Trier par',
+		budgetNotSpecified: 'Budget non spécifié',
+		regionNotSpecified: 'Région non spécifiée',
+		categoryNotSpecified: 'Catégorie non spécifiée',
 	},
 	de: {
 		companiesTitle: 'Unternehmen',
@@ -174,6 +187,9 @@ const T = {
 		resetFilters: 'Zurücksetzen',
 		totalResults: 'Gefunden',
 		sortBy: 'Sortieren nach',
+		budgetNotSpecified: 'Budget nicht angegeben',
+		regionNotSpecified: 'Region nicht angegeben',
+		categoryNotSpecified: 'Kategorie nicht angegeben',
 	},
 } as const
 
@@ -661,56 +677,65 @@ export function FilteredList({
 												{isCompany ? company?.name : bid?.title}
 											</h3>
 											{!isCompany && bid && (
-												<span className='text-lg font-bold text-green-600'>
-													${bid.cost}
+												<span
+													className={`font-bold ${
+														bid.cost > 0
+															? 'text-lg text-green-600'
+															: 'text-sm text-gray-500'
+													}`}
+												>
+													{bid.cost > 0 ? `$${bid.cost}` : t.budgetNotSpecified}
 												</span>
 											)}
 										</div>
 
+										{/* Описание - для компаний и заявок */}
 										{isCompany && company?.description && (
 											<p className='text-sm text-gray-600 mb-2'>
-												{company.description}
+												{company.description.length > 150
+													? company.description.substring(0, 150) + '...'
+													: company.description}
+											</p>
+										)}
+										{!isCompany && bid?.description && (
+											<p className='text-sm text-gray-600 mb-2'>
+												{bid.description.length > 150
+													? bid.description.substring(0, 150) + '...'
+													: bid.description}
 											</p>
 										)}
 
-										{/* Отображаем блок категорий только если они есть */}
-										{((isCompany && company?.category_ids && company.category_ids.length > 0) ||
-											(!isCompany && bid?.category && bid.category.length > 0)) && (
-											<div className='text-xs text-gray-600 mb-2'>
-												{isCompany &&
-													company?.category_ids &&
-													company.category_ids.length > 0 && (
-														<div>
-															<span className='font-medium'>{t.category}:</span>{' '}
-															{company.category_ids
-																.map(id => getCategoryName(String(id)))
-																.join(', ')}
-														</div>
-													)}
-												{!isCompany &&
-													bid?.category &&
-													bid.category.length > 0 && (
-														<div>
-															<span className='font-medium'>{t.category}:</span>{' '}
-															{bid.category
-																.map(id => getCategoryName(String(id)))
-																.join(', ')}
-														</div>
-													)}
+										{/* Блок категорий - всегда показываем */}
+										<div className='text-xs text-gray-600 mb-2'>
+											<div>
+												<span className='font-medium'>{t.category}:</span>{' '}
+												{isCompany && company?.category_ids && company.category_ids.length > 0
+													? company.category_ids
+															.map(id => getCategoryName(String(id)))
+															.join(', ')
+													: !isCompany && bid?.category && bid.category.length > 0
+													? bid.category
+															.map(id => getCategoryName(String(id)))
+															.join(', ')
+													: t.categoryNotSpecified}
 											</div>
-										)}
+										</div>
 
 										<div className='flex items-center justify-between text-sm text-gray-600'>
 											<div className='flex items-center space-x-2'>
-												{/* Отображаем локацию только если есть город или страна */}
+												{/* Локация - всегда показываем */}
 												{((isCompany && (company?.city || company?.country)) ||
-													(!isCompany && (bid?.city || bid?.country))) && (
+													(!isCompany && (bid?.city || bid?.country))) ? (
 													<span className='bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs'>
 														📍 {isCompany ? company?.city : bid?.city}
 														{isCompany &&
 															company?.country &&
 															`, ${company.country}`}
 														{!isCompany && bid?.country && `, ${bid.country}`}
+													</span>
+												) : (
+													<span className='text-gray-500 text-xs'>
+														{t.regionNotSpecified}
 													</span>
 												)}
 											</div>
