@@ -24,8 +24,9 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
 
 	const handleLanguageChange = (newLang: Lang) => {
 		const currentPath = window.location.pathname
+		const queryParams = window.location.search // сохраняем query параметры
 		const newPath = switchLang(currentPath, newLang)
-		window.location.href = newPath
+		window.location.href = newPath + queryParams // добавляем query параметры к новому пути
 	}
 
 	return (
