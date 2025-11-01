@@ -9,7 +9,7 @@ import LanguageSwitcher, {
 	Lang,
 } from '@/components/createRequest/LanguageSwitcher'
 import TitleDescription from '@/components/createRequest/TitleDescription'
-import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
+import { API_ENDPOINTS } from '@/config/api'
 import { TRANSLATIONS } from '@/translations/create-request'
 import { checkAuth } from '@/utils/auth'
 import { getLangPath, getLangFromPathname } from '@/utils/linkHelper'
@@ -253,9 +253,6 @@ export default function CreateBidPage() {
 		try {
 			const data = new FormData()
 
-			// Добавляем язык из URL
-			data.append('lang', lang)
-
 			if (formState.categories.length > 0) {
 				data.append('category', formState.categories.join(','))
 			}
@@ -284,8 +281,9 @@ export default function CreateBidPage() {
 
 			formState.files.slice(0, 3).forEach(f => data.append('files', f))
 
+			// Язык передается в URL пути, а не в теле запроса
 			const res = await fetch(
-				`${API_BASE_URL}/api/create-request-fast`,
+				API_ENDPOINTS.createBid(lang),
 				{
 					method: 'POST',
 					body: data,
