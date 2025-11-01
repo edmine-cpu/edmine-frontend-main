@@ -2,8 +2,8 @@
 
 import { Lang } from '@/app/(types)/lang'
 import { getTranslation } from '@/hooks/headerTranslation'
-import { TabLink } from '@/components/headersOLD/Buttons'
 import { getLangPath } from '@/utils/linkHelper'
+import { TabLink } from '../TabNav'
 
 interface BurgerListProps {
 	lang: Lang

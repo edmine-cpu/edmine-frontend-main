@@ -73,14 +73,14 @@ export function RegisterForms({ lang }: Props) {
   if (isAuth === null) return null;
 
   return (
-    <div className="flex justify-center items-center px-4 min-h-screen">
-      <div className="container mx-auto sm:w-xl">
+    <div className="flex justify-center items-center px-4 min-h-screen w-full">
+      <div className="w-full max-w-md mx-auto">
         <form
           onSubmit={(e) => {
             console.log("🎯 Form submit event triggered");
             handleSubmit(e);
           }}
-          className="flex flex-col items-center justify-center gap-2"
+          className="flex flex-col items-center justify-center gap-2 w-full"
         >
           <RegisterTitleText lang={language} />
 

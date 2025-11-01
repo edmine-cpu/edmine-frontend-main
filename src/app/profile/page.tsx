@@ -376,7 +376,7 @@ const translations = {
 	},
 } as const
 
-type ProfileTranslations = typeof translations.uk
+type ProfileTranslations = (typeof translations)[keyof typeof translations]
 
 // Custom hook for profile state management
 const useProfileState = () => {

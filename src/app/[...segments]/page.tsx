@@ -83,6 +83,12 @@ export async function generateMetadata({
 	// Определяем тип (поддерживаем true, True, TRUE)
 	const isRequests = resolvedSearchParams?.zayavki?.toString().toLowerCase() === 'true'
 
+	// Проверяем наличие фильтров (кроме page и zayavki)
+	const filterParams = Object.keys(resolvedSearchParams || {}).filter(
+		key => !['page', 'zayavki'].includes(key)
+	)
+	const hasFilters = filterParams.length > 0
+
 	// Переводы для метаданных
 	const titles = {
 		companies: {
@@ -122,9 +128,38 @@ export async function generateMetadata({
 	const title = titles[type][lang]
 	const description = descriptions[type][lang]
 
+	// Формируем базовый URL без query параметров для canonical
+	const baseUrl = `/${allSegments.join('/')}${isRequests ? '?zayavki=true' : ''}`
+
+	// Если есть фильтры - noindex + canonical на родительскую страницу
+	if (hasFilters) {
+		return {
+			title,
+			description,
+			robots: {
+				index: false, // Не индексируем фильтрованные страницы
+				follow: true, // Но разрешаем переходить по ссылкам
+			},
+			alternates: {
+				canonical: baseUrl, // Canonical на родительскую страницу без фильтров
+			},
+			openGraph: {
+				title,
+				description,
+				locale: lang,
+				type: 'website',
+			},
+		}
+	}
+
+	// Чистая страница без фильтров - индексируем
 	return {
 		title,
 		description,
+		robots: {
+			index: true,
+			follow: true,
+		},
 		alternates: {
 			languages: {
 				'uk': `/uk/${allSegments.slice(1).join('/')}`,

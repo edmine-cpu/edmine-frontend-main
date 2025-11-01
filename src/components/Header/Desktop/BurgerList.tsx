@@ -1,8 +1,8 @@
 'use client'
 
-import { TabLink } from '@/components/headersOLD/Buttons'
 import { getLangPath } from '@/utils/linkHelper'
 import { useState } from 'react'
+import { TabLink } from '../TabNav'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
