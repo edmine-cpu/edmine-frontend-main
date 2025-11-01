@@ -1,11 +1,10 @@
-'use client'
-
-import { Header } from '@/components/Header/Header'
+import { ServerHeader } from '@/components/Header/ServerHeader'
+import { ContactButton } from '@/components/Company/ContactButton'
 import { API_ENDPOINTS } from '@/config/api'
-import { useRouter, usePathname } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { getLangFromPathname, getLangPath } from '@/utils/linkHelper'
-import { getCompanyDetailPath } from '@/lib/i18n-routes'
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de'
 
@@ -61,75 +60,45 @@ const T = {
 		categories: 'Категорії:',
 		subcategories: 'Підкатегорії:',
 		about: 'Про нас:',
-		loading: 'Завантаження...',
 		notFound: 'Компанію не знайдено',
 		requests: 'Заявки',
 		reviews: 'Відгуки',
-		message: 'Написати',
-		loginToChat: 'Увійти для спілкування',
-		cannotChatWithSelf: 'Неможливо створити чат з самим собою',
-		chatError: 'Помилка створення чату. Спробуйте пізніше.',
-		networkError: 'Помилка мережі. Перевірте підключення.',
 	},
 	en: {
 		backToList: 'Back to list',
 		categories: 'Categories:',
 		subcategories: 'Subcategories:',
 		about: 'About us:',
-		loading: 'Loading...',
 		notFound: 'Company not found',
 		requests: 'Requests',
 		reviews: 'Reviews',
-		message: 'Write',
-		loginToChat: 'Login to chat',
-		cannotChatWithSelf: 'Cannot create chat with yourself',
-		chatError: 'Chat creation error. Try again later.',
-		networkError: 'Network error. Check your connection.',
 	},
 	pl: {
 		backToList: 'Powrót do listy',
 		categories: 'Kategorie:',
 		subcategories: 'Podkategorie:',
 		about: 'O nas:',
-		loading: 'Ładowanie...',
 		notFound: 'Nie znaleziono firmy',
 		requests: 'Zlecenia',
 		reviews: 'Opinie',
-		message: 'Napisz',
-		loginToChat: 'Zaloguj się, aby czatować',
-		cannotChatWithSelf: 'Nie można utworzyć czatu z samym sobą',
-		chatError: 'Błąd tworzenia czatu. Spróbuj ponownie później.',
-		networkError: 'Błąd sieci. Sprawdź połączenie.',
 	},
 	fr: {
 		backToList: 'Retour à la liste',
 		categories: 'Catégories:',
 		subcategories: 'Sous-catégories:',
 		about: 'À propos:',
-		loading: 'Chargement...',
 		notFound: 'Entreprise introuvable',
 		requests: 'Demandes',
 		reviews: 'Avis',
-		message: 'Écrire',
-		loginToChat: 'Se connecter pour discuter',
-		cannotChatWithSelf: 'Impossible de créer un chat avec soi-même',
-		chatError: 'Erreur de création de chat. Réessayez plus tard.',
-		networkError: 'Erreur réseau. Vérifiez votre connexion.',
 	},
 	de: {
 		backToList: 'Zurück zur Liste',
 		categories: 'Kategorien:',
 		subcategories: 'Unterkategorien:',
 		about: 'Über uns:',
-		loading: 'Laden...',
 		notFound: 'Unternehmen nicht gefunden',
 		requests: 'Aufträge',
 		reviews: 'Bewertungen',
-		message: 'Schreiben',
-		loginToChat: 'Anmelden zum Chatten',
-		cannotChatWithSelf: 'Chat mit sich selbst nicht möglich',
-		chatError: 'Chat-Erstellungsfehler. Versuchen Sie es später erneut.',
-		networkError: 'Netzwerkfehler. Überprüfen Sie Ihre Verbindung.',
 	},
 } as const
 
@@ -149,150 +118,104 @@ function getInitials(name: string): string {
 	return initials
 }
 
-export default function CompanyDetailPage({
+// Server-side data fetching
+async function getCompany(slug: string): Promise<CompanyDetail | null> {
+	try {
+		const response = await fetch(`${API_ENDPOINTS.company_by_slug(slug)}`, {
+			next: { revalidate: 3600 }, // Revalidate every hour
+		})
+
+		if (!response.ok) {
+			return null
+		}
+
+		return await response.json()
+	} catch (error) {
+		console.error('Error fetching company:', error)
+		return null
+	}
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<Params>
+}): Promise<Metadata> {
+	const resolvedParams = await params
+	const { slug } = resolvedParams
+
+	// Get lang from headers
+	const headersList = await headers()
+	const lang = (headersList.get('x-locale') || 'en') as Lang
+
+	// Fetch company data
+	const company = await getCompany(slug)
+
+	if (!company) {
+		return {
+			title: T[lang].notFound,
+			robots: {
+				index: false,
+				follow: true,
+			},
+		}
+	}
+
+	// Get localized name and description
+	const nameKey = `name_${lang}` as keyof CompanyDetail
+	const descriptionKey = `description_${lang}` as keyof CompanyDetail
+
+	const companyName = (company[nameKey] as string) || company.name_en || company.name
+	const description = (company[descriptionKey] as string) || company.description_en || ''
+
+	return {
+		title: companyName,
+		description: description.substring(0, 160), // Meta description limit
+		robots: {
+			index: true, // Индексируем страницы компаний
+			follow: true,
+		},
+		openGraph: {
+			title: companyName,
+			description: description.substring(0, 160),
+			type: 'website',
+			locale: lang,
+		},
+	}
+}
+
+export default async function CompanyDetailPage({
 	params,
 }: {
 	params: Promise<Params>
 }) {
-	const pathname = usePathname()
-	const resolvedParams = React.use(params)
+	const resolvedParams = await params
 	const { slug } = resolvedParams
-	const lang = getLangFromPathname(pathname)
+
+	// Get lang from headers
+	const headersList = await headers()
+	const lang = (headersList.get('x-locale') || 'en') as Lang
 	const t = T[lang]
-	const router = useRouter()
 
-	const [company, setCompany] = useState<CompanyDetail | null>(null)
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState(false)
-	const [currentUserId, setCurrentUserId] = useState<number | null>(null)
-	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+	// Fetch company data on server
+	const company = await getCompany(slug)
 
-	// Fetch current user
-	useEffect(() => {
-		const fetchCurrentUser = async () => {
-			try {
-				const response = await fetch(API_ENDPOINTS.meApi, {
-					credentials: 'include',
-				})
-				if (response.ok) {
-					const userData = await response.json()
-					setCurrentUserId(userData.id)
-					setIsAuthenticated(true)
-				} else {
-					setIsAuthenticated(false)
-				}
-			} catch (error) {
-				console.error('Error fetching current user:', error)
-				setIsAuthenticated(false)
-			}
-		}
-		fetchCurrentUser()
-	}, [])
-
-	// Fetch company by slug
-	useEffect(() => {
-		setLoading(true)
-		fetch(`${API_ENDPOINTS.company_by_slug(slug)}`)
-			.then(res => {
-				if (!res.ok) {
-					throw new Error('Company not found')
-				}
-				return res.json()
-			})
-			.then((data: any) => {
-				setCompany(data)
-			})
-			.catch(err => {
-				console.error(err)
-				setError(true)
-			})
-			.finally(() => setLoading(false))
-	}, [slug])
-
-	const handleCreateChat = async () => {
-		if (!company?.owner_id) return
-
-		// Check if user is trying to chat with themselves
-		if (currentUserId === company.owner_id) {
-			alert(t.cannotChatWithSelf)
-			return
-		}
-
-		try {
-			const formData = new FormData()
-			formData.append('partner_id', company.owner_id.toString())
-
-			const response = await fetch(API_ENDPOINTS.createChat, {
-				method: 'POST',
-				body: formData,
-				credentials: 'include',
-			})
-
-			if (response.ok) {
-				const data = await response.json()
-				router.push(getLangPath(`/chat/${data.chat_id}`, lang))
-			} else {
-				const errorData = await response.json()
-				console.error('Failed to create chat:', response.status, errorData)
-
-				if (
-					response.status === 400 &&
-					errorData.detail?.includes('с самим собой')
-				) {
-					alert(t.cannotChatWithSelf)
-				} else {
-					alert(t.chatError)
-				}
-			}
-		} catch (error) {
-			console.error('Error creating chat:', error)
-			alert(t.networkError)
-		}
-	}
-
-	if (loading) {
-		return (
-			<div className='min-h-screen flex flex-col'>
-				<Header lang={lang} />
-				<div className='flex-1 flex items-center justify-center'>
-					<div className='text-center'>
-						<div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-600'></div>
-						<p className='mt-4 text-gray-600'>{t.loading}</p>
-					</div>
-				</div>
-			</div>
-		)
-	}
-
-	if (error || !company) {
-		return (
-			<div className='min-h-screen flex flex-col'>
-				<Header lang={lang} />
-				<div className='flex-1 flex items-center justify-center'>
-					<div className='text-center'>
-						<p className='text-xl text-gray-600 mb-4'>{t.notFound}</p>
-						<button
-							onClick={() => router.push('/all')}
-							className='px-6 py-2 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700'
-						>
-							{t.backToList}
-						</button>
-					</div>
-				</div>
-			</div>
-		)
+	if (!company) {
+		notFound()
 	}
 
 	// Get localized name and description
-	const nameKey = `name_${lang}` as 'name_uk' | 'name_en' | 'name_pl' | 'name_fr' | 'name_de'
-	const descriptionKey = `description_${lang}` as 'description_uk' | 'description_en' | 'description_pl' | 'description_fr' | 'description_de'
+	const nameKey = `name_${lang}` as keyof CompanyDetail
+	const descriptionKey = `description_${lang}` as keyof CompanyDetail
 
-	const companyName: string = company[nameKey] || company.name_en || company.name
-	const description: string = company[descriptionKey] || company.description_en || ''
+	const companyName = (company[nameKey] as string) || company.name_en || company.name
+	const description = (company[descriptionKey] as string) || company.description_en || ''
 
 	const getCategoryName = (category: Category | Subcategory) => {
+		const langKey = `name_${lang}` as keyof (Category | Subcategory)
 		return (
-			(category as any)[`name_${lang}`] ||
+			(category[langKey] as string) ||
 			category.name_en ||
 			category.name
 		)
@@ -300,23 +223,23 @@ export default function CompanyDetailPage({
 
 	return (
 		<div className='min-h-screen flex flex-col'>
-			<Header lang={lang} />
+			<ServerHeader lang={lang} />
 			<div className='flex-1 flex items-start justify-center p-4'>
 				<div className='w-full max-w-4xl'>
 					{/* Header with back button */}
 					<div className='flex justify-between items-center mb-6'>
-						<button
-							onClick={() => router.push('/all')}
+						<Link
+							href='/all'
 							className='text-red-600 hover:text-red-700 font-semibold'
 						>
 							← {t.backToList}
-						</button>
-						<button
-							onClick={() => router.push('/all?zayavki=True')}
+						</Link>
+						<Link
+							href='/all?zayavki=True'
 							className='px-4 py-2 rounded-md bg-white border text-gray-700 font-semibold hover:bg-gray-100'
 						>
 							{t.requests}
-						</button>
+						</Link>
 					</div>
 
 					{/* Main Content */}
@@ -325,7 +248,7 @@ export default function CompanyDetailPage({
 						<div className='w-auto flex mb-6'>
 							<div>
 								<div className='h-28 w-28 rounded-full bg-green-300 border-1 text-center flex justify-center items-center text-white font-bold text-3xl'>
-									{getInitials(companyName as string)}
+									{getInitials(companyName)}
 								</div>
 							</div>
 							<div className='flex flex-col pl-3 pr-6'>
@@ -351,22 +274,8 @@ export default function CompanyDetailPage({
 										(120 {t.reviews})
 									</span>
 								</div>
-								{isAuthenticated ? (
-									<button
-										onClick={handleCreateChat}
-										className='flex justify-center items-center mr-auto bg-gray-100 rounded-md pr-3 pl-3 hover:bg-gray-200 transition durations-200'
-									>
-										<span className='text-3xl'>✉ </span>
-										{t.message}
-									</button>
-								) : (
-									<button
-										onClick={() => router.push(getLangPath('/login', lang))}
-										className='flex justify-center items-center mr-auto bg-red-100 rounded-md pr-3 pl-3 hover:bg-red-200 transition durations-200'
-									>
-										<span className='text-3xl'>🔐 </span>
-										{t.loginToChat}
-									</button>
+								{company.owner_id && (
+									<ContactButton ownerId={company.owner_id} lang={lang} />
 								)}
 							</div>
 						</div>
