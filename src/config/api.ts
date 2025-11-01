@@ -1,5 +1,6 @@
 // export const API_BASE_URL = 'http://82.25.86.30:8000'
 export const API_BASE_URL = "https://makeasap.com";
+export const STATIC_FILES_URL = "http://82.25.86.30:8888";
 
 export const API_ENDPOINTS = {
   // Auth

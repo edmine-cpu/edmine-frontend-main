@@ -1023,7 +1023,7 @@ export default function ProfilePage() {
 							<div className='relative'>
 								{profile.avatar ? (
 									<img
-										src={`${API_ENDPOINTS.static}/${profile.avatar}`}
+										src={`${profile.avatar}`}
 										alt='Avatar'
 										className='w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg'
 									/>
