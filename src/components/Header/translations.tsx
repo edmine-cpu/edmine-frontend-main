@@ -4,6 +4,7 @@ export const texts = {
 		login: 'УВІЙТИ',
 		howItWorks: 'ЯК ЦЕ ПРАЦЮЄ',
 		catalog: 'КАТЕГОРІЇ',
+		companies: 'КОМПАНІЇ',
 		blog: 'БЛОГ',
 	},
 	en: {
@@ -11,6 +12,7 @@ export const texts = {
 		login: 'LOGIN',
 		howItWorks: 'HOW IT WORKS',
 		catalog: 'CATEGORIES',
+		companies: 'COMPANIES',
 		blog: 'BLOG',
 	},
 	pl: {
@@ -18,6 +20,7 @@ export const texts = {
 		login: 'ZALOGUJ SIĘ',
 		howItWorks: 'JAK TO DZIAŁA',
 		catalog: 'KATEGORIE',
+		companies: 'FIRMY',
 		blog: 'BLOG',
 	},
 	fr: {
@@ -25,6 +28,7 @@ export const texts = {
 		login: 'SE CONNECTER',
 		howItWorks: 'COMMENT ÇA MARCHE',
 		catalog: 'CATÉGORIES',
+		companies: 'ENTREPRISES',
 		blog: 'BLOG',
 	},
 	de: {
@@ -32,6 +36,7 @@ export const texts = {
 		login: 'ANMELDEN',
 		howItWorks: 'WIE ES FUNKTIONIERT',
 		catalog: 'KATEGORIEN',
+		companies: 'UNTERNEHMEN',
 		blog: 'BLOG',
 	},
 } as const

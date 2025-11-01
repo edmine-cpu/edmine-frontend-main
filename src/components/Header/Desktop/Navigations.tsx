@@ -26,7 +26,7 @@ export function Navigations({ lang }: Props) {
 				href={companiesUrl}
 				className='text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50'
 			>
-				COMPANIES
+				{t.companies}
 			</Link>
 			<Link
 				href={blogUrl}
