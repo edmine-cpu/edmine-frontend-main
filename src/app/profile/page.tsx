@@ -5,7 +5,7 @@ import LanguageSwitcher, {
 	Lang as LangType,
 } from '@/components/createRequest/LanguageSwitcher'
 import { Header } from '@/components/Header/Header'
-import { API_ENDPOINTS } from '@/config/api'
+import { API_ENDPOINTS, STATIC_FILES_URL } from '@/config/api'
 import { useTranslation } from '@/translations'
 import { checkAuth } from '@/utils/auth'
 import { getLangFromPathname } from '@/utils/linkHelper'
@@ -1023,7 +1023,7 @@ export default function ProfilePage() {
 							<div className='relative'>
 								{profile.avatar ? (
 									<img
-										src={`${profile.avatar}`}
+										src={`${STATIC_FILES_URL}/${profile.avatar}`}
 										alt='Avatar'
 										className='w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg'
 									/>
