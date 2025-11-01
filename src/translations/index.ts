@@ -21,11 +21,13 @@ export const translations = {
         loading: 'Завантаження...',
         
         // Ошибки
+        nameRequired: 'Ім\'я обов\'язкове',
         emailRequired: 'Email обов\'язковий',
         emailInvalid: 'Неверний формат email',
         passwordRequired: 'Пароль обов\'язковий',
-        passwordMinLength: 'Пароль повинен містити мінімум 6 символів',
+        passwordMinLength: 'Пароль повинен містити мінімум 8 символів',
         invalidCredentials: 'Невірний логін або пароль',
+        registrationFailed: 'Реєстрація не вдалася. Спробуйте ще раз.',
         
         // Сообщения
         loginSuccess: 'Успішний вхід',
@@ -130,11 +132,13 @@ export const translations = {
         loading: 'Loading...',
         
         // Errors
+        nameRequired: 'Name is required',
         emailRequired: 'Email is required',
         emailInvalid: 'Invalid email format',
         passwordRequired: 'Password is required',
-        passwordMinLength: 'Password must contain at least 6 characters',
+        passwordMinLength: 'Password must contain at least 8 characters',
         invalidCredentials: 'Invalid login or password',
+        registrationFailed: 'Registration failed. Please try again.',
         
         // Messages
         loginSuccess: 'Login successful',
@@ -239,11 +243,13 @@ export const translations = {
         loading: 'Ładowanie...',
         
         // Błędy
+        nameRequired: 'Imię jest wymagane',
         emailRequired: 'Email jest wymagany',
         emailInvalid: 'Nieprawidłowy format email',
         passwordRequired: 'Hasło jest wymagane',
-        passwordMinLength: 'Hasło musi zawierać co najmniej 6 znaków',
+        passwordMinLength: 'Hasło musi zawierać co najmniej 8 znaków',
         invalidCredentials: 'Nieprawidłowy login lub hasło',
+        registrationFailed: 'Rejestracja nie powiodła się. Spróbuj ponownie.',
         
         // Wiadomości
         loginSuccess: 'Logowanie udane',
@@ -343,11 +349,13 @@ export const translations = {
         loading: 'Chargement...',
         
         // Erreurs
+        nameRequired: 'Le nom est requis',
         emailRequired: 'Email requis',
         emailInvalid: 'Format email invalide',
         passwordRequired: 'Mot de passe requis',
-        passwordMinLength: 'Le mot de passe doit contenir au moins 6 caractères',
+        passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
         invalidCredentials: 'Identifiant ou mot de passe invalide',
+        registrationFailed: 'L\'inscription a échoué. Veuillez réessayer.',
         
         // Messages
         loginSuccess: 'Connexion réussie',
@@ -447,11 +455,13 @@ export const translations = {
         loading: 'Laden...',
         
         // Fehler
+        nameRequired: 'Name ist erforderlich',
         emailRequired: 'E-Mail erforderlich',
         emailInvalid: 'Ungültiges E-Mail-Format',
         passwordRequired: 'Passwort erforderlich',
-        passwordMinLength: 'Das Passwort muss mindestens 6 Zeichen enthalten',
+        passwordMinLength: 'Das Passwort muss mindestens 8 Zeichen enthalten',
         invalidCredentials: 'Ungültiger Login oder Passwort',
+        registrationFailed: 'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.',
         
         // Nachrichten
         loginSuccess: 'Anmeldung erfolgreich',

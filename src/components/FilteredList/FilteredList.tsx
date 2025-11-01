@@ -15,6 +15,7 @@ import {
 } from '@/lib/slug-resolver'
 import { getLangFromPathname } from '@/utils/linkHelper'
 import { transliterate } from '@/utils/transliterate'
+import { notFound } from 'next/navigation'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -246,6 +247,14 @@ export function FilteredList({
 
 			// Парсим URL для получения фильтров
 			const filters = await parseFilterUrl(segments, lang)
+
+			// Проверяем валидность URL
+			// Если фильтры невалидны (например, случайный URL с .png или несуществующие категории)
+			// отправляем на 404
+			if (!filters.isValid) {
+				notFound()
+				return
+			}
 
 			// Устанавливаем фильтры из URL (для API)
 			const categoryId = filters.category?.id.toString() || ''

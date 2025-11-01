@@ -10,6 +10,7 @@ import {
 import React from 'react'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
+import { notFound } from 'next/navigation'
 
 /**
  * Универсальная страница для всех мультиязычных маршрутов
@@ -32,6 +33,43 @@ import { headers } from 'next/headers'
  * - /fr/category?zayavki=true - заявки в категории (французский)
  * И т.д.
  */
+
+/**
+ * Валидация URL на наличие расширений файлов и других недопустимых паттернов
+ * Возвращает true, если URL валиден, false - если нужно отправить на 404
+ */
+function isValidUrl(segments: string[]): boolean {
+	// Список расширений файлов, которые не должны попадать в роутинг
+	const fileExtensions = [
+		'.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.avif', '.bmp', '.ico',
+		'.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.tar', '.gz',
+		'.mp3', '.mp4', '.avi', '.mov', '.wmv', '.flv',
+		'.css', '.js', '.json', '.xml', '.txt', '.csv',
+		'.woff', '.woff2', '.ttf', '.eot', '.otf'
+	]
+
+	// Проверяем каждый сегмент
+	for (const segment of segments) {
+		// Проверка на расширения файлов
+		const lowerSegment = segment.toLowerCase()
+		if (fileExtensions.some(ext => lowerSegment.endsWith(ext))) {
+			return false
+		}
+
+		// Проверка на подозрительные паттерны
+		if (
+			segment.includes('..') || // Path traversal
+			segment.startsWith('.') || // Скрытые файлы
+			segment.includes('static/') || // Попытка доступа к статическим файлам
+			segment.includes('_next/') || // Next.js internal paths
+			segment.length > 200 // Слишком длинный сегмент
+		) {
+			return false
+		}
+	}
+
+	return true
+}
 
 /**
  * Генерация статических параметров для pre-rendering популярных страниц
@@ -180,6 +218,11 @@ export default async function UniversalPage({
 	const resolvedParams = await params
 	const resolvedSearchParams = await (searchParams ?? Promise.resolve<{ [key: string]: string | string[] | undefined }>({}))
 	const allSegments = resolvedParams?.segments || []
+
+	// Валидация URL: проверяем на расширения файлов и недопустимые паттерны
+	if (!isValidUrl(allSegments)) {
+		notFound()
+	}
 
 	// Читаем язык из headers, установленных middleware
 	const headersList = await headers()

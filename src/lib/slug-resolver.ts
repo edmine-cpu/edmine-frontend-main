@@ -426,13 +426,18 @@ export async function parseFilterUrl(
 	subcategory?: ResolvedSegment
 	country?: ResolvedSegment
 	city?: ResolvedSegment
+	isValid: boolean
 }> {
-	const result: any = {}
+	const result: any = { isValid: true }
 
 	if (segments.length === 0) return result
 
 	// Загружаем данные
 	const data = await loadAllData()
+
+	// Отслеживаем, были ли валидные сегменты
+	let hasValidSegments = false
+	let unmatchedSegments = 0
 
 	// Проходим по сегментам и определяем каждый независимо
 	// Алгоритм: для КАЖДОГО сегмента проверяем ВСЕ типы данных (категории, страны, подкатегории, города)
@@ -443,6 +448,7 @@ export async function parseFilterUrl(
 
 		// Пропускаем языковые префиксы и 'all'
 		if (['uk', 'en', 'pl', 'fr', 'de', 'all'].includes(segment)) {
+			hasValidSegments = true
 			continue
 		}
 
@@ -459,6 +465,7 @@ export async function parseFilterUrl(
 					data: category
 				}
 				matched = true
+				hasValidSegments = true
 			}
 		}
 
@@ -475,6 +482,7 @@ export async function parseFilterUrl(
 					data: subcategory
 				}
 				matched = true
+				hasValidSegments = true
 			}
 		}
 
@@ -489,6 +497,7 @@ export async function parseFilterUrl(
 					data: country
 				}
 				matched = true
+				hasValidSegments = true
 			}
 		}
 
@@ -505,11 +514,20 @@ export async function parseFilterUrl(
 					data: city
 				}
 				matched = true
+				hasValidSegments = true
 			}
 		}
 
-		// Если сегмент не совпал ни с одним типом данных, просто игнорируем его
-		// (это может быть неизвестный slug или часть другой структуры URL)
+		// Если сегмент не совпал ни с одним типом данных, это невалидный URL
+		if (!matched) {
+			unmatchedSegments++
+		}
+	}
+
+	// URL невалиден, если есть несовпавшие сегменты и нет валидных сегментов
+	// Это отсеет случайные URL вроде /static/avatars/file.png
+	if (unmatchedSegments > 0 && !hasValidSegments) {
+		result.isValid = false
 	}
 
 	return result

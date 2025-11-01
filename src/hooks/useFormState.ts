@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_ENDPOINTS } from '@/config/api';
+import { useTranslation } from '@/translations';
 
 export type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de';
 
@@ -31,6 +32,7 @@ export function useFormState(initialLang: Lang): FormState {
 	const [fadeOut, setFadeOut] = useState(false);
 	const [serverError, setServerError] = useState('');
 	const [language, setLanguage] = useState<Lang>(initialLang);
+	const t = useTranslation(language);
 
 	const handleChange = (field: string, value: string) => {
 		switch (field) {
@@ -66,14 +68,14 @@ export function useFormState(initialLang: Lang): FormState {
 
 		const newErrors: Record<string, string> = {};
 
-		if (!name) newErrors.name = 'Name is required';
+		if (!name) newErrors.name = t('nameRequired');
 		if (!email) {
-			newErrors.email = 'Email is required';
+			newErrors.email = t('emailRequired');
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-			newErrors.email = 'Invalid email format';
+			newErrors.email = t('emailInvalid');
 		}
-		if (!password) newErrors.password = 'Password is required';
-		if (password && password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+		if (!password) newErrors.password = t('passwordRequired');
+		if (password && password.length < 8) newErrors.password = t('passwordMinLength');
 
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors);
@@ -95,7 +97,7 @@ export function useFormState(initialLang: Lang): FormState {
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(errorData.detail || 'Registration failed');
+				throw new Error(errorData.detail || t('registrationFailed'));
 			}
 
 			// Registration successful
@@ -104,11 +106,12 @@ export function useFormState(initialLang: Lang): FormState {
 
 			setFadeOut(true);
 			setTimeout(() => {
-				router.push('/register/verify-code');
+				const redirectPath = language === 'en' ? '/register/verify-code' : `/${language}/register/verify-code`;
+				router.push(redirectPath);
 			}, 300);
 		} catch (error: any) {
 			console.error('Registration error:', error);
-			setServerError(error.message || 'Registration failed. Please try again.');
+			setServerError(error.message || t('registrationFailed'));
 		}
 	};
 

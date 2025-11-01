@@ -9,6 +9,7 @@ import { RegisterTitleText } from "@/components/register/TextRegister";
 import { CountryCitySelector } from "@/components/register/CountryCitySelector";
 import { API_ENDPOINTS } from "@/config/api";
 import { checkAuth } from "@/utils/auth";
+import { useTranslation } from "@/translations";
 
 type Props = {
   lang: Lang;
@@ -18,6 +19,7 @@ export function RegisterForms({ lang }: Props) {
   const formState = useFormState(lang); // 👈 передаём сюда lang
   const router = useRouter();
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const t = useTranslation(lang);
 
   const {
     name,
@@ -89,7 +91,7 @@ export function RegisterForms({ lang }: Props) {
               type="text"
               value={name}
               onChange={(e) => handleChange("name", e.target.value)}
-              placeholder="Name"
+              placeholder={t('name')}
               required
               className={`w-full px-4 py-2 border rounded-lg ${inputClass("name")}`}
             />
@@ -102,7 +104,7 @@ export function RegisterForms({ lang }: Props) {
               type="email"
               value={email}
               onChange={(e) => handleChange("email", e.target.value)}
-              placeholder="Email"
+              placeholder={t('email')}
               required
               className={`w-full px-4 py-2 border rounded-lg ${inputClass("email")}`}
             />
@@ -115,7 +117,7 @@ export function RegisterForms({ lang }: Props) {
               type="password"
               value={password}
               onChange={(e) => handleChange("password", e.target.value)}
-              placeholder="Password"
+              placeholder={t('password')}
               minLength={8}
               required
               className={`w-full px-4 py-2 border rounded-lg ${inputClass("password")}`}

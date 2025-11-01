@@ -93,6 +93,6 @@ export function middleware(request: NextRequest) {
 export const config = {
 	matcher: [
 		// Пропускаем статические файлы и API роуты
-		'/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|check|login|logout|me).*)',
+		'/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|check|logout|me).*)',
 	],
 }
