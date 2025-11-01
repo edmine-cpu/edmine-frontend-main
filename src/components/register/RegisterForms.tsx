@@ -84,25 +84,46 @@ export function RegisterForms({ lang }: Props) {
         >
           <RegisterTitleText lang={language} />
 
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            placeholder="Name"
-          />
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => handleChange("email", e.target.value)}
-            placeholder="Email"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => handleChange("password", e.target.value)}
-            placeholder="Password"
-            minLength={8}
-          />
+          <div className="w-full max-w-[260px] [@media(min-width:375px)]:max-w-[300px] [@media(min-width:480px)]:max-w-[400px]">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              placeholder="Name"
+              required
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass("name")}`}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
+          </div>
+          <div className="w-full max-w-[260px] [@media(min-width:375px)]:max-w-[300px] [@media(min-width:480px)]:max-w-[400px]">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              placeholder="Email"
+              required
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass("email")}`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+            )}
+          </div>
+          <div className="w-full max-w-[260px] [@media(min-width:375px)]:max-w-[300px] [@media(min-width:480px)]:max-w-[400px]">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => handleChange("password", e.target.value)}
+              placeholder="Password"
+              minLength={8}
+              required
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass("password")}`}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+            )}
+          </div>
           <div className="max-w-lg mx-auto w-[260px] [@media(min-width:375px)]:w-[300px] [@media(min-width:480px)]:w-[400px]">
             <CountryCitySelector
               lang={language}

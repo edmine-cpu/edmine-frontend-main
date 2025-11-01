@@ -67,7 +67,11 @@ export function useFormState(initialLang: Lang): FormState {
 		const newErrors: Record<string, string> = {};
 
 		if (!name) newErrors.name = 'Name is required';
-		if (!email) newErrors.email = 'Email is required';
+		if (!email) {
+			newErrors.email = 'Email is required';
+		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			newErrors.email = 'Invalid email format';
+		}
 		if (!password) newErrors.password = 'Password is required';
 		if (password && password.length < 8) newErrors.password = 'Password must be at least 8 characters';
 
@@ -95,6 +99,9 @@ export function useFormState(initialLang: Lang): FormState {
 			}
 
 			// Registration successful
+			// Set email cookie for verification page
+			document.cookie = `email=${encodeURIComponent(email)}; path=/; max-age=3600; SameSite=Lax`;
+
 			setFadeOut(true);
 			setTimeout(() => {
 				router.push('/register/verify-code');
