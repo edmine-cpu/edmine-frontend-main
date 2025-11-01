@@ -9,6 +9,7 @@ import {
 } from '@/lib/i18n-routes'
 import React from 'react'
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 
 /**
  * Универсальная страница для всех мультиязычных маршрутов
@@ -68,17 +69,9 @@ export async function generateMetadata({
 	const resolvedSearchParams = await searchParams
 	const allSegments = resolvedParams?.segments || []
 
-	// Определяем язык
-	let lang: Lang = 'en'
-	const firstSegment = allSegments[0]
-
-	if (firstSegment && SUPPORTED_LANGS.includes(firstSegment as Lang)) {
-		lang = firstSegment as Lang
-	} else if (firstSegment) {
-		const companyLang = getLangByCompanyRoute(firstSegment)
-		const requestLang = getLangByRequestRoute(firstSegment)
-		lang = companyLang || requestLang || 'en'
-	}
+	// Читаем язык из headers, установленных middleware
+	const headersList = await headers()
+	const lang = (headersList.get('x-locale') || 'en') as Lang
 
 	// Определяем тип (поддерживаем true, True, TRUE)
 	const isRequests = resolvedSearchParams?.zayavki?.toString().toLowerCase() === 'true'
@@ -177,45 +170,23 @@ export async function generateMetadata({
 		},
 	}
 }
-export default function UniversalPage({
+export default async function UniversalPage({
 	params,
 	searchParams,
 }: {
 	params: Promise<{ segments?: string[] }>
 	searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-	const resolvedParams = React.use(params)
-	const resolvedSearchParams = React.use(searchParams ?? Promise.resolve<{ [key: string]: string | string[] | undefined }>({}))
+	const resolvedParams = await params
+	const resolvedSearchParams = await (searchParams ?? Promise.resolve<{ [key: string]: string | string[] | undefined }>({}))
 	const allSegments = resolvedParams?.segments || []
 
-	// Определяем язык из URL
-	let lang: Lang = 'en' // Дефолтный язык - английский
-	let contentSegments: string[] = allSegments
+	// Читаем язык из headers, установленных middleware
+	const headersList = await headers()
+	const lang = (headersList.get('x-locale') || 'en') as Lang
 
-	// Проверяем, является ли первый сегмент языковым префиксом
-	const firstSegment = allSegments[0]
-	if (firstSegment && SUPPORTED_LANGS.includes(firstSegment as Lang)) {
-		lang = firstSegment as Lang
-		// Убираем языковой префикс из сегментов контента
-		contentSegments = allSegments.slice(1)
-	}
-
-	// Проверяем, является ли первый сегмент локализованным маршрутом компаний
-	if (firstSegment) {
-		const companyLang = getLangByCompanyRoute(firstSegment)
-		if (companyLang) {
-			lang = companyLang
-			// Убираем маршрут компаний из сегментов
-			contentSegments = allSegments.slice(1)
-		}
-
-		const requestLang = getLangByRequestRoute(firstSegment)
-		if (requestLang) {
-			lang = requestLang
-			// Убираем маршрут заявок из сегментов
-			contentSegments = allSegments.slice(1)
-		}
-	}
+	// segments уже очищены от языковых префиксов в middleware через rewrite
+	const contentSegments = allSegments
 
 	// Определяем тип из query параметра (поддерживаем true, True, TRUE)
 	const isRequests = resolvedSearchParams?.zayavki?.toString().toLowerCase() === 'true'

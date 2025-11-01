@@ -38,6 +38,18 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(url)
 	}
 
+	// РЕДИРЕКТ: Если URL это ТОЛЬКО языковой префикс (например /uk, /pl, /de, /fr)
+	// редиректим на главную страницу /, middleware установит правильный header x-locale
+	if (segments.length === 1 && supportedLangs.includes(firstSegment)) {
+		const url = request.nextUrl.clone()
+		url.pathname = '/'
+		// При редиректе header не сохранится, поэтому главная страница должна читать из pathname
+		// Но лучше сделать rewrite вместо redirect
+		const response = NextResponse.rewrite(url)
+		response.headers.set('x-locale', firstSegment)
+		return response
+	}
+
 	// Проверяем, является ли путь локализованным маршрутом компаний или заявок
 	const internalRoute = getInternalRoute(pathname)
 	if (internalRoute) {
@@ -56,6 +68,19 @@ export function middleware(request: NextRequest) {
 	// Проверяем, является ли первый сегмент языковым префиксом
 	if (firstSegment && supportedLangs.includes(firstSegment)) {
 		detectedLang = firstSegment
+
+		// REWRITE: Если URL начинается с языкового префикса (кроме 'en')
+		// убираем префикс из pathname, но сохраняем язык в header
+		// Пример: /uk/blog -> rewrite на /blog с header x-locale: uk
+		if (segments.length > 1) {
+			const newPathname = '/' + segments.slice(1).join('/')
+			const url = request.nextUrl.clone()
+			url.pathname = newPathname
+
+			const response = NextResponse.rewrite(url)
+			response.headers.set('x-locale', detectedLang)
+			return response
+		}
 	}
 
 	// Создаём response с добавлением языка в headers
