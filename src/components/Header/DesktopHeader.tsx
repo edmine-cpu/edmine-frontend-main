@@ -7,16 +7,17 @@ import { Navigations } from './Desktop/Navigations'
 
 interface HeaderProps {
 	lang: Lang
+	initialAuth: boolean
 }
 
-export function DesktopHeader({ lang }: HeaderProps) {
+export function DesktopHeader({ lang, initialAuth }: HeaderProps) {
 	return (
 		<header className='flex items-center justify-between container mx-auto mt-3'>
 			<TitleName lang={lang} />
 			<LanguageSwitcher currentLang={lang} />
 			<SearchBid lang={lang} />
 			<Navigations lang={lang} />
-			<HeaderButtons lang={lang || 'uk'} />
+			<HeaderButtons lang={lang || 'uk'} initialAuth={initialAuth} />
 		</header>
 	)
 }

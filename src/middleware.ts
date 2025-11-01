@@ -3,13 +3,14 @@ import type { NextRequest } from 'next/server'
 import { getInternalRoute } from './lib/i18n-routes'
 
 /**
- * Middleware для мультиязычной поддержки
+ * Middleware для мультиязычной поддержки и проверки аутентификации
  *
  * Логика работы:
  * 1. Определяет язык из URL префикса (uk/pl/de/fr) или использует английский (без префикса)
  * 2. Обрабатывает локализованные маршруты для компаний и заявок
  * 3. Добавляет язык в headers (x-locale) для использования в Server Components
- * 4. Обрабатывает редиректы для английского языка: /en/* -> /*
+ * 4. Проверяет наличие JWT токена и добавляет x-user-authenticated header
+ * 5. Обрабатывает редиректы для английского языка: /en/* -> /*
  *
  * Примеры URL:
  * - / -> английский (en)
@@ -20,6 +21,9 @@ import { getInternalRoute } from './lib/i18n-routes'
  * - /en/blog -> редирект на /blog (убираем префикс en)
  */
 export function middleware(request: NextRequest) {
+	// Проверяем наличие JWT токена в cookies
+	const jwtToken = request.cookies.get('jwt_token')
+	const isAuthenticated = !!jwtToken?.value
 	const { pathname } = request.nextUrl
 
 	// Список поддерживаемых языков
@@ -35,7 +39,9 @@ export function middleware(request: NextRequest) {
 		const newPathname = '/' + segments.slice(1).join('/')
 		const url = request.nextUrl.clone()
 		url.pathname = newPathname || '/'
-		return NextResponse.redirect(url)
+		const response = NextResponse.redirect(url)
+		response.headers.set('x-user-authenticated', isAuthenticated ? 'true' : 'false')
+		return response
 	}
 
 	// РЕДИРЕКТ: Если URL это ТОЛЬКО языковой префикс (например /uk, /pl, /de, /fr)
@@ -47,6 +53,7 @@ export function middleware(request: NextRequest) {
 		// Но лучше сделать rewrite вместо redirect
 		const response = NextResponse.rewrite(url)
 		response.headers.set('x-locale', firstSegment)
+		response.headers.set('x-user-authenticated', isAuthenticated ? 'true' : 'false')
 		return response
 	}
 
@@ -59,6 +66,7 @@ export function middleware(request: NextRequest) {
 
 		const response = NextResponse.rewrite(url)
 		response.headers.set('x-locale', internalRoute.lang)
+		response.headers.set('x-user-authenticated', isAuthenticated ? 'true' : 'false')
 		return response
 	}
 
@@ -79,13 +87,15 @@ export function middleware(request: NextRequest) {
 
 			const response = NextResponse.rewrite(url)
 			response.headers.set('x-locale', detectedLang)
+			response.headers.set('x-user-authenticated', isAuthenticated ? 'true' : 'false')
 			return response
 		}
 	}
 
-	// Создаём response с добавлением языка в headers
+	// Создаём response с добавлением языка и статуса аутентификации в headers
 	const response = NextResponse.next()
 	response.headers.set('x-locale', detectedLang)
+	response.headers.set('x-user-authenticated', isAuthenticated ? 'true' : 'false')
 
 	return response
 }

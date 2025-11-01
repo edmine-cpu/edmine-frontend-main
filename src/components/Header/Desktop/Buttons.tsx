@@ -34,11 +34,12 @@ const checkAdminStatus = async () => {
 
 interface HeaderProps {
 	lang: Lang
+	initialAuth: boolean
 }
 
-export function HeaderButtons({ lang }: HeaderProps) {
+export function HeaderButtons({ lang, initialAuth }: HeaderProps) {
 	const { t } = useTranslationHeader(lang)
-	const [isAuth, setIsAuth] = useState<boolean | null>(null)
+	const [isAuth, setIsAuth] = useState<boolean>(initialAuth)
 	const [isAdmin, setIsAdmin] = useState<boolean>(false)
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef<HTMLDivElement>(null)
@@ -120,8 +121,6 @@ export function HeaderButtons({ lang }: HeaderProps) {
 			console.error('Logout error:', error)
 		}
 	}
-
-	if (isAuth === null) return null
 
 	return (
 		<div className='flex items-center space-x-4'>

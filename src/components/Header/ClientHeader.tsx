@@ -7,18 +7,18 @@ import { type Lang } from '@/hooks/headerTranslation'
 import { checkAuth } from '@/utils/auth'
 import { useEffect, useState } from 'react'
 
-interface HeaderProps {
+interface ClientHeaderProps {
 	lang: Lang
 	initialAuth?: boolean
 }
 
 /**
- * Header component с поддержкой server-side initial auth
- * Если initialAuth передан - использует его, иначе проверяет на клиенте
+ * Client-side Header wrapper для использования в client components
+ * Проверяет аутентификацию на клиенте если initialAuth не передан
  */
-export function Header({ lang, initialAuth }: HeaderProps) {
+export function ClientHeader({ lang, initialAuth }: ClientHeaderProps) {
 	const [isAuth, setIsAuth] = useState<boolean>(initialAuth ?? false)
-	const [isLoading, setIsLoading] = useState(initialAuth === undefined)
+	const [isLoading, setIsLoading] = useState(!initialAuth)
 
 	useEffect(() => {
 		// Если initialAuth не передан, проверяем на клиенте
@@ -27,18 +27,10 @@ export function Header({ lang, initialAuth }: HeaderProps) {
 				setIsAuth(auth)
 				setIsLoading(false)
 			})
-		} else {
-			// Даже если передан initialAuth, переверяем на клиенте для обновлений
-			checkAuth().then(auth => {
-				if (auth !== initialAuth) {
-					setIsAuth(auth)
-				}
-			})
 		}
 	}, [initialAuth])
 
-	// Если передан initialAuth, показываем сразу (SSR-friendly)
-	// Если нет - показываем placeholder пока грузится
+	// Не показываем хедер пока идет загрузка
 	if (isLoading) {
 		return <div className='h-16' /> // placeholder для избежания layout shift
 	}
@@ -62,5 +54,3 @@ export function Header({ lang, initialAuth }: HeaderProps) {
 		</header>
 	)
 }
-
-export default Header

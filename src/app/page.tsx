@@ -1,4 +1,4 @@
-import { Header } from "@/components/Header/Header";
+import { ServerHeader } from "@/components/Header/ServerHeader";
 import { MainPage } from "@/components/MainPage/MainPageComponent";
 import { headers } from 'next/headers';
 import type { Lang } from '@/app/(types)/lang';
@@ -24,7 +24,7 @@ export default async function Home() {
 
   return (
     <div>
-      <Header lang={lang} />
+      <ServerHeader lang={lang} />
       <MainPage lang={lang} />
     </div>
   );

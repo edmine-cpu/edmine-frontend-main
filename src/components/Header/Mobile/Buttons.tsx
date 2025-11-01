@@ -11,11 +11,12 @@ import './mobile-fixes.css'
 
 interface MobileButtonsProps {
 	lang: Lang
+	initialAuth: boolean
 }
 
-export function MobileButtons({ lang }: MobileButtonsProps) {
+export function MobileButtons({ lang, initialAuth }: MobileButtonsProps) {
 	const { t } = useTranslationHeader(lang)
-	const [isAuth, setIsAuth] = useState<boolean | null>(null)
+	const [isAuth, setIsAuth] = useState<boolean>(initialAuth)
 	const [isAdmin, setIsAdmin] = useState<boolean>(false)
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef<HTMLDivElement>(null)
@@ -110,11 +111,7 @@ export function MobileButtons({ lang }: MobileButtonsProps) {
 				{isMenuOpen && (
 					<div className='absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 z-50 font-primary'>
 						<div className='py-2'>
-							{isAuth === null ? (
-								<div className='px-5 py-3 text-sm text-gray-400'>
-									Loading...
-								</div>
-							) : isAuth ? (
+							{isAuth ? (
 								<>
 									<Link
 										href={getLangPath('/profile', lang)}

@@ -11,6 +11,7 @@ import { useState } from 'react'
 
 interface HeaderProps {
 	lang: Lang
+	initialAuth: boolean
 }
 
 export const texts = {
@@ -51,7 +52,7 @@ export const texts = {
 	},
 } as const
 
-export function TabletHeader({ lang }: HeaderProps) {
+export function TabletHeader({ lang, initialAuth }: HeaderProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const t = texts[lang] || texts.uk // fallback to Ukrainian
 
@@ -83,7 +84,7 @@ export function TabletHeader({ lang }: HeaderProps) {
 				{/* Add Task Button */}
 
 				{/* Auth Buttons */}
-				<HeaderButtons lang={lang || 'en'} />
+				<HeaderButtons lang={lang || 'en'} initialAuth={initialAuth} />
 			</div>
 
 			{/* Overlay to close menu when clicking outside */}

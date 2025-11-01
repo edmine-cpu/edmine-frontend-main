@@ -10,9 +10,10 @@ import Link from 'next/link'
 
 interface HeaderProps {
 	lang: Lang
+	initialAuth: boolean
 }
 
-export function MobileHeader({ lang }: HeaderProps) {
+export function MobileHeader({ lang, initialAuth }: HeaderProps) {
 	return (
 		<header className='w-full bg-white py-3'>
 			<div className='flex w-full items-center justify-between'>
@@ -33,7 +34,7 @@ export function MobileHeader({ lang }: HeaderProps) {
 				</Link>
 
 				{/* 5. Burger Menu */}
-				<MobileButtons lang={lang} />
+				<MobileButtons lang={lang} initialAuth={initialAuth} />
 			</div>
 		</header>
 	)
