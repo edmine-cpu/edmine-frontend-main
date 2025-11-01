@@ -12,8 +12,8 @@ import TitleDescription from '@/components/createRequest/TitleDescription'
 import { API_BASE_URL, API_ENDPOINTS } from '@/config/api'
 import { TRANSLATIONS } from '@/translations/create-request'
 import { checkAuth } from '@/utils/auth'
-import { getLangPath } from '@/utils/linkHelper'
-import { useParams, useRouter } from 'next/navigation'
+import { getLangPath, getLangFromPathname } from '@/utils/linkHelper'
+import { useParams, useRouter, usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 interface Country {
@@ -67,8 +67,8 @@ const CURRENCIES = [
 export default function CreateBidPage() {
 	const params = useParams()
 	const router = useRouter()
-	const langFromUrl = "en" as Lang
-	const lang = LANG_LABELS[langFromUrl] ? langFromUrl : 'en'
+	const pathname = usePathname()
+	const lang = getLangFromPathname(pathname)
 	const t = TRANSLATIONS[lang]
 
 	const [editLang, setEditLang] = useState<Lang>(lang)
@@ -117,7 +117,7 @@ export default function CreateBidPage() {
 
 			if (!auth) {
 				// Если пользователь не авторизован, перенаправляем на логин
-				router.push(getLangPath('/login', 'en'))
+				router.push(getLangPath('/login', lang))
 				return
 			}
 
@@ -253,6 +253,9 @@ export default function CreateBidPage() {
 		try {
 			const data = new FormData()
 
+			// Добавляем язык из URL
+			data.append('lang', lang)
+
 			if (formState.categories.length > 0) {
 				data.append('category', formState.categories.join(','))
 			}
@@ -294,7 +297,7 @@ export default function CreateBidPage() {
 			if (!res.ok) throw new Error(result.error || 'Failed to create request')
 
 			// Для авторизованных пользователей сразу редиректим в каталог заявок
-			router.push(getLangPath('/zayavki', 'en'))
+			router.push(getLangPath('/requests', lang))
 		} catch (e) {
 			console.error('Error creating request:', e)
 		} finally {
@@ -401,7 +404,7 @@ export default function CreateBidPage() {
 						</div>
 
 						<CountryCityMulti
-							lang={"en" as Lang}
+							lang={lang}
 							countries={countries as any}
 							filteredCities={filteredCities as any}
 							country={formState.country}
