@@ -270,18 +270,18 @@ export default function ChatPage() {
       <Header lang={lang as any} />
 
       {/* Chat Container - Full height with proper centering */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl h-[calc(100vh-200px)] flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-0 md:p-4">
+        <div className="w-full max-w-6xl h-[calc(100vh-80px)] md:h-[calc(100vh-200px)] flex flex-col">
           {/* Chat Header */}
-          <div className="bg-white rounded-t-xl shadow-sm border-b p-6">
+          <div className="bg-white md:rounded-t-xl shadow-sm border-b p-3 md:p-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 md:space-x-4 flex-1 min-w-0">
                 <button
                   onClick={() => router.back()}
-                  className="flex items-center text-gray-600 hover:text-red-500 transition-colors"
+                  className="flex items-center text-gray-600 hover:text-red-500 transition-colors flex-shrink-0"
                 >
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="w-5 h-5 md:mr-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -293,13 +293,13 @@ export default function ChatPage() {
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
-                  {t.back}
+                  <span className="hidden md:inline">{t.back}</span>
                 </button>
-                <div className="h-8 w-px bg-gray-300"></div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                <div className="h-6 md:h-8 w-px bg-gray-300"></div>
+                <div className="flex items-center space-x-2 md:space-x-3 min-w-0">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0">
                     <svg
-                      className="w-6 h-6 text-red-500"
+                      className="w-4 h-4 md:w-6 md:h-6 text-red-500"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -310,26 +310,28 @@ export default function ChatPage() {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h1 className="text-xl font-semibold text-gray-900">
+                  <div className="min-w-0">
+                    <h1 className="text-base md:text-xl font-semibold text-gray-900 truncate">
                       {partnerName}
                     </h1>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs md:text-sm text-gray-500 truncate">
                       {t.chat} #{chatId}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <TranslationToggle
-                  isEnabled={translation.state.isEnabled}
-                  isLoading={translation.state.isLoading}
-                  onToggle={translation.toggleTranslation}
-                  onLanguageChange={translation.setTargetLanguage}
-                  error={translation.state.error}
-                  lang="en"
-                />
-                <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+                <div className="hidden lg:block">
+                  <TranslationToggle
+                    isEnabled={translation.state.isEnabled}
+                    isLoading={translation.state.isLoading}
+                    onToggle={translation.toggleTranslation}
+                    onLanguageChange={translation.setTargetLanguage}
+                    error={translation.state.error}
+                    lang="en"
+                  />
+                </div>
+                <div className="hidden md:flex items-center space-x-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                   <span className="text-sm text-gray-600">{t.online}</span>
                 </div>
@@ -339,7 +341,7 @@ export default function ChatPage() {
 
           {/* Messages Container */}
           <div className="flex-1 bg-white overflow-hidden flex flex-col">
-            <div className="flex-1 overflow-y-auto p-6 space-y-2 bg-gradient-to-b from-gray-50 to-white">
+            <div className="flex-1 overflow-y-auto p-2 md:p-6 space-y-2 bg-gradient-to-b from-gray-50 to-white">
               {messages.map((message, index) => {
                 const isOwn = message.sender_id === currentUserId;
                 const prevMessage = index > 0 ? messages[index - 1] : null;
@@ -351,12 +353,12 @@ export default function ChatPage() {
                     key={message.id}
                     className={`flex ${
                       isOwn ? "justify-end" : "justify-start"
-                    } ${!showAvatar ? "mt-1" : "mt-4"}`}
+                    } ${!showAvatar ? "mt-1" : "mt-2 md:mt-4"}`}
                   >
                     {/* Avatar для чужих сообщений */}
                     {!isOwn && (
                       <div
-                        className={`flex-shrink-0 w-8 h-8 mr-3 ${
+                        className={`hidden md:flex flex-shrink-0 w-8 h-8 mr-3 ${
                           showAvatar ? "" : "invisible"
                         }`}
                       >
@@ -377,7 +379,7 @@ export default function ChatPage() {
                     )}
 
                     <div
-                      className={`max-w-lg px-4 py-3 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md ${
+                      className={`max-w-[85%] md:max-w-lg px-3 py-2 md:px-4 md:py-3 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md ${
                         isOwn
                           ? "bg-red-500 text-white rounded-br-md"
                           : "bg-white text-gray-800 border border-gray-200 rounded-bl-md"
@@ -385,40 +387,42 @@ export default function ChatPage() {
                     >
                       {message.content && (
                         <>
-                          <div className="whitespace-pre-wrap leading-relaxed">
+                          <div className="whitespace-pre-wrap leading-relaxed text-sm md:text-base">
                             {translation.getMessageContent(
                               message.id,
                               message.content
                             )}
                           </div>
-                          <MessageTranslationStatus
-                            isTranslated={translation.isMessageTranslated(
-                              message.id
-                            )}
-                            detectedLanguage={
-                              translation.translatedMessages.get(message.id)
-                                ?.detectedLanguage
-                            }
-                            targetLanguage={translation.state.targetLanguage}
-                            lang="en"
-                          />
+                          <div className="hidden lg:block">
+                            <MessageTranslationStatus
+                              isTranslated={translation.isMessageTranslated(
+                                message.id
+                              )}
+                              detectedLanguage={
+                                translation.translatedMessages.get(message.id)
+                                  ?.detectedLanguage
+                              }
+                              targetLanguage={translation.state.targetLanguage}
+                              lang="en"
+                            />
+                          </div>
                         </>
                       )}
 
                       {message.file_path && (
-                        <div className="mt-3">
+                        <div className="mt-2 md:mt-3">
                           <a
                             href={`${API_ENDPOINTS.static}/${message.file_path}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`inline-flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
+                            className={`inline-flex items-center px-2 py-1 md:px-3 md:py-2 rounded-lg text-xs md:text-sm transition-colors ${
                               isOwn
                                 ? "bg-red-600 text-white hover:bg-red-700"
                                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                           >
                             <svg
-                              className="w-4 h-4 mr-2"
+                              className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -430,9 +434,11 @@ export default function ChatPage() {
                                 d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
                               />
                             </svg>
-                            {message.file_name || t.file}
+                            <span className="truncate max-w-[120px] md:max-w-none">
+                              {message.file_name || t.file}
+                            </span>
                             {message.file_size && (
-                              <span className="ml-2 text-xs opacity-75">
+                              <span className="ml-1 md:ml-2 text-xs opacity-75 hidden md:inline">
                                 ({formatFileSize(message.file_size)})
                               </span>
                             )}
@@ -441,7 +447,7 @@ export default function ChatPage() {
                       )}
 
                       <div
-                        className={`text-xs mt-2 ${
+                        className={`text-xs mt-1 md:mt-2 ${
                           isOwn ? "text-red-100" : "text-gray-400"
                         }`}
                       >
@@ -455,7 +461,7 @@ export default function ChatPage() {
                     {/* Avatar для своих сообщений */}
                     {isOwn && (
                       <div
-                        className={`flex-shrink-0 w-8 h-8 ml-3 ${
+                        className={`hidden md:flex flex-shrink-0 w-8 h-8 ml-3 ${
                           showAvatar ? "" : "invisible"
                         }`}
                       >
@@ -481,13 +487,13 @@ export default function ChatPage() {
             </div>
 
             {/* Message Input */}
-            <div className="bg-white border-t border-gray-200 p-6 rounded-b-xl">
+            <div className="bg-white border-t border-gray-200 p-2 md:p-6 md:rounded-b-xl">
               {selectedFile && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <div className="mb-2 md:mb-4 p-2 md:p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
+                  <div className="flex items-center space-x-2 md:space-x-3 min-w-0">
+                    <div className="w-6 h-6 md:w-8 md:h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-4 h-4 text-red-500"
+                        className="w-3 h-3 md:w-4 md:h-4 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -500,8 +506,8 @@ export default function ChatPage() {
                         />
                       </svg>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
+                    <div className="min-w-0">
+                      <p className="text-xs md:text-sm font-medium text-gray-900 truncate">
                         {selectedFile.name}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -533,7 +539,7 @@ export default function ChatPage() {
                 </div>
               )}
 
-              <div className="flex items-end space-x-3">
+              <div className="flex items-end space-x-1 md:space-x-3">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -551,7 +557,7 @@ export default function ChatPage() {
 
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex-shrink-0 p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="flex-shrink-0 p-2 md:p-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   title={t.attachFile}
                 >
                   <svg
@@ -575,12 +581,12 @@ export default function ChatPage() {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={t.messagePlaceholder}
-                    className="w-full p-4 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200"
-                    rows={2}
-                    style={{ minHeight: "60px", maxHeight: "120px" }}
+                    className="w-full p-2 pr-10 md:p-4 md:pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    rows={1}
+                    style={{ minHeight: "40px", maxHeight: "120px" }}
                   />
-                  {/* Character count */}
-                  <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                  {/* Character count - hidden on mobile */}
+                  <div className="hidden md:block absolute bottom-2 right-3 text-xs text-gray-400">
                     {newMessage.length}/1000
                   </div>
                 </div>
@@ -588,7 +594,7 @@ export default function ChatPage() {
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim() && !selectedFile}
-                  className="flex-shrink-0 p-4 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
+                  className="flex-shrink-0 p-2 md:p-4 bg-red-500 text-white rounded-xl hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center"
                   title={t.send}
                 >
                   <svg
