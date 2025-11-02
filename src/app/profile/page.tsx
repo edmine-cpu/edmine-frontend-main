@@ -1023,12 +1023,9 @@ export default function ProfilePage() {
               <div className="relative w-32 h-32">
                 {profile.avatar ? (
                   <img
-                    // src={`${API_BASE_URL}/${profile.avatar}`}
-                    src={
-                      "https://content.freelancehunt.com/profile/photo/50/edmine.png"
-                    }
+                    src={`${API_BASE_URL}/${profile.avatar}`}
                     alt="Avatar"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg"
+                    className="w-32 h-32 rounded-full object-cover"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                       e.currentTarget.nextElementSibling?.classList.remove(
