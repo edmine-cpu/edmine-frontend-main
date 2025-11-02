@@ -10,7 +10,6 @@ import { useTranslation } from '@/translations'
 import { checkAuth } from '@/utils/auth'
 import { getLangFromPathname } from '@/utils/linkHelper'
 import { usePathname, useRouter } from 'next/navigation'
-import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 interface Profile {
@@ -538,6 +537,7 @@ export default function ProfilePage() {
 	})
 
 	const [avatarFile, setAvatarFile] = useState<File | null>(null)
+	const [avatarError, setAvatarError] = useState(false)
 
 	// Company states
 	const [showCompanyForm, setShowCompanyForm] = useState(false)
@@ -586,6 +586,7 @@ export default function ProfilePage() {
 			if (response.ok) {
 				const data: Profile = await response.json()
 				setProfile(data)
+				setAvatarError(false)
 				setFormData({
 					name: data.name || '',
 					description: data.profile_description || '',
@@ -745,6 +746,7 @@ export default function ProfilePage() {
 			if (response.ok) {
 				setSuccess(tr.avatarUpdated)
 				setAvatarFile(null)
+				setAvatarError(false)
 				await fetchProfile()
 			} else {
 				setError('Failed to update avatar')
@@ -880,6 +882,7 @@ export default function ProfilePage() {
 			})
 			if (response.ok) {
 				setSuccess(tr.avatarDeleted)
+				setAvatarError(false)
 				await fetchProfile()
 			} else {
 				setError('Failed to delete avatar')
@@ -1022,18 +1025,12 @@ export default function ProfilePage() {
 						{/* Avatar Section */}
 						<div className='flex flex-col items-center space-y-6'>
 							<div className='relative w-32 h-32'>
-								{profile.avatar ? (
-									<Image
+								{profile.avatar && !avatarError ? (
+									<img
 										src={`${STATIC_FILES_URL}/${profile.avatar}`}
 										alt='Avatar'
-										width={128}
-										height={128}
-										className='rounded-full object-cover border-4 border-red-100 shadow-lg'
-										unoptimized
-										onError={(e) => {
-											const target = e.target as HTMLImageElement;
-											target.style.display = 'none';
-										}}
+										className='w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg'
+										onError={() => setAvatarError(true)}
 									/>
 								) : (
 									<div className='w-32 h-32 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-lg'>

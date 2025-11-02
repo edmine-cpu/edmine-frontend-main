@@ -15,15 +15,20 @@ const nextConfig: NextConfig = {
 				protocol: 'http',
 				hostname: '82.25.86.30',
 				port: '8888',
-				pathname: '/static/**',
+				pathname: '/**',
 			},
 			{
 				protocol: 'https',
 				hostname: 'makeasap.com',
-				pathname: '/static/**',
+				pathname: '/**',
+			},
+			{
+				protocol: 'https',
+				hostname: 'content.freelancehunt.com',
+				pathname: '/**',
 			},
 		],
-		unoptimized: false,
+		unoptimized: true,
 	},
 
 	// Заголовки (объединено)
