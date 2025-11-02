@@ -1023,7 +1023,10 @@ export default function ProfilePage() {
               <div className="relative w-32 h-32">
                 {profile.avatar ? (
                   <img
-                    src={`${API_BASE_URL}/${profile.avatar}`}
+                    // src={`${API_BASE_URL}/${profile.avatar}`}
+                    src={
+                      "https://content.freelancehunt.com/profile/photo/50/edmine.png"
+                    }
                     alt="Avatar"
                     className="w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg"
                     onError={(e) => {
