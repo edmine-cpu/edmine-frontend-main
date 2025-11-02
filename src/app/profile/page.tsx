@@ -537,7 +537,6 @@ export default function ProfilePage() {
 	})
 
 	const [avatarFile, setAvatarFile] = useState<File | null>(null)
-	const [avatarError, setAvatarError] = useState(false)
 
 	// Company states
 	const [showCompanyForm, setShowCompanyForm] = useState(false)
@@ -586,7 +585,6 @@ export default function ProfilePage() {
 			if (response.ok) {
 				const data: Profile = await response.json()
 				setProfile(data)
-				setAvatarError(false)
 				setFormData({
 					name: data.name || '',
 					description: data.profile_description || '',
@@ -746,7 +744,6 @@ export default function ProfilePage() {
 			if (response.ok) {
 				setSuccess(tr.avatarUpdated)
 				setAvatarFile(null)
-				setAvatarError(false)
 				await fetchProfile()
 			} else {
 				setError('Failed to update avatar')
@@ -882,7 +879,6 @@ export default function ProfilePage() {
 			})
 			if (response.ok) {
 				setSuccess(tr.avatarDeleted)
-				setAvatarError(false)
 				await fetchProfile()
 			} else {
 				setError('Failed to delete avatar')
@@ -1025,28 +1021,30 @@ export default function ProfilePage() {
 						{/* Avatar Section */}
 						<div className='flex flex-col items-center space-y-6'>
 							<div className='relative w-32 h-32'>
-								{profile.avatar && !avatarError ? (
+								{profile.avatar ? (
 									<img
 										src={`${STATIC_FILES_URL}/${profile.avatar}`}
 										alt='Avatar'
 										className='w-32 h-32 rounded-full object-cover border-4 border-red-100 shadow-lg'
-										onError={() => setAvatarError(true)}
+										onError={(e) => {
+											e.currentTarget.style.display = 'none';
+											e.currentTarget.nextElementSibling?.classList.remove('hidden');
+										}}
 									/>
-								) : (
-									<div className='w-32 h-32 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-lg'>
-										<svg
-											className='w-16 h-16 text-red-400'
-											fill='currentColor'
-											viewBox='0 0 20 20'
-										>
-											<path
-												fillRule='evenodd'
-												d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
-												clipRule='evenodd'
-											/>
-										</svg>
-									</div>
-								)}
+								) : null}
+								<div className={profile.avatar ? 'hidden w-32 h-32 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-lg' : 'w-32 h-32 rounded-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center shadow-lg'}>
+									<svg
+										className='w-16 h-16 text-red-400'
+										fill='currentColor'
+										viewBox='0 0 20 20'
+									>
+										<path
+											fillRule='evenodd'
+											d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
+											clipRule='evenodd'
+										/>
+									</svg>
+								</div>
 							</div>
 
 							<div className='flex flex-col items-center space-y-3 w-full max-w-xs'>
