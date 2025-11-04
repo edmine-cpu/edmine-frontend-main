@@ -6,8 +6,9 @@ import { Header } from "@/components/Header/Header";
 import { API_ENDPOINTS } from "@/config/api";
 import { useTranslation } from "@/hooks/useTranslation";
 import { checkAuth } from "@/utils/auth";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { getLangFromPathname } from "@/utils/linkHelper";
 
 type Lang = "uk" | "en" | "pl" | "fr" | "de";
 
@@ -111,10 +112,11 @@ interface Message {
 export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [chatId, setChatId] = useState<number | null>(null);
-  const [partnerName, setPartnerName] = useState("Партнер");
+  const [partnerName, setPartnerName] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -122,7 +124,7 @@ export default function ChatPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const chatIdParam = params.chatId as string;
-  const lang = "en" as Lang;
+  const lang = getLangFromPathname(pathname) as Lang;
   const t = texts[lang];
 
   // Инициализируем хук перевода
@@ -312,7 +314,7 @@ export default function ChatPage() {
                   </div>
                   <div className="min-w-0">
                     <h1 className="text-base md:text-xl font-semibold text-gray-900 truncate">
-                      {partnerName}
+                      {partnerName || t.partner}
                     </h1>
                     <p className="text-xs md:text-sm text-gray-500 truncate">
                       {t.chat} #{chatId}

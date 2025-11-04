@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
   //bids
   bids: `${API_BASE_URL}/api/bids`,
   bidsV2: `${API_BASE_URL}/api/v2/request`,
+  bids_profile: `${API_BASE_URL}/api/bids/profile/get_bids`,
   createBid: (lang: string) =>
     `${API_BASE_URL}/api/${lang}/create-request-fast`,
   createBidSlow: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,
@@ -77,6 +78,7 @@ export const API_ENDPOINTS = {
   profileAvatar: `${API_BASE_URL}/api/profile/avatar`,
   profileLocation: `${API_BASE_URL}/api/profile/location`,
   profileRole: `${API_BASE_URL}/api/profile/role`,
+  profileLanguage: `${API_BASE_URL}/api/profile/language`,
   profileCategories: `${API_BASE_URL}/api/profile/categories`,
   profileMultilang: `${API_BASE_URL}/api/profile/multilang`,
   profileById: (id: number) => `${API_BASE_URL}/api/profile/${id}`,

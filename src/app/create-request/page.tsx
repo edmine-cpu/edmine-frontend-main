@@ -360,7 +360,7 @@ export default function CreateBidPage() {
 										<option value=''>{t.select}</option>
 										{categories.map(cat => (
 											<option key={cat.id} value={cat.id}>
-												{cat.name_en || cat.name}
+												{(cat as any)[`name_${lang}`] || cat.name_en || cat.name}
 											</option>
 										))}
 									</select>
@@ -385,7 +385,7 @@ export default function CreateBidPage() {
 												)
 												.map(sc => (
 													<option key={sc.id} value={sc.id}>
-														{sc.name_en || sc.name}
+														{(sc as any)[`name_${lang}`] || sc.name_en || sc.name}
 													</option>
 												))}
 										</select>

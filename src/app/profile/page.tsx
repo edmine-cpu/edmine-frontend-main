@@ -59,6 +59,38 @@ interface Company {
   subcategories?: any[];
 }
 
+interface Bid {
+  id: number;
+  title_uk?: string;
+  title_en?: string;
+  title_pl?: string;
+  title_fr?: string;
+  title_de?: string;
+  description_uk?: string;
+  description_en?: string;
+  description_pl?: string;
+  description_fr?: string;
+  description_de?: string;
+  budget?: string;
+  budget_type?: string;
+  slug_name: string;
+  created_at: string;
+  country?: {
+    id: number;
+    name_uk?: string;
+    name_en?: string;
+    name?: string;
+  } | null;
+  city?: {
+    id: number;
+    name_uk?: string;
+    name_en?: string;
+    name?: string;
+  } | null;
+  categories?: any[];
+  subcategories?: any[];
+}
+
 interface Country {
   id: number;
   name_uk?: string;
@@ -79,6 +111,7 @@ interface EditStates {
   description: boolean;
   location: boolean;
   role: boolean;
+  language: boolean;
 }
 
 interface FormData {
@@ -87,6 +120,7 @@ interface FormData {
   country: string;
   city: string;
   role: string;
+  language: string;
 }
 
 interface CompanyFormData {
@@ -111,6 +145,7 @@ const translations = {
   uk: {
     personalInfo: "Персональна інформація",
     myCompanies: "Мої компанії",
+    myBids: "Мої заявки",
     fullName: "Повне ім'я",
     description: "Опис",
     role: "Роль",
@@ -155,15 +190,22 @@ const translations = {
     descriptionUpdated: "Опис успішно оновлено",
     locationUpdated: "Розташування успішно оновлено",
     roleUpdated: "Роль успішно оновлена",
+    languageUpdated: "Мову успішно оновлено",
     avatarUpdated: "Аватар успішно оновлено",
     avatarDeleted: "Аватар видалено",
     companyCreated: "Компанію успішно створено",
     companyUpdated: "Компанію успішно оновлено",
     companyDeleted: "Компанію успішно видалено",
+    noBidsYet: "У вас ще немає заявок",
+    addFirstBid: "Додайте свою першу заявку",
+    bidUpdated: "Заявку успішно оновлено",
+    bidDeleted: "Заявку успішно видалено",
+    bidDeleteConfirm: "Ви впевнені, що хочете видалити цю заявку?",
   },
   en: {
     personalInfo: "Personal Information",
     myCompanies: "My Companies",
+    myBids: "My Bids",
     fullName: "Full Name",
     description: "Description",
     role: "Role",
@@ -208,15 +250,22 @@ const translations = {
     descriptionUpdated: "Description updated successfully",
     locationUpdated: "Location updated successfully",
     roleUpdated: "Role updated successfully",
+    languageUpdated: "Language updated successfully",
     avatarUpdated: "Avatar updated successfully",
     avatarDeleted: "Avatar deleted",
     companyCreated: "Company created successfully",
     companyUpdated: "Company updated successfully",
     companyDeleted: "Company deleted successfully",
+    noBidsYet: "You don't have any bids yet",
+    addFirstBid: "Add your first bid",
+    bidUpdated: "Bid updated successfully",
+    bidDeleted: "Bid deleted successfully",
+    bidDeleteConfirm: "Are you sure you want to delete this bid?",
   },
   pl: {
     personalInfo: "Informacje osobiste",
     myCompanies: "Moje firmy",
+    myBids: "Moje oferty",
     fullName: "Pełne imię",
     description: "Opis",
     role: "Rola",
@@ -261,15 +310,22 @@ const translations = {
     descriptionUpdated: "Opis pomyślnie zaktualizowany",
     locationUpdated: "Lokalizacja pomyślnie zaktualizowana",
     roleUpdated: "Rola pomyślnie zaktualizowana",
+    languageUpdated: "Język pomyślnie zaktualizowany",
     avatarUpdated: "Avatar pomyślnie zaktualizowany",
     avatarDeleted: "Avatar usunięty",
     companyCreated: "Firma pomyślnie utworzona",
     companyUpdated: "Firma pomyślnie zaktualizowana",
     companyDeleted: "Firma pomyślnie usunięta",
+    noBidsYet: "Nie masz jeszcze żadnych ofert",
+    addFirstBid: "Dodaj swoją pierwszą ofertę",
+    bidUpdated: "Oferta pomyślnie zaktualizowana",
+    bidDeleted: "Oferta pomyślnie usunięta",
+    bidDeleteConfirm: "Czy na pewno chcesz usunąć tę ofertę?",
   },
   fr: {
     personalInfo: "Informations personnelles",
     myCompanies: "Mes entreprises",
+    myBids: "Mes demandes",
     fullName: "Nom complet",
     description: "Description",
     role: "Rôle",
@@ -314,15 +370,22 @@ const translations = {
     descriptionUpdated: "Description mise à jour avec succès",
     locationUpdated: "Emplacement mis à jour avec succès",
     roleUpdated: "Rôle mis à jour avec succès",
+    languageUpdated: "Langue mise à jour avec succès",
     avatarUpdated: "Avatar mis à jour avec succès",
     avatarDeleted: "Avatar supprimé",
     companyCreated: "Entreprise créée avec succès",
     companyUpdated: "Entreprise mise à jour avec succès",
     companyDeleted: "Entreprise supprimée avec succès",
+    noBidsYet: "Vous n'avez pas encore de demandes",
+    addFirstBid: "Ajoutez votre première demande",
+    bidUpdated: "Demande mise à jour avec succès",
+    bidDeleted: "Demande supprimée avec succès",
+    bidDeleteConfirm: "Êtes-vous sûr de vouloir supprimer cette demande?",
   },
   de: {
     personalInfo: "Persönliche Informationen",
     myCompanies: "Meine Unternehmen",
+    myBids: "Meine Anfragen",
     fullName: "Vollständiger Name",
     description: "Beschreibung",
     role: "Rolle",
@@ -368,11 +431,17 @@ const translations = {
     descriptionUpdated: "Beschreibung erfolgreich aktualisiert",
     locationUpdated: "Standort erfolgreich aktualisiert",
     roleUpdated: "Rolle erfolgreich aktualisiert",
+    languageUpdated: "Sprache erfolgreich aktualisiert",
     avatarUpdated: "Avatar erfolgreich aktualisiert",
     avatarDeleted: "Avatar gelöscht",
     companyCreated: "Unternehmen erfolgreich erstellt",
     companyUpdated: "Unternehmen erfolgreich aktualisiert",
     companyDeleted: "Unternehmen erfolgreich gelöscht",
+    noBidsYet: "Sie haben noch keine Anfragen",
+    addFirstBid: "Fügen Sie Ihre erste Anfrage hinzu",
+    bidUpdated: "Anfrage erfolgreich aktualisiert",
+    bidDeleted: "Anfrage erfolgreich gelöscht",
+    bidDeleteConfirm: "Sind Sie sicher, dass Sie diese Anfrage löschen möchten?",
   },
 } as const;
 
@@ -382,6 +451,7 @@ type ProfileTranslations = (typeof translations)[keyof typeof translations];
 const useProfileState = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [bids, setBids] = useState<Bid[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -406,6 +476,8 @@ const useProfileState = () => {
     setProfile,
     companies,
     setCompanies,
+    bids,
+    setBids,
     loading,
     setLoading,
     error,
@@ -501,6 +573,8 @@ export default function ProfilePage() {
     setProfile,
     companies,
     setCompanies,
+    bids,
+    setBids,
     loading,
     setLoading,
     error,
@@ -525,6 +599,7 @@ export default function ProfilePage() {
     description: false,
     location: false,
     role: false,
+    language: false,
   });
 
   // Form states
@@ -534,6 +609,7 @@ export default function ProfilePage() {
     country: "",
     city: "",
     role: "",
+    language: "",
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -591,6 +667,7 @@ export default function ProfilePage() {
           country: data.country?.id?.toString() || "",
           city: data.city || "",
           role: data.user_role || "",
+          language: data.language || "",
         });
       }
     } catch (err) {
@@ -613,6 +690,23 @@ export default function ProfilePage() {
       setLoading(false);
     }
   };
+
+  // TODO: Раскомментировать когда бекенд будет готов
+  /*
+  const fetchBids = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.bids_profile, {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data: Bid[] = await response.json();
+        setBids(data || []);
+      }
+    } catch (err) {
+      console.error("Error loading bids:", err);
+    }
+  };
+  */
 
   const fetchCountries = async () => {
     try {
@@ -1164,9 +1258,6 @@ export default function ProfilePage() {
               </h1>
               <p className="text-lg text-gray-600 mb-2">{profile.email}</p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
-                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-                  {getRoleDisplayName(profile.user_role)}
-                </span>
                 <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
                   {getCityDisplayName(profile.city)}
                 </span>
@@ -1416,7 +1507,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Language - Read only */}
+            {/* Language - Read only (редактирование будет на бекенде) */}
             <div>
               <label className="text-sm font-medium text-gray-700 mb-3 block">
                 {tr.language}
@@ -1442,6 +1533,39 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+            {/* TODO: Раскомментировать когда бекенд будет готов
+            <EditableField
+              label={tr.language}
+              value={profile.language?.toUpperCase() || ""}
+              isEditing={editStates.language}
+              onEdit={() => updateEditState("language", true)}
+              onSave={() =>
+                updateField(
+                  API_ENDPOINTS.profileLanguage,
+                  formData.language,
+                  tr.languageUpdated,
+                  "language"
+                )
+              }
+              onCancel={() => updateEditState("language", false)}
+              placeholder={tr.languageNotSet}
+              editText={tr.edit}
+              saveText={tr.save}
+              cancelText={tr.cancel}
+            >
+              <select
+                value={formData.language}
+                onChange={(e) => updateFormData("language", e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              >
+                <option value="uk">Українська (UK)</option>
+                <option value="en">English (EN)</option>
+                <option value="pl">Polski (PL)</option>
+                <option value="fr">Français (FR)</option>
+                <option value="de">Deutsch (DE)</option>
+              </select>
+            </EditableField>
+            */}
           </div>
 
           {/* Companies Management */}
@@ -1939,6 +2063,154 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
+
+          {/* Bids Management */}
+          {/* TODO: Раскомментировать когда бекенд будет готов */}
+          {/*
+          <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                <svg
+                  className="w-6 h-6 mr-3 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                {tr.myBids}
+              </h2>
+            </div>
+
+            {bids.length > 0 ? (
+              <div className="space-y-4">
+                {bids.map((bid) => (
+                  <div
+                    key={bid.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-red-300 transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-2">
+                          {(bid as any)[`title_${lang}`] || bid.title_uk || "No title"}
+                        </h3>
+                        {(bid as any)[`description_${lang}`] && (
+                          <p className="text-gray-700 text-sm mb-2 line-clamp-2">
+                            {(bid as any)[`description_${lang}`]}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-1">
+                          {bid.country && (
+                            <div className="flex items-center">
+                              <svg
+                                className="w-3 h-3 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              {getCountryDisplayName(bid.country)}
+                              {bid.city && `, ${getCityDisplayName(bid.city)}`}
+                            </div>
+                          )}
+                          {bid.budget && (
+                            <div className="flex items-center">
+                              <svg
+                                className="w-3 h-3 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                              {bid.budget} {bid.budget_type || ''}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {new Date(bid.created_at).toLocaleDateString(lang === 'uk' ? 'uk-UA' : lang === 'pl' ? 'pl-PL' : lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : 'en-US')}
+                        </p>
+                        {bid.categories && bid.categories.length > 0 && (
+                          <div className="mt-2">
+                            <div className="flex flex-wrap gap-1">
+                              {bid.categories.map((category: any) => (
+                                <span
+                                  key={category.id}
+                                  className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs"
+                                >
+                                  {category.name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="ml-4 flex flex-col space-y-2">
+                        <button
+                          onClick={() => router.push(getLangPath(`/requests/${bid.slug_name}`, lang))}
+                          className="text-blue-600 hover:text-blue-800 text-sm whitespace-nowrap"
+                        >
+                          {tr.edit}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm(tr.bidDeleteConfirm)) {
+                              // TODO: Implement delete bid API call
+                              setSuccess(tr.bidDeleted);
+                            }
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          {tr.delete}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <svg
+                  className="w-16 h-16 mx-auto mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <p className="text-lg font-medium mb-2">{tr.noBidsYet}</p>
+                <p className="text-sm">{tr.addFirstBid}</p>
+              </div>
+            )}
+          </div>
+          */}
         </div>
       </div>
     </div>

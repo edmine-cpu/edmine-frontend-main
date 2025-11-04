@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { checkAuth, setAuthCache } from '@/utils/auth';
 import { useTranslation, type Lang } from '@/translations';
 import { API_ENDPOINTS } from '@/config/api';
+import { getLangPath } from '@/utils/linkHelper';
 
 interface Props {
     lang: Lang;
@@ -77,7 +78,7 @@ export default function LoginForm({ lang }: Props) {
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new Event('auth-changed'));
                 }
-                router.push(`/${lang}`);
+                router.push(getLangPath('/', lang));
             } else {
                 setError(data.detail || t('invalidCredentials'));
             }
@@ -92,7 +93,7 @@ export default function LoginForm({ lang }: Props) {
         (async () => {
             const auth = await checkAuth();
             setIsAuth(auth);
-            if (auth) router.push(`/${lang}`);
+            if (auth) router.push(getLangPath('/', lang));
         })();
     }, [lang, router]);
 
