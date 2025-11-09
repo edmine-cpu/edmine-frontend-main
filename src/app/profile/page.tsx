@@ -650,6 +650,7 @@ export default function ProfilePage() {
       }
     };
     checkAuthentication();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   // API calls
@@ -765,6 +766,7 @@ export default function ProfilePage() {
       fetchCategories();
       fetchSubcategories();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // Generic update function
@@ -1116,6 +1118,7 @@ export default function ProfilePage() {
             <div className="flex flex-col items-center space-y-6">
               <div className="relative w-32 h-32">
                 {profile.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={`${API_BASE_URL}/${profile.avatar}`}
                     alt="Avatar"

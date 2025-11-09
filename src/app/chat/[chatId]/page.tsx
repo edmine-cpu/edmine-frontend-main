@@ -228,6 +228,7 @@ export default function ChatPage() {
       }
     };
     initChat();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
   useEffect(() => {

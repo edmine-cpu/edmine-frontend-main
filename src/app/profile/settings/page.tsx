@@ -152,6 +152,7 @@ export default function ProfilePage() {
             setFilteredCities([])
             setFormState(prev => ({ ...prev, city: undefined }))
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formState.country, cities])
 
     useEffect(() => {
@@ -171,6 +172,7 @@ export default function ProfilePage() {
             setLoading(false)
         }
         init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     async function fetchUser(userId: number) {

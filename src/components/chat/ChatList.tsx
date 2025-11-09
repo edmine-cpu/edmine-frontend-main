@@ -40,6 +40,7 @@ export default function ChatList({ lang }: ChatListProps) {
 
     useEffect(() => {
         checkAuthAndFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const checkAuthAndFetch = async () => {
@@ -154,6 +155,7 @@ export default function ChatList({ lang }: ChatListProps) {
                                         {/* Avatar */}
                                         <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
                                             {chat.partner.avatar ? (
+                                                // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
                                                 <img
                                                     src={`${API_ENDPOINTS.static}/${chat.partner.avatar}`}
                                                     className="w-12 h-12 rounded-full object-cover"

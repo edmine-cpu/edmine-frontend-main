@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Header } from "@/components/Header/Header";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -73,11 +73,7 @@ export default function BlogArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchArticle();
-  }, [articleId, lang]);
-
-  const fetchArticle = async () => {
+  const fetchArticle = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -96,7 +92,11 @@ export default function BlogArticlePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [articleId, lang, t.error, t.notFound]);
+
+  useEffect(() => {
+    fetchArticle();
+  }, [fetchArticle]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -160,6 +160,7 @@ export default function BlogArticlePage() {
           <article className="bg-white rounded-lg shadow-md overflow-hidden">
             {article.featured_image && (
               <div className="h-64 md:h-96 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={article.featured_image}
                   alt={article.title}

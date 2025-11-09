@@ -486,6 +486,7 @@ export default function RequestsPage({
 		if (categories.length > 0 && countries.length > 0) {
 			fetchBids()
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [categories, countries])
 
 	return (

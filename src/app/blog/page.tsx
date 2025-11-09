@@ -3,7 +3,7 @@
 import { Header } from '@/components/Header/Header'
 import { API_ENDPOINTS } from '@/config/api'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useLanguage } from '@/hooks/useLanguage'
 
 interface BlogArticle {
@@ -64,11 +64,7 @@ export default function BlogPage() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState('')
 
-	useEffect(() => {
-		fetchArticles()
-	}, [lang])
-
-	const fetchArticles = async () => {
+	const fetchArticles = useCallback(async () => {
 		try {
 			setLoading(true)
 			const response = await fetch(`${API_ENDPOINTS.blogArticles}?lang=${lang}`)
@@ -83,7 +79,11 @@ export default function BlogPage() {
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [lang])
+
+	useEffect(() => {
+		fetchArticles()
+	}, [lang, fetchArticles])
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString)
@@ -136,6 +136,7 @@ export default function BlogPage() {
 							>
 								{article.featured_image && (
 									<div className='h-48 overflow-hidden'>
+										{/* eslint-disable-next-line @next/next/no-img-element */}
 										<img
 											src={article.featured_image}
 											alt={article.title}

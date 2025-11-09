@@ -458,6 +458,7 @@ export default function CompaniesPage({
 		if (categories.length > 0 && countries.length > 0) {
 			fetchCompanies()
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [categories, countries])
 
 	return (

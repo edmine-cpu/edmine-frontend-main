@@ -164,6 +164,7 @@ export default function ChatMenuPage() {
 		if (isAuthenticated) {
 			fetchChats()
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAuthenticated])
 
 	useEffect(() => {
@@ -172,6 +173,7 @@ export default function ChatMenuPage() {
 			const interval = setInterval(fetchMessages, 3000)
 			return () => clearInterval(interval)
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedChat])
 
 	const fetchChats = async () => {
@@ -331,6 +333,7 @@ export default function ChatMenuPage() {
 										<div className='flex items-center space-x-3'>
 											<div className='w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0'>
 												{chat.partner.avatar ? (
+													// eslint-disable-next-line @next/next/no-img-element
 													<img
 														src={`${API_ENDPOINTS.static}/${chat.partner.avatar}`}
 														alt={chat.partner.name}
@@ -389,6 +392,7 @@ export default function ChatMenuPage() {
 										<div className='flex items-center space-x-3'>
 											<div className='w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center'>
 												{selectedChat.partner.avatar ? (
+													// eslint-disable-next-line @next/next/no-img-element
 													<img
 														src={`${API_ENDPOINTS.static}/${selectedChat.partner.avatar}`}
 														alt={selectedChat.partner.name}

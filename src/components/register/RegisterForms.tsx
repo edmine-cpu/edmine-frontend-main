@@ -46,6 +46,7 @@ export function RegisterForms({ lang }: Props) {
       setIsAuth(auth);
       if (auth) router.push(getLangPath("/", lang));
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   useEffect(() => {
