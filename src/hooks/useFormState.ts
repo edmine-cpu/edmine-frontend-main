@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_ENDPOINTS } from '@/config/api';
 import { useTranslation } from '@/translations';
+import { getLangPath } from '@/utils/linkHelper';
 
 export type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de';
 
@@ -106,8 +107,7 @@ export function useFormState(initialLang: Lang): FormState {
 
 			setFadeOut(true);
 			setTimeout(() => {
-				const redirectPath = language === 'en' ? '/register/verify-code' : `/${language}/register/verify-code`;
-				router.push(redirectPath);
+				router.push(getLangPath('/register/verify-code', language));
 			}, 300);
 		} catch (error: any) {
 			console.error('Registration error:', error);

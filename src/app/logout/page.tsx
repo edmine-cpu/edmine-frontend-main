@@ -1,30 +1,10 @@
-'use client';
+import { Lang } from '@/app/(types)/lang';
+import LogoutForm from '@/components/logout/LogoutForm';
+import { headers } from 'next/headers';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { API_ENDPOINTS } from '@/config/api';
+export default async function LogoutPage() {
+    const headersList = await headers();
+    const lang = (headersList.get('x-locale') || 'en') as Lang;
 
-export default function Logout() {
-    const router = useRouter();
-
-    useEffect(() => {
-        async function logout() {
-            try {
-                const res = await fetch(API_ENDPOINTS.logout, {
-                    method: 'POST',
-                    credentials: 'include',
-                });
-                if (res.ok) {
-                    router.push('/');
-                } else {
-                    console.error('Logout failed');
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        }
-        logout();
-    }, [router]);
-
-    return <p>Logging out...</p>;
+    return <LogoutForm lang={lang} />;
 }

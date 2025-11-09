@@ -8,7 +8,7 @@ import { Header } from "@/components/Header/Header";
 import { API_BASE_URL, API_ENDPOINTS, STATIC_FILES_URL } from "@/config/api";
 import { useTranslation } from "@/translations";
 import { checkAuth } from "@/utils/auth";
-import { getLangFromPathname } from "@/utils/linkHelper";
+import { getLangFromPathname, getLangPath } from "@/utils/linkHelper";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -646,7 +646,7 @@ export default function ProfilePage() {
       const isAuth = await checkAuth();
       setIsAuthenticated(isAuth);
       if (!isAuth) {
-        router.push(`/login`);
+        router.push(getLangPath(`/login`, lang));
       }
     };
     checkAuthentication();
