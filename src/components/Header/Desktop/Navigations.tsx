@@ -9,7 +9,6 @@ type Props = {
 export function Navigations({ lang }: Props) {
   const t = texts[lang];
 
-  // Построение ссылок на главные страницы
   const catalogUrl =
     lang === "en" ? "/all?zayavki=true" : `/${lang}/all?zayavki=true`;
   const companiesUrl = lang === "en" ? "/all" : `/${lang}/all`;

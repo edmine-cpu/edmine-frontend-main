@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RegisterButton } from "@/components/register/ButtonsRegisterPage";
 
 import { useFormState, Lang } from "@/hooks/useFormState";
 import { RegisterTitleText } from "@/components/register/TextRegister";
-import { CountryCitySelector } from "@/components/register/CountryCitySelector";
-import { API_ENDPOINTS } from "@/config/api";
 import { checkAuth } from "@/utils/auth";
 import { getLangPath } from "@/utils/linkHelper";
 import { useTranslation } from "@/translations";
@@ -26,20 +24,14 @@ export function RegisterForms({ lang }: Props) {
     name,
     email,
     password,
-    city,
-    country,
     errors,
-    fadeOut,
     handleChange,
     handleSubmit,
     inputClass,
     serverError,
-    setLang,
     language,
   } = formState;
 
-  const [cities, setCities] = useState<string[]>([]);
-  const [countries, setCountries] = useState<string[]>([]);
   useEffect(() => {
     (async () => {
       const auth = await checkAuth();
@@ -48,31 +40,6 @@ export function RegisterForms({ lang }: Props) {
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
-
-  useEffect(() => {
-    async function fetchCitiesAndCountries() {
-      try {
-        const [cityRes, countryRes] = await Promise.all([
-          fetch(API_ENDPOINTS.cities),
-          fetch(API_ENDPOINTS.countries),
-        ]);
-
-        if (!cityRes.ok || !countryRes.ok) {
-          throw new Error("Err in downloading cities end countries");
-        }
-
-        const citiesJson = await cityRes.json();
-        const countriesJson = await countryRes.json();
-
-        setCities(citiesJson);
-        setCountries(countriesJson);
-      } catch (err) {
-        console.error("Err in downloading cities end countries", err);
-      }
-    }
-
-    fetchCitiesAndCountries();
-  }, []);
 
   if (isAuth === null) return null;
 
@@ -133,15 +100,6 @@ export function RegisterForms({ lang }: Props) {
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             )}
-          </div>
-          <div className="max-w-lg mx-auto w-[260px] [@media(min-width:375px)]:w-[300px] [@media(min-width:480px)]:w-[400px]">
-            <CountryCitySelector
-              lang={language}
-              country={country}
-              city={city}
-              handleChange={handleChange}
-              inputClass={inputClass}
-            />
           </div>
           <RegisterButton lang={language} name="reg" />
           {serverError && (

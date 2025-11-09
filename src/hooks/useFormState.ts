@@ -10,8 +10,6 @@ export interface FormState {
 	name: string;
 	email: string;
 	password: string;
-	city: string;
-	country: string;
 	errors: Record<string, string>;
 	fadeOut: boolean;
 	serverError: string;
@@ -27,8 +25,6 @@ export function useFormState(initialLang: Lang): FormState {
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [city, setCity] = useState('');
-	const [country, setCountry] = useState('');
 	const [errors, setErrors] = useState<Record<string, string>>({});
 	const [fadeOut, setFadeOut] = useState(false);
 	const [serverError, setServerError] = useState('');
@@ -45,12 +41,6 @@ export function useFormState(initialLang: Lang): FormState {
 				break;
 			case 'password':
 				setPassword(value);
-				break;
-			case 'city':
-				setCity(value);
-				break;
-			case 'country':
-				setCountry(value);
 				break;
 		}
 		// Clear error when user starts typing
@@ -84,16 +74,16 @@ export function useFormState(initialLang: Lang): FormState {
 		}
 
 		try {
-			const formData = new FormData();
-			formData.append('name', name);
-			formData.append('email', email);
-			formData.append('password', password);
-			if (city) formData.append('city', city);
-			if (country) formData.append('country', country);
-
 			const response = await fetch(API_ENDPOINTS.register, {
 				method: 'POST',
-				body: formData,
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					name,
+					email,
+					password,
+				}),
 			});
 
 			if (!response.ok) {
@@ -127,8 +117,6 @@ export function useFormState(initialLang: Lang): FormState {
 		name,
 		email,
 		password,
-		city,
-		country,
 		errors,
 		fadeOut,
 		serverError,
