@@ -1,5 +1,4 @@
-type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de';
-
+import { Lang } from "@/app/(types)/lang";
 const registerTexts = {
     uk: 'Реєстрація користувача',
     en: 'User Registration',

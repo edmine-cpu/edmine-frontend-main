@@ -9,6 +9,7 @@ import { RegisterTitleText } from "@/components/register/TextRegister";
 import { CountryCitySelector } from "@/components/register/CountryCitySelector";
 import { API_ENDPOINTS } from "@/config/api";
 import { checkAuth } from "@/utils/auth";
+import { getLangPath } from "@/utils/linkHelper";
 import { useTranslation } from "@/translations";
 
 type Props = {
@@ -16,7 +17,7 @@ type Props = {
 };
 
 export function RegisterForms({ lang }: Props) {
-  const formState = useFormState(lang); // 👈 передаём сюда lang
+  const formState = useFormState(lang);
   const router = useRouter();
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const t = useTranslation(lang);
@@ -43,7 +44,7 @@ export function RegisterForms({ lang }: Props) {
     (async () => {
       const auth = await checkAuth();
       setIsAuth(auth);
-      if (auth) router.push("/");
+      if (auth) router.push(getLangPath("/", lang));
     })();
   }, [router]);
 
@@ -56,7 +57,7 @@ export function RegisterForms({ lang }: Props) {
         ]);
 
         if (!cityRes.ok || !countryRes.ok) {
-          throw new Error("Ошибка при загрузке городов или стран");
+          throw new Error("Err in downloading cities end countries");
         }
 
         const citiesJson = await cityRes.json();
@@ -65,7 +66,7 @@ export function RegisterForms({ lang }: Props) {
         setCities(citiesJson);
         setCountries(countriesJson);
       } catch (err) {
-        console.error("Ошибка загрузки городов или стран:", err);
+        console.error("Err in downloading cities end countries", err);
       }
     }
 
@@ -91,9 +92,11 @@ export function RegisterForms({ lang }: Props) {
               type="text"
               value={name}
               onChange={(e) => handleChange("name", e.target.value)}
-              placeholder={t('name')}
+              placeholder={t("name")}
               required
-              className={`w-full px-4 py-2 border rounded-lg ${inputClass("name")}`}
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass(
+                "name"
+              )}`}
             />
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -104,9 +107,11 @@ export function RegisterForms({ lang }: Props) {
               type="email"
               value={email}
               onChange={(e) => handleChange("email", e.target.value)}
-              placeholder={t('email')}
+              placeholder={t("email")}
               required
-              className={`w-full px-4 py-2 border rounded-lg ${inputClass("email")}`}
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass(
+                "email"
+              )}`}
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -117,10 +122,12 @@ export function RegisterForms({ lang }: Props) {
               type="password"
               value={password}
               onChange={(e) => handleChange("password", e.target.value)}
-              placeholder={t('password')}
+              placeholder={t("password")}
               minLength={8}
               required
-              className={`w-full px-4 py-2 border rounded-lg ${inputClass("password")}`}
+              className={`w-full px-4 py-2 border rounded-lg ${inputClass(
+                "password"
+              )}`}
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>

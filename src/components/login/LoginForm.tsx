@@ -148,13 +148,13 @@ export default function LoginForm({ lang }: Props) {
 
                         <div className="flex justify-between text-sm">
                             <Link
-                                href={`/${lang}/forgot-password`}
+                                href={getLangPath('/forgot-password', lang)}
                                 className="text-red-600 hover:text-red-800"
                             >
                                 {t('forgotPassword')}
                             </Link>
                             <Link
-                                href={`/${lang}/register`}
+                                href={getLangPath('/register', lang)}
                                 className="text-blue-500"
                             >
                                 {t('noAccount')}

@@ -1,9 +1,6 @@
 'use client'
 
-import React from "react";
-
 export type Lang = 'uk' | 'en' | 'pl' | 'fr' | 'de';
-
 export type SubCategory = { id: string; name: string; categoryId: string };
 
 type Props = {
@@ -29,7 +26,6 @@ export function SubCategorySelector({
                                         selectedSubCategories,
                                         setSelectedSubCategories,
                                     }: Props) {
-    // Фильтруем подкатегории, только для выбранных категорий
     const filteredSubCategories = subCategories.filter(sub =>
         selectedCategories.includes(sub.categoryId)
     );
