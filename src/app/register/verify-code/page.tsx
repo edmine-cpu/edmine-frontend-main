@@ -8,10 +8,12 @@ import {
   VerificationCodeInput,
   Lang,
 } from "@/components/common/VerificationCodeInput";
-import { getLangPath } from "@/utils/linkHelper";
+import { getLangPath, getLangFromPathname } from "@/utils/linkHelper";
+import { usePathname } from "next/navigation";
 
 export default function VerifyCodePage() {
-  const lang: Lang = "en";
+  const pathname = usePathname();
+  const lang = getLangFromPathname(pathname) as Lang;
 
   const [email, setEmail] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -38,7 +40,7 @@ export default function VerifyCodePage() {
       }, 3000);
       return () => clearTimeout(timeout);
     }
-  }, [success]);
+  }, [success, lang]);
 
   if (email === null) {
     return <p>Loading...</p>;

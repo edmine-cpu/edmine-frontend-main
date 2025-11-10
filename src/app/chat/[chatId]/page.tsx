@@ -120,8 +120,11 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessageCountRef = useRef(0);
 
   const chatIdParam = params.chatId as string;
   const lang = getLangFromPathname(pathname) as Lang;
@@ -130,8 +133,20 @@ export default function ChatPage() {
   // Инициализируем хук перевода
   const translation = useTranslation(chatId || 0);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = (force = false) => {
+    if (force || !isUserScrolling) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Detect user scrolling
+  const handleScroll = () => {
+    if (!messagesContainerRef.current) return;
+
+    const container = messagesContainerRef.current;
+    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+
+    setIsUserScrolling(!isAtBottom);
   };
 
   const fetchMessages = async () => {
@@ -150,7 +165,27 @@ export default function ChatPage() {
         const messages = data.messages || data;
 
         if (Array.isArray(messages)) {
-          setMessages(messages.reverse()); // Reverse to show oldest first
+          const reversedMessages = [...messages].reverse();
+
+          // Only update if there are new messages
+          setMessages(prev => {
+            // Check if messages actually changed
+            if (prev.length === reversedMessages.length &&
+                prev.length > 0 &&
+                reversedMessages.length > 0 &&
+                prev[prev.length - 1]?.id === reversedMessages[reversedMessages.length - 1]?.id) {
+              return prev; // No changes, don't update
+            }
+
+            // New messages detected
+            if (reversedMessages.length > lastMessageCountRef.current) {
+              lastMessageCountRef.current = reversedMessages.length;
+              // Auto-scroll only if new messages arrived
+              setTimeout(() => scrollToBottom(), 100);
+            }
+
+            return reversedMessages;
+          });
         } else {
           console.error("Messages data is not an array:", data);
           setMessages([]);
@@ -186,7 +221,8 @@ export default function ChatPage() {
         setNewMessage("");
         setSelectedFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
-        fetchMessages();
+        await fetchMessages();
+        scrollToBottom(true); // Force scroll after sending
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -231,9 +267,14 @@ export default function ChatPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
+  // Scroll to bottom on initial load only
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages.length > 0 && lastMessageCountRef.current === 0) {
+      lastMessageCountRef.current = messages.length;
+      scrollToBottom(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return `0 ${t.bytes}`;
@@ -344,7 +385,11 @@ export default function ChatPage() {
 
           {/* Messages Container */}
           <div className="flex-1 bg-white overflow-hidden flex flex-col">
-            <div className="flex-1 overflow-y-auto p-2 md:p-6 space-y-2 bg-gradient-to-b from-gray-50 to-white">
+            <div
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 overflow-y-auto p-2 md:p-6 space-y-2 bg-gradient-to-b from-gray-50 to-white"
+            >
               {messages.map((message, index) => {
                 const isOwn = message.sender_id === currentUserId;
                 const prevMessage = index > 0 ? messages[index - 1] : null;
@@ -415,7 +460,7 @@ export default function ChatPage() {
                       {message.file_path && (
                         <div className="mt-2 md:mt-3">
                           <a
-                            href={`${API_ENDPOINTS.static}/${message.file_path}`}
+                            href={`${API_ENDPOINTS.static.replace('/static', '')}/${message.file_path}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`inline-flex items-center px-2 py-1 md:px-3 md:py-2 rounded-lg text-xs md:text-sm transition-colors ${
