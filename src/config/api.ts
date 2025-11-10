@@ -21,6 +21,9 @@ export const API_ENDPOINTS = {
   bids: `${API_BASE_URL}/api/bids`,
   bidsV2: `${API_BASE_URL}/api/v2/request`,
   bids_profile: `${API_BASE_URL}/api/bids/profile/get_bids`,
+  myBids: `${API_BASE_URL}/my-bids`,
+  updateMyBid: (id: number) => `${API_BASE_URL}/my-bids/${id}`,
+  deleteMyBid: (id: number) => `${API_BASE_URL}/my-bids/${id}`,
   createBid: (lang: string) =>
     `${API_BASE_URL}/api/${lang}/create-request-fast`,
   createBidSlow: (lang: string) => `${API_BASE_URL}/api/${lang}/create-request`,

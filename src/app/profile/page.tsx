@@ -141,6 +141,25 @@ interface CompanyFormData {
   subcategories: number[];
 }
 
+interface BidFormData {
+  title_uk: string;
+  title_en: string;
+  title_pl: string;
+  title_fr: string;
+  title_de: string;
+  description_uk: string;
+  description_en: string;
+  description_pl: string;
+  description_fr: string;
+  description_de: string;
+  budget: string;
+  budget_type: string;
+  country: string;
+  city: string;
+  categories: number[];
+  subcategories: number[];
+}
+
 const translations = {
   uk: {
     personalInfo: "Персональна інформація",
@@ -201,6 +220,14 @@ const translations = {
     bidUpdated: "Заявку успішно оновлено",
     bidDeleted: "Заявку успішно видалено",
     bidDeleteConfirm: "Ви впевнені, що хочете видалити цю заявку?",
+    editBid: "Редагувати заявку",
+    bidTitle: "Заголовок заявки",
+    bidDescription: "Опис заявки",
+    budget: "Бюджет",
+    budgetType: "Тип бюджету",
+    fixed: "Фіксований",
+    hourly: "Погодинний",
+    updateBid: "Оновити заявку",
   },
   en: {
     personalInfo: "Personal Information",
@@ -261,6 +288,14 @@ const translations = {
     bidUpdated: "Bid updated successfully",
     bidDeleted: "Bid deleted successfully",
     bidDeleteConfirm: "Are you sure you want to delete this bid?",
+    editBid: "Edit bid",
+    bidTitle: "Bid title",
+    bidDescription: "Bid description",
+    budget: "Budget",
+    budgetType: "Budget type",
+    fixed: "Fixed",
+    hourly: "Hourly",
+    updateBid: "Update bid",
   },
   pl: {
     personalInfo: "Informacje osobiste",
@@ -321,6 +356,14 @@ const translations = {
     bidUpdated: "Oferta pomyślnie zaktualizowana",
     bidDeleted: "Oferta pomyślnie usunięta",
     bidDeleteConfirm: "Czy na pewno chcesz usunąć tę ofertę?",
+    editBid: "Edytuj ofertę",
+    bidTitle: "Tytuł oferty",
+    bidDescription: "Opis oferty",
+    budget: "Budżet",
+    budgetType: "Typ budżetu",
+    fixed: "Stały",
+    hourly: "Godzinowy",
+    updateBid: "Zaktualizuj ofertę",
   },
   fr: {
     personalInfo: "Informations personnelles",
@@ -381,6 +424,14 @@ const translations = {
     bidUpdated: "Demande mise à jour avec succès",
     bidDeleted: "Demande supprimée avec succès",
     bidDeleteConfirm: "Êtes-vous sûr de vouloir supprimer cette demande?",
+    editBid: "Modifier la demande",
+    bidTitle: "Titre de la demande",
+    bidDescription: "Description de la demande",
+    budget: "Budget",
+    budgetType: "Type de budget",
+    fixed: "Fixe",
+    hourly: "Horaire",
+    updateBid: "Mettre à jour la demande",
   },
   de: {
     personalInfo: "Persönliche Informationen",
@@ -442,6 +493,14 @@ const translations = {
     bidUpdated: "Anfrage erfolgreich aktualisiert",
     bidDeleted: "Anfrage erfolgreich gelöscht",
     bidDeleteConfirm: "Sind Sie sicher, dass Sie diese Anfrage löschen möchten?",
+    editBid: "Anfrage bearbeiten",
+    bidTitle: "Anfragebezeichnung",
+    bidDescription: "Anfragebeschreibung",
+    budget: "Budget",
+    budgetType: "Budgettyp",
+    fixed: "Fest",
+    hourly: "Stündlich",
+    updateBid: "Anfrage aktualisieren",
   },
 } as const;
 
@@ -640,6 +699,33 @@ export default function ProfilePage() {
     { category: number | ""; subcategory: number | "" }[]
   >([{ category: "", subcategory: "" }]);
 
+  // Bid states
+  const [showBidForm, setShowBidForm] = useState(false);
+  const [editingBidId, setEditingBidId] = useState<number | null>(null);
+  const [selectedBidLang, setSelectedBidLang] = useState<LangType>("uk");
+  const [bidForm, setBidForm] = useState<BidFormData>({
+    title_uk: "",
+    title_en: "",
+    title_pl: "",
+    title_fr: "",
+    title_de: "",
+    description_uk: "",
+    description_en: "",
+    description_pl: "",
+    description_fr: "",
+    description_de: "",
+    budget: "",
+    budget_type: "fixed",
+    country: "",
+    city: "",
+    categories: [],
+    subcategories: [],
+  });
+
+  const [bidCategoryBlocks, setBidCategoryBlocks] = useState<
+    { category: number | ""; subcategory: number | "" }[]
+  >([{ category: "", subcategory: "" }]);
+
   // Authentication check
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -692,11 +778,9 @@ export default function ProfilePage() {
     }
   };
 
-  // TODO: Раскомментировать когда бекенд будет готов
-  /*
   const fetchBids = async () => {
     try {
-      const response = await fetch(API_ENDPOINTS.bids_profile, {
+      const response = await fetch(API_ENDPOINTS.myBids, {
         credentials: "include",
       });
       if (response.ok) {
@@ -707,7 +791,6 @@ export default function ProfilePage() {
       console.error("Error loading bids:", err);
     }
   };
-  */
 
   const fetchCountries = async () => {
     try {
@@ -761,6 +844,7 @@ export default function ProfilePage() {
     if (isAuthenticated) {
       fetchProfile();
       fetchCompanies();
+      fetchBids();
       fetchCountries();
       fetchCities();
       fetchCategories();
@@ -984,6 +1068,148 @@ export default function ProfilePage() {
     }
   };
 
+  // Bid management functions
+  const resetBidForm = () => {
+    setBidForm({
+      title_uk: "",
+      title_en: "",
+      title_pl: "",
+      title_fr: "",
+      title_de: "",
+      description_uk: "",
+      description_en: "",
+      description_pl: "",
+      description_fr: "",
+      description_de: "",
+      budget: "",
+      budget_type: "fixed",
+      country: "",
+      city: "",
+      categories: [],
+      subcategories: [],
+    });
+    setBidCategoryBlocks([{ category: "", subcategory: "" }]);
+    setSelectedBidLang("uk");
+    setEditingBidId(null);
+    setShowBidForm(false);
+  };
+
+  const startEditBid = (bid: Bid) => {
+    const categories = (bid as any).categories || [];
+    const subcategories = (bid as any).subcategories || [];
+
+    setBidForm({
+      title_uk: bid.title_uk || "",
+      title_en: bid.title_en || "",
+      title_pl: bid.title_pl || "",
+      title_fr: bid.title_fr || "",
+      title_de: bid.title_de || "",
+      description_uk: bid.description_uk || "",
+      description_en: bid.description_en || "",
+      description_pl: bid.description_pl || "",
+      description_fr: bid.description_fr || "",
+      description_de: bid.description_de || "",
+      budget: bid.budget?.toString() || "",
+      budget_type: bid.budget_type || "fixed",
+      country: bid.country?.id?.toString() || "",
+      city: bid.city?.id?.toString() || "",
+      categories: categories.map((c: any) => c.id),
+      subcategories: subcategories.map((s: any) => s.id),
+    });
+
+    // Создаем bidCategoryBlocks на основе существующих категорий
+    const blocks = [];
+    const maxLength = Math.max(categories.length, subcategories.length, 1);
+    for (let i = 0; i < maxLength; i++) {
+      blocks.push({
+        category: categories[i]?.id || "",
+        subcategory: subcategories[i]?.id || "",
+      });
+    }
+    setBidCategoryBlocks(blocks);
+
+    setEditingBidId(bid.id);
+    setShowBidForm(true);
+  };
+
+  const saveBid = async () => {
+    if (!editingBidId) {
+      setError("Cannot save bid without ID");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      // Добавляем заголовки
+      if (bidForm.title_uk) formData.append("title_uk", bidForm.title_uk);
+      if (bidForm.title_en) formData.append("title_en", bidForm.title_en);
+      if (bidForm.title_pl) formData.append("title_pl", bidForm.title_pl);
+      if (bidForm.title_fr) formData.append("title_fr", bidForm.title_fr);
+      if (bidForm.title_de) formData.append("title_de", bidForm.title_de);
+
+      // Добавляем описания
+      if (bidForm.description_uk) formData.append("description_uk", bidForm.description_uk);
+      if (bidForm.description_en) formData.append("description_en", bidForm.description_en);
+      if (bidForm.description_pl) formData.append("description_pl", bidForm.description_pl);
+      if (bidForm.description_fr) formData.append("description_fr", bidForm.description_fr);
+      if (bidForm.description_de) formData.append("description_de", bidForm.description_de);
+
+      // Добавляем бюджет
+      if (bidForm.budget) formData.append("budget", bidForm.budget);
+      if (bidForm.budget_type) formData.append("budget_type", bidForm.budget_type);
+
+      // Добавляем местоположение
+      if (bidForm.country) formData.append("country", bidForm.country);
+      if (bidForm.city) formData.append("city", bidForm.city);
+
+      // Добавляем категории
+      if (bidForm.categories.length > 0) {
+        formData.append("category", bidForm.categories.join(","));
+      }
+      if (bidForm.subcategories.length > 0) {
+        formData.append("under_category", bidForm.subcategories.join(","));
+      }
+
+      const response = await fetch(API_ENDPOINTS.updateMyBid(editingBidId), {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setSuccess(tr.bidUpdated);
+        resetBidForm();
+        await fetchBids();
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || "Failed to update bid");
+      }
+    } catch (err) {
+      setError("Error updating bid");
+    }
+  };
+
+  const deleteBid = async (bidId: number) => {
+    if (!confirm(tr.bidDeleteConfirm)) return;
+
+    try {
+      const response = await fetch(API_ENDPOINTS.deleteMyBid(bidId), {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setSuccess(tr.bidDeleted);
+        await fetchBids();
+      } else {
+        setError("Failed to delete bid");
+      }
+    } catch (err) {
+      setError("Error deleting bid");
+    }
+  };
+
   const updateFormData = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -1039,6 +1265,70 @@ export default function ProfilePage() {
         `description_${selectedLang}` as keyof CompanyFormData
       ] as string) || ""
     );
+  };
+
+  const getCurrentBidTitle = (): string => {
+    return (
+      (bidForm[
+        `title_${selectedBidLang}` as keyof BidFormData
+      ] as string) || ""
+    );
+  };
+
+  const getCurrentBidDescription = (): string => {
+    return (
+      (bidForm[
+        `description_${selectedBidLang}` as keyof BidFormData
+      ] as string) || ""
+    );
+  };
+
+  const updateBidTitle = (value: string) => {
+    setBidForm((prev) => ({
+      ...prev,
+      [`title_${selectedBidLang}`]: value,
+    }));
+  };
+
+  const updateBidDescription = (value: string) => {
+    setBidForm((prev) => ({
+      ...prev,
+      [`description_${selectedBidLang}`]: value,
+    }));
+  };
+
+  const handleBidCategoryChange = (index: number, value: number | "") => {
+    setBidCategoryBlocks((prev) =>
+      prev.map((block, i) =>
+        i === index ? { ...block, category: value, subcategory: "" } : block
+      )
+    );
+    setBidForm((prev) => {
+      const newCategories = [...prev.categories];
+      if (value) {
+        newCategories[index] = value as number;
+      }
+      return { ...prev, categories: newCategories.filter(Boolean) as number[] };
+    });
+  };
+
+  const handleBidSubcategoryChange = (index: number, value: number | "") => {
+    setBidCategoryBlocks((prev) =>
+      prev.map((block, i) =>
+        i === index ? { ...block, subcategory: value } : block
+      )
+    );
+    setBidForm((prev) => {
+      const newSubcats = [...prev.subcategories];
+      if (value) {
+        newSubcats[index] = value as number;
+      }
+      return { ...prev, subcategories: newSubcats.filter(Boolean) as number[] };
+    });
+  };
+
+  const addBidCategoryBlock = () => {
+    setBidCategoryBlocks((prev) => [...prev, { category: "", subcategory: "" }]);
   };
 
   const getRoleDisplayName = (role: string): string => {
@@ -1260,14 +1550,6 @@ export default function ProfilePage() {
                 {profile.name}
               </h1>
               <p className="text-lg text-gray-600 mb-2">{profile.email}</p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
-                <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-                  {getCityDisplayName(profile.city)}
-                </span>
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                  {profile.language?.toUpperCase()}
-                </span>
-              </div>
               {profile.profile_description && (
                 <p className="text-gray-700 max-w-2xl leading-relaxed">
                   {profile.profile_description}
@@ -1387,188 +1669,6 @@ export default function ProfilePage() {
                 placeholder={tr.tellAboutYourself}
               />
             </EditableField>
-
-            {/* Role */}
-            <EditableField
-              label={tr.role}
-              value={getRoleDisplayName(profile.user_role)}
-              isEditing={editStates.role}
-              onEdit={() => updateEditState("role", true)}
-              onSave={() =>
-                updateField(
-                  API_ENDPOINTS.profileRole,
-                  formData.role,
-                  tr.roleUpdated,
-                  "role"
-                )
-              }
-              onCancel={() => updateEditState("role", false)}
-              placeholder={tr.roleNotSet}
-              editText={tr.edit}
-              saveText={tr.save}
-              cancelText={tr.cancel}
-            >
-              <select
-                value={formData.role}
-                onChange={(e) => updateFormData("role", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="customer">{tr.customer}</option>
-                <option value="executor">{tr.executor}</option>
-                <option value="both">{tr.both}</option>
-              </select>
-            </EditableField>
-
-            {/* Location */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-3">
-                <label className="text-sm font-medium text-gray-700">
-                  {tr.location}
-                </label>
-                {!editStates.location && (
-                  <button
-                    onClick={() => updateEditState("location", true)}
-                    className="text-red-600 hover:text-red-800 text-sm"
-                  >
-                    {tr.edit}
-                  </button>
-                )}
-              </div>
-              {editStates.location ? (
-                <div className="space-y-3">
-                  <select
-                    value={formData.country}
-                    onChange={(e) => {
-                      updateFormData("country", e.target.value);
-                      updateFormData("city", "");
-                    }}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  >
-                    <option value="">{tr.selectCountry}</option>
-                    {allCountries.map((country) => (
-                      <option key={country.id} value={country.id}>
-                        {country.name_en || country.name_uk || country.name}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={formData.city}
-                    onChange={(e) => updateFormData("city", e.target.value)}
-                    disabled={!formData.country}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <option value="">{tr.selectCity}</option>
-                    {getFilteredCities(formData.country).map((city) => (
-                      <option key={city.id} value={city.id}>
-                        {city.name_en || city.name_uk || city.name}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={updateLocation}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                    >
-                      {tr.save}
-                    </button>
-                    <button
-                      onClick={() => updateEditState("location", false)}
-                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors text-sm"
-                    >
-                      {tr.cancel}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-2 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    <span className="text-gray-900">
-                      {getCountryDisplayName(profile.country)},{" "}
-                      {getCityDisplayName(profile.city)}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Language - Read only (редактирование будет на бекенде) */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-3 block">
-                {tr.language}
-              </label>
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <div className="flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-2 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
-                    />
-                  </svg>
-                  <span className="text-gray-900 uppercase">
-                    {profile.language || tr.languageNotSet}
-                  </span>
-                </div>
-              </div>
-            </div>
-            {/* TODO: Раскомментировать когда бекенд будет готов
-            <EditableField
-              label={tr.language}
-              value={profile.language?.toUpperCase() || ""}
-              isEditing={editStates.language}
-              onEdit={() => updateEditState("language", true)}
-              onSave={() =>
-                updateField(
-                  API_ENDPOINTS.profileLanguage,
-                  formData.language,
-                  tr.languageUpdated,
-                  "language"
-                )
-              }
-              onCancel={() => updateEditState("language", false)}
-              placeholder={tr.languageNotSet}
-              editText={tr.edit}
-              saveText={tr.save}
-              cancelText={tr.cancel}
-            >
-              <select
-                value={formData.language}
-                onChange={(e) => updateFormData("language", e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              >
-                <option value="uk">Українська (UK)</option>
-                <option value="en">English (EN)</option>
-                <option value="pl">Polski (PL)</option>
-                <option value="fr">Français (FR)</option>
-                <option value="de">Deutsch (DE)</option>
-              </select>
-            </EditableField>
-            */}
           </div>
 
           {/* Companies Management */}
@@ -2068,9 +2168,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Bids Management */}
-          {/* TODO: Раскомментировать когда бекенд будет готов */}
-          {/*
-          <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
+          <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                 <svg
@@ -2088,9 +2186,31 @@ export default function ProfilePage() {
                 </svg>
                 {tr.myBids}
               </h2>
+              {!showBidForm && (
+                <button
+                  onClick={() => router.push(getLangPath('/create-request', lang))}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>{tr.add}</span>
+                </button>
+              )}
             </div>
 
-            {bids.length > 0 ? (
+            {/* Bids List */}
+            {bids.length > 0 && !showBidForm && (
               <div className="space-y-4">
                 {bids.map((bid) => (
                   <div
@@ -2102,9 +2222,9 @@ export default function ProfilePage() {
                         <h3 className="font-semibold text-gray-900 mb-2">
                           {(bid as any)[`title_${lang}`] || bid.title_uk || "No title"}
                         </h3>
-                        {(bid as any)[`description_${lang}`] && (
-                          <p className="text-gray-700 text-sm mb-2 line-clamp-2">
-                            {(bid as any)[`description_${lang}`]}
+                        {((bid as any)[`description_${lang}`] || bid.description_uk) && (
+                          <p className="text-gray-700 text-sm mb-2">
+                            {(bid as any)[`description_${lang}`] || bid.description_uk}
                           </p>
                         )}
                         <div className="flex items-center gap-4 text-xs text-gray-500 mb-1">
@@ -2152,9 +2272,14 @@ export default function ProfilePage() {
                             </div>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">
-                          {new Date(bid.created_at).toLocaleDateString(lang === 'uk' ? 'uk-UA' : lang === 'pl' ? 'pl-PL' : lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : 'en-US')}
-                        </p>
+                        {bid.created_at && (
+                          <p className="text-xs text-gray-500">
+                            {new Date(bid.created_at).toLocaleDateString(
+                              lang === 'uk' ? 'uk-UA' : lang === 'pl' ? 'pl-PL' :
+                              lang === 'fr' ? 'fr-FR' : lang === 'de' ? 'de-DE' : 'en-US'
+                            )}
+                          </p>
+                        )}
                         {bid.categories && bid.categories.length > 0 && (
                           <div className="mt-2">
                             <div className="flex flex-wrap gap-1">
@@ -2169,31 +2294,69 @@ export default function ProfilePage() {
                             </div>
                           </div>
                         )}
+                        {bid.subcategories && bid.subcategories.length > 0 && (
+                          <div className="mt-1">
+                            <div className="flex flex-wrap gap-1">
+                              {bid.subcategories.map((subcategory: any) => (
+                                <span
+                                  key={subcategory.id}
+                                  className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
+                                >
+                                  {subcategory.name_uk || subcategory.name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="ml-4 flex flex-col space-y-2">
+                      <div className="flex space-x-2 ml-4">
                         <button
-                          onClick={() => router.push(getLangPath(`/requests/${bid.slug_name}`, lang))}
-                          className="text-blue-600 hover:text-blue-800 text-sm whitespace-nowrap"
+                          onClick={() => startEditBid(bid)}
+                          className="text-blue-600 hover:text-blue-800 p-2"
+                          title={tr.editBid}
                         >
-                          {tr.edit}
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
                         </button>
                         <button
-                          onClick={async () => {
-                            if (confirm(tr.bidDeleteConfirm)) {
-                              // TODO: Implement delete bid API call
-                              setSuccess(tr.bidDeleted);
-                            }
-                          }}
-                          className="text-red-600 hover:text-red-800 text-sm"
+                          onClick={() => deleteBid(bid.id)}
+                          className="text-red-600 hover:text-red-800 p-2"
+                          title="Видалити"
                         >
-                          {tr.delete}
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
+            )}
+
+            {/* No Bids Message */}
+            {bids.length === 0 && !showBidForm && (
               <div className="text-center py-12 text-gray-500">
                 <svg
                   className="w-16 h-16 mx-auto mb-4 text-gray-300"
@@ -2212,8 +2375,232 @@ export default function ProfilePage() {
                 <p className="text-sm">{tr.addFirstBid}</p>
               </div>
             )}
+
+            {/* Edit Bid Form */}
+            {showBidForm && editingBidId && (
+              <div className="border-2 border-dashed border-red-300 rounded-lg p-6 bg-red-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {tr.editBid}
+                  </h3>
+                  <button
+                    onClick={resetBidForm}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Bid Title - Multilingual */}
+                <div className="mb-6">
+                  <label className="text-sm font-medium text-gray-700 mb-3 block">
+                    {tr.bidTitle}
+                  </label>
+                  <div className="mb-3">
+                    <LanguageSwitcher
+                      current={selectedBidLang}
+                      onChange={setSelectedBidLang}
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    value={getCurrentBidTitle()}
+                    onChange={(e) => updateBidTitle(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder={`${tr.bidTitle} (${LANG_LABELS[selectedBidLang]})`}
+                  />
+                </div>
+
+                {/* Budget Fields */}
+                <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      {tr.budget}
+                    </label>
+                    <input
+                      type="number"
+                      value={bidForm.budget}
+                      onChange={(e) =>
+                        setBidForm((prev) => ({ ...prev, budget: e.target.value }))
+                      }
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      placeholder={tr.budget}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      {tr.budgetType}
+                    </label>
+                    <select
+                      value={bidForm.budget_type}
+                      onChange={(e) =>
+                        setBidForm((prev) => ({
+                          ...prev,
+                          budget_type: e.target.value,
+                        }))
+                      }
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="fixed">{tr.fixed}</option>
+                      <option value="hourly">{tr.hourly}</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      {tr.country}
+                    </label>
+                    <select
+                      value={bidForm.country}
+                      onChange={(e) => {
+                        setBidForm((prev) => ({
+                          ...prev,
+                          country: e.target.value,
+                          city: "",
+                        }));
+                      }}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    >
+                      <option value="">{tr.selectCountry}</option>
+                      {allCountries.map((country) => (
+                        <option key={country.id} value={country.id}>
+                          {country.name_uk || country.name_en || country.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      {tr.city}
+                    </label>
+                    <select
+                      value={bidForm.city}
+                      onChange={(e) =>
+                        setBidForm((prev) => ({
+                          ...prev,
+                          city: e.target.value,
+                        }))
+                      }
+                      disabled={!bidForm.country}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      <option value="">{tr.selectCity}</option>
+                      {getFilteredCities(bidForm.country).map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name_uk || city.name_en || city.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Categories */}
+                <div className="mb-4">
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    {tr.companyCategories}
+                  </label>
+                  {bidCategoryBlocks.map((block, index) => (
+                    <div key={index} className="mb-4 space-y-2">
+                      <select
+                        value={block.category}
+                        onChange={(e) =>
+                          handleBidCategoryChange(
+                            index,
+                            Number(e.target.value) || ""
+                          )
+                        }
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      >
+                        <option value="">{tr.selectCategory}</option>
+                        {allCategories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {(cat as any)[`name_${lang}`] || cat.name_en || cat.name}
+                          </option>
+                        ))}
+                      </select>
+                      {block.category && (
+                        <select
+                          value={block.subcategory}
+                          onChange={(e) =>
+                            handleBidSubcategoryChange(
+                              index,
+                              Number(e.target.value) || ""
+                            )
+                          }
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        >
+                          <option value="">{tr.selectSubcategory}</option>
+                          {allSubcategories
+                            .filter(
+                              (sc) =>
+                                (sc as any).category_id === block.category ||
+                                (sc as any).full_category_id === block.category
+                            )
+                            .map((sc) => (
+                              <option key={sc.id} value={sc.id}>
+                                {(sc as any)[`name_${lang}`] || sc.name_en || sc.name}
+                              </option>
+                            ))}
+                        </select>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addBidCategoryBlock}
+                    className="mt-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    {`\u27A5 ${tr.addAnotherCategory}`}
+                  </button>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    {tr.bidDescription} ({LANG_LABELS[selectedBidLang]})
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={getCurrentBidDescription()}
+                    onChange={(e) => updateBidDescription(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                    placeholder={`${tr.bidDescription} (${LANG_LABELS[selectedBidLang]})`}
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-3">
+                  <button
+                    onClick={saveBid}
+                    className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  >
+                    {tr.updateBid}
+                  </button>
+                  <button
+                    onClick={resetBidForm}
+                    className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors font-medium"
+                  >
+                    {tr.cancel}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          */}
         </div>
       </div>
     </div>
